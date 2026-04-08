@@ -168,16 +168,16 @@ export function Sidebar() {
         {/* Logo */}
         <div className="flex items-center justify-between h-36 px-4 border-b">
           <div className="flex items-center gap-3">
-            <div className="h-12 w-12 rounded-lg bg-primary flex items-center justify-center">
+            <div className="h-32 w-32 rounded-lg flex items-center justify-center">
               <div className="text-primary text-white font-bold text-lg">
-                <img src="/assets/logo.png" alt="Motly" className="h-10 w-10" />
+                <img src="/logo2.png" alt="Booking Dashboard" className="h-32 w-32" />
               </div>
             </div>
-            {!sidebarCollapsed && (
+            {/* {!sidebarCollapsed && (
               <span className="font-display font-bold text-xl text-accent">Dashboard</span>
-            )}
+            )} */}
           </div>
-          <Button
+          {/* <Button
             variant="ghost"
             size="icon-sm"
             onClick={() => dispatch(toggleSidebar())}
@@ -188,7 +188,7 @@ export function Sidebar() {
             ) : (
               <ChevronLeft className="h-4 w-4 text-accent" />
             )}
-          </Button>
+          </Button> */}
         </div>
 
         {/* Navigation */}
