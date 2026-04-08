@@ -14,16 +14,24 @@ export function TransactionTable({
   transactions,
   onView,
 }: TransactionTableProps) {
+  const formatMoney = (t: Transaction) => {
+    const currency = (t.currency ?? 'USD').toUpperCase()
+    const symbol = currency === 'USD' ? '$' : currency === 'EUR' ? '€' : `${currency} `
+    return `${symbol}${t.amount.toFixed(2)}`
+  }
+
   return (
     <div className="w-full overflow-auto">
-      <table className="w-full min-w-[900px]">
+      <table className="w-full min-w-[1100px]">
         <thead>
           <tr className="bg-[#CCF3F5] text-slate-800">
-            <th className="px-6 py-4 text-left text-sm font-bold">Transaction ID</th>
-            <th className="px-6 py-4 text-left text-sm font-bold">Date</th>
+            <th className="px-6 py-4 text-left text-sm font-bold">Booking ID</th>
             <th className="px-6 py-4 text-left text-sm font-bold">User Name</th>
-            <th className="px-6 py-4 text-left text-sm font-bold">Email</th>
-            <th className="px-6 py-4 text-left text-sm font-bold">Amount</th>
+            <th className="px-6 py-4 text-left text-sm font-bold">Contact</th>
+            <th className="px-6 py-4 text-left text-sm font-bold">Selected Room</th>
+            <th className="px-6 py-4 text-left text-sm font-bold">Check in Date</th>
+            <th className="px-6 py-4 text-left text-sm font-bold">Check out Date</th>
+            <th className="px-6 py-4 text-left text-sm font-bold">Price</th>
             <th className="px-6 py-4 text-left text-sm font-bold">Status</th>
             <th className="px-6 py-4 text-right text-sm font-bold">Action</th>
           </tr>
@@ -32,7 +40,7 @@ export function TransactionTable({
           {transactions.length === 0 ? (
             <tr>
               <td
-                colSpan={7}
+                colSpan={9}
                 className="px-6 py-8 text-center text-gray-500"
               >
                 No transactions found
@@ -47,20 +55,13 @@ export function TransactionTable({
                 transition={{ delay: 0.05 * index }}
                 className="hover:bg-gray-50 transition-colors"
               >
-                {/* Transaction ID Column */}
+                {/* Booking ID Column */}
                 <td className="px-6 py-4">
                   <span
                     onClick={() => onView(transaction)}
                     className="text-sm font-medium text-blue-600 underline cursor-pointer hover:text-blue-700"
                   >
-                    {transaction.transactionId}
-                  </span>
-                </td>
-
-                {/* Date Column */}
-                <td className="px-6 py-4">
-                  <span className="text-sm text-slate-700">
-                    {formatDate(transaction.date, 'dd MMM yyyy')}
+                    {transaction.bookingId ?? transaction.transactionId}
                   </span>
                 </td>
 
@@ -71,17 +72,38 @@ export function TransactionTable({
                   </span>
                 </td>
 
-                {/* Email Column */}
+                {/* Contact Column */}
                 <td className="px-6 py-4">
                   <span className="text-sm text-slate-700">
                     {transaction.email}
                   </span>
                 </td>
 
-                {/* Amount Column */}
+                {/* Selected Room Column */}
+                <td className="px-6 py-4">
+                  <span className="text-sm text-slate-700">
+                    {transaction.selectedRoom ?? '—'}
+                  </span>
+                </td>
+
+                {/* Check-in Date Column */}
+                <td className="px-6 py-4">
+                  <span className="text-sm text-slate-700">
+                    {formatDate(transaction.checkInDate ?? transaction.date, 'dd MMM, yyyy')}
+                  </span>
+                </td>
+
+                {/* Check-out Date Column */}
+                <td className="px-6 py-4">
+                  <span className="text-sm text-slate-700">
+                    {formatDate(transaction.checkOutDate ?? transaction.date, 'dd MMM, yyyy')}
+                  </span>
+                </td>
+
+                {/* Price Column */}
                 <td className="px-6 py-4">
                   <span className="text-sm font-semibold text-slate-800">
-                    {transaction.currency || '€'}{transaction.amount}
+                    {formatMoney(transaction)}
                   </span>
                 </td>
 
@@ -90,10 +112,12 @@ export function TransactionTable({
                   <span
                     className={cn(
                       'inline-flex items-center px-3 py-1 w-[90px] justify-center text-center rounded-sm text-xs font-medium',
-                      transaction.status === 'Completed'
+                      transaction.status === 'Paid' || transaction.status === 'Completed'
                         ? 'bg-green-100 text-green-800'
                         : transaction.status === 'Pending'
                         ? 'bg-orange-100 text-orange-800'
+                        : transaction.status === 'Refunded'
+                        ? 'bg-purple-100 text-purple-800'
                         : transaction.status === 'Failed'
                         ? 'bg-red-100 text-red-800'
                         : 'bg-gray-100 text-gray-800'

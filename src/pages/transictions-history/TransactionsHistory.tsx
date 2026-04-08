@@ -19,10 +19,9 @@ import type { Transaction, TransactionStatus } from "@/types";
 
 const STATUS_OPTIONS: { value: TransactionStatus | "all"; label: string }[] = [
   { value: "all", label: "All Status" },
+  { value: "Paid", label: "Paid" },
+  { value: "Refunded", label: "Refunded" },
   { value: "Pending", label: "Pending" },
-  { value: "Completed", label: "Completed" },
-  { value: "Failed", label: "Failed" },
-  { value: "Cancelled", label: "Cancelled" },
 ];
 
 export default function TransactionsHistory() {

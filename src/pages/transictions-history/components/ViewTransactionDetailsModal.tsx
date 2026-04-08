@@ -22,8 +22,11 @@ export function ViewTransactionDetailsModal({
 
   const getStatusIcon = () => {
     switch (transaction.status) {
+      case 'Paid':
       case 'Completed':
         return <CheckCircle className="h-5 w-5 text-green-600" />
+      case 'Refunded':
+        return <AlertCircle className="h-5 w-5 text-purple-600" />
       case 'Pending':
         return <Clock className="h-5 w-5 text-orange-600" />
       case 'Failed':
@@ -55,10 +58,12 @@ export function ViewTransactionDetailsModal({
           <div
             className={cn(
               'inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium',
-              transaction.status === 'Completed'
+              transaction.status === 'Paid' || transaction.status === 'Completed'
                 ? 'bg-green-100 text-green-800'
                 : transaction.status === 'Pending'
                 ? 'bg-orange-100 text-orange-800'
+                : transaction.status === 'Refunded'
+                ? 'bg-purple-100 text-purple-800'
                 : transaction.status === 'Failed'
                 ? 'bg-red-100 text-red-800'
                 : 'bg-gray-100 text-gray-800'

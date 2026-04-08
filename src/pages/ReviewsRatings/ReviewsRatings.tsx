@@ -28,7 +28,7 @@ function StarsRow({ value, size = 24 }: { value: number; size?: number }) {
 
 function StarsFilledRtl({ value, size = 20 }: { value: number; size?: number }) {
   return (
-    <div className="flex items-center justify-end gap-1 w-[86px]">
+    <div className="flex items-center justify-end gap-4 w-[86px]">
       {Array.from({ length: value }).map((_, i) => (
         <Star
           key={i}
@@ -49,7 +49,7 @@ function getInitials(name: string) {
 
 export default function ReviewsRatings() {
   const [page, setPage] = useUrlNumber('page', 1)
-  const [limit, setLimit] = useUrlNumber('limit', 2)
+  const [limit, setLimit] = useUrlNumber('limit', 5)
 
   const [reviews, setReviews] = useState<ReviewItem[]>(mockReviews)
   const [selected, setSelected] = useState<ReviewItem | null>(null)
@@ -114,13 +114,13 @@ export default function ReviewsRatings() {
         <CardContent className="p-6">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {/* Average */}
-            <div className="flex items-center gap-5">
+            <div className="flex items-start gap-5 flex-col">
               <div className="h-[96px] w-[96px] rounded-full bg-[#6BBF2D] text-white flex items-center justify-center">
                 <span className="text-3xl font-bold">{ratingStats.avg.toFixed(1)}</span>
               </div>
               <div>
-                <StarsRow value={Math.round(ratingStats.avg)} size={18} />
-                <p className="mt-2 text-sm text-slate-700">
+                <StarsRow value={Math.round(ratingStats.avg)} size={32} />
+                <p className="mt-2 text- font-bold text-slate-700">
                   ({totalItems} reviews)
                 </p>
               </div>
@@ -136,10 +136,10 @@ export default function ReviewsRatings() {
                 return (
                   <div key={stars} className="flex items-center gap-6">
                     <div className="flex items-center gap-6 w-[160px] justify-end">
-                      <StarsFilledRtl value={stars} size={20} />
-                      <span className="text-xs text-slate-600 whitespace-nowrap inline-flex flex-row-reverse items-center gap-2">
-                        <span>{stars}</span>
-                        <span>stars</span>
+                      <StarsFilledRtl value={stars} size={30} />
+                      <span className="text- text-slate-600 whitespace-nowrap inline-flex flex-row-reverse items-center gap-2">
+                        <span className='font-bold'>{stars}</span>
+                        <span >stars</span>
                       </span>
                     </div>
                     <div className="h-3 w-full rounded-full bg-slate-200 overflow-hidden">
@@ -148,7 +148,7 @@ export default function ReviewsRatings() {
                         style={{ width: `${pct}%` }}
                       />
                     </div>
-                    <div className="w-[48px] text-right text-xs text-slate-600">
+                    <div className="w-[48px] text-right text- text-slate-600 font-bold">
                       {count}
                     </div>
                   </div>

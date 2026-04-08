@@ -446,7 +446,7 @@ export interface FAQFormData {
 }
 
 // ==================== Transaction Types ====================
-export type TransactionStatus = 'Pending' | 'Completed' | 'Failed' | 'Cancelled'
+export type TransactionStatus = 'Paid' | 'Refunded' | 'Pending' | 'Completed' | 'Failed' | 'Cancelled'
 
 export interface Transaction {
   id: string
@@ -457,6 +457,10 @@ export interface Transaction {
   amount: number
   currency?: string
   status: TransactionStatus
+  bookingId?: string
+  selectedRoom?: string
+  checkInDate?: string
+  checkOutDate?: string
   paymentMethod?: string
   description?: string
   businessId?: string // For role-based filtering
