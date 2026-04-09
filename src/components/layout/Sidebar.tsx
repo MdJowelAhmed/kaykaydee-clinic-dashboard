@@ -19,6 +19,7 @@ import {
   Gamepad2,
   Package,
   ListChecksIcon,
+  LogOut,
 } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -27,7 +28,10 @@ import { toggleSidebar } from '@/redux/slices/uiSlice'
 import { cn } from '@/utils/cn'
 import { UserRole } from '@/types/roles'
 import { UserRoleIndicator } from '@/components/layout/UserRoleIndicator'
-
+import { Button } from '../ui/button'
+import { logout } from '@/redux/slices/authSlice'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 interface NavItem {
   title: string
   href: string
@@ -153,7 +157,7 @@ export function Sidebar() {
   const { sidebarCollapsed } = useAppSelector((state) => state.ui)
   const { user } = useAppSelector((state) => state.auth)
   const location = useLocation()
-
+  const navigate = useNavigate()
   const isSettingsActive = location.pathname.startsWith('/settings')
 
   // 🔍 Console log for debugging
@@ -176,6 +180,12 @@ export function Sidebar() {
     if (!user) return false
     return item.allowedRoles.includes(user.role as UserRole)
   })
+
+  const handleLogout = () => {
+    dispatch(logout())
+    toast.success('User logged out successfully')
+    navigate('/auth/login')
+  }
 
   return (
     <>
@@ -293,11 +303,14 @@ export function Sidebar() {
           {!sidebarCollapsed && user && (
             <UserRoleIndicator />
           )}
-          {!sidebarCollapsed && (
+          {/* {!sidebarCollapsed && (
             <p className="text-xs text-muted-foreground text-center">
               © 2026 Motly v1.0
             </p>
-          )}
+          )} */}
+
+          {/* <Button variant="outline" className="w-full" onClick={handleLogout}> <LogOut className="h-4 w-4 mr-2" /> Logout</Button> */}
+          <Button variant="outline" className="w-full" onClick={handleLogout}> <LogOut className="h-4 w-4 mr-2" /> Logout</Button>
         </div>
       </aside>
     </>
