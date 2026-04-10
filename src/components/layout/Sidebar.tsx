@@ -20,6 +20,7 @@ import {
   Package,
   ListChecksIcon,
   LogOut,
+  Users,
 } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -47,6 +48,12 @@ const navItems: NavItem[] = [
     href: '/dashboard',
     icon: LayoutDashboard,
     allowedRoles: [UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS], 
+  },
+  {
+    title: 'User Management',
+    href: '/users',
+    icon: Users,
+    allowedRoles: [UserRole.SUPER_ADMIN],
   },
 
   {

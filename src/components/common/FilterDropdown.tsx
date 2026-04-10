@@ -16,6 +16,8 @@ interface FilterDropdownProps {
   placeholder?: string
   className?: string
   label?: string
+  /** Merged into the select trigger (e.g. rounded-full). */
+  triggerClassName?: string
 }
 
 export function FilterDropdown({
@@ -25,6 +27,7 @@ export function FilterDropdown({
   placeholder = 'Select...',
   className,
   label,
+  triggerClassName,
 }: FilterDropdownProps) {
   return (
     <div className={cn('space-y-1.5', className)}>
@@ -34,7 +37,9 @@ export function FilterDropdown({
         </label>
       )}
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-full min-w-[160px]">
+        <SelectTrigger
+          className={cn('w-full min-w-[140px] shadow-none', triggerClassName)}
+        >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>

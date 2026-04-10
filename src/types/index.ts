@@ -13,6 +13,14 @@ export interface User {
   address?: string
   city?: string
   country?: string
+  /** Shown in user-management table when set (e.g. clinic / business name). */
+  organizationName?: string
+  /** Associated clinic name for directory-style tables. */
+  clinicName?: string
+  /** Subscription tier for filtering (mock / future API). */
+  packagePlan?: 'basic' | 'pro' | 'enterprise'
+  /** Tab: monthly subscribers vs clinic members. */
+  membershipType?: 'subscription' | 'member'
 }
 
 export type UserRole = 'admin' | 'user' | 'moderator' | 'editor'
@@ -22,6 +30,7 @@ export interface UserFilters {
   search: string
   status: UserStatus | 'all'
   role: UserRole | 'all'
+  package: User['packagePlan'] | 'all'
 }
 
 // ==================== Product Types ====================

@@ -10,6 +10,8 @@ interface SearchInputProps {
   placeholder?: string
   debounceMs?: number
   className?: string
+  /** Classes for the inner input (e.g. rounded-full h-11). */
+  inputClassName?: string
 }
 
 export function SearchInput({
@@ -18,6 +20,7 @@ export function SearchInput({
   placeholder = 'Search...',
   debounceMs = 300,
   className,
+  inputClassName,
 }: SearchInputProps) {
   const [localValue, setLocalValue] = useState(value)
 
@@ -48,7 +51,7 @@ export function SearchInput({
         value={localValue}
         onChange={(e) => setLocalValue(e.target.value)}
         placeholder={placeholder}
-        className="pl-9 pr-9"
+        className={cn('pl-9 pr-9', inputClassName)}
       />
       {localValue && (
         <Button

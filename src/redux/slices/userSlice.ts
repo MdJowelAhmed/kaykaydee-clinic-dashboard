@@ -2,99 +2,40 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { User, UserFilters, PaginationState } from '@/types'
 import { DEFAULT_PAGINATION } from '@/utils/constants'
 
-// Mock data for demonstration
-const mockUsers: User[] = [
-  {
-    id: '1',
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'john.doe@example.com',
-    phone: '+1 234 567 890',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John',
-    role: 'admin',
-    status: 'active',
-    createdAt: '2024-01-15T10:30:00Z',
-    updatedAt: '2024-01-20T14:45:00Z',
-    address: '123 Main St',
-    city: 'New York',
-    country: 'USA',
-  },
-  {
-    id: '2',
-    firstName: 'Jane',
-    lastName: 'Smith',
-    email: 'jane.smith@example.com',
-    phone: '+1 234 567 891',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jane',
-    role: 'user',
-    status: 'active',
-    createdAt: '2024-01-16T11:30:00Z',
-    updatedAt: '2024-01-21T15:45:00Z',
-    address: '456 Oak Ave',
-    city: 'Los Angeles',
-    country: 'USA',
-  },
-  {
-    id: '3',
-    firstName: 'Mike',
-    lastName: 'Johnson',
-    email: 'mike.johnson@example.com',
-    phone: '+1 234 567 892',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mike',
-    role: 'moderator',
-    status: 'pending',
-    createdAt: '2024-01-17T12:30:00Z',
-    updatedAt: '2024-01-22T16:45:00Z',
-    address: '789 Pine Rd',
-    city: 'Chicago',
-    country: 'USA',
-  },
-  {
-    id: '4',
-    firstName: 'Sarah',
-    lastName: 'Williams',
-    email: 'sarah.williams@example.com',
-    phone: '+1 234 567 893',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
-    role: 'editor',
-    status: 'blocked',
-    createdAt: '2024-01-18T13:30:00Z',
-    updatedAt: '2024-01-23T17:45:00Z',
-    address: '321 Elm St',
-    city: 'Houston',
-    country: 'USA',
-  },
-  {
-    id: '5',
-    firstName: 'David',
-    lastName: 'Brown',
-    email: 'david.brown@example.com',
-    phone: '+1 234 567 894',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David',
-    role: 'user',
-    status: 'active',
-    createdAt: '2024-01-19T14:30:00Z',
-    updatedAt: '2024-01-24T18:45:00Z',
-    address: '654 Maple Dr',
-    city: 'Phoenix',
-    country: 'USA',
-  },
-  {
-    id: '6',
-    firstName: 'Emily',
-    lastName: 'Davis',
-    email: 'emily.davis@example.com',
-    phone: '+1 234 567 895',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Emily',
-    role: 'user',
-    status: 'inactive',
-    createdAt: '2024-01-20T15:30:00Z',
-    updatedAt: '2024-01-25T19:45:00Z',
-    address: '987 Cedar Ln',
-    city: 'Philadelphia',
-    country: 'USA',
-  },
-]
+const ORGS = ['Smart Clinic', 'Care Plus Medical', 'Metro Health', 'Star Clinic', 'Wellness Hub']
+const CLINICS = ['Star Clinic', 'Moon Clinic', 'North Medical', 'South Care', 'East Health']
+const FIRST = ['James', 'Sarah', 'Michael', 'Emma', 'David', 'Priya', 'James', 'Olivia', 'Noah', 'Ava']
+const LAST = ['Nguyen', 'Patel', 'Khan', 'Lee', 'Brown', 'Sharma', 'Wilson', 'Garcia', 'Miller', 'Chen']
+const ROLES: User['role'][] = ['admin', 'user', 'moderator', 'editor']
+const PACKAGES: NonNullable<User['packagePlan']>[] = ['basic', 'pro', 'enterprise']
+
+function buildMockUsers(): User[] {
+  const users: User[] = []
+  for (let i = 0; i < 50; i++) {
+    const id = String(1_458_100 + i)
+    users.push({
+      id,
+      firstName: FIRST[i % FIRST.length],
+      lastName: LAST[i % LAST.length],
+      organizationName: ORGS[i % ORGS.length],
+      clinicName: CLINICS[i % CLINICS.length],
+      email: `user${i}.cli@gmail.com`,
+      phone: `+61 ${2569 + (i % 900)} ${2569 + (i % 900)}`,
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${id}`,
+      role: ROLES[i % ROLES.length],
+      status: i % 9 === 0 ? 'pending' : i % 11 === 0 ? 'inactive' : 'active',
+      packagePlan: PACKAGES[i % PACKAGES.length],
+      membershipType: i % 2 === 0 ? 'subscription' : 'member',
+      createdAt: new Date(2024, i % 12, (i % 28) + 1).toISOString(),
+      updatedAt: new Date().toISOString(),
+      city: 'Sydney',
+      country: 'Australia',
+    })
+  }
+  return users
+}
+
+const mockUsers = buildMockUsers()
 
 interface UserState {
   list: User[]
@@ -114,6 +55,7 @@ const initialState: UserState = {
     search: '',
     status: 'all',
     role: 'all',
+    package: 'all',
   },
   pagination: {
     ...DEFAULT_PAGINATION,
@@ -137,9 +79,8 @@ const userSlice = createSlice({
     },
     setFilters: (state, action: PayloadAction<Partial<UserFilters>>) => {
       state.filters = { ...state.filters, ...action.payload }
-      // Apply filters
       let filtered = [...state.list]
-      
+
       if (state.filters.search) {
         const searchLower = state.filters.search.toLowerCase()
         filtered = filtered.filter(
@@ -147,25 +88,31 @@ const userSlice = createSlice({
             user.firstName.toLowerCase().includes(searchLower) ||
             user.lastName.toLowerCase().includes(searchLower) ||
             user.email.toLowerCase().includes(searchLower) ||
-            user.phone.includes(state.filters.search)
+            user.phone.includes(state.filters.search) ||
+            user.organizationName?.toLowerCase().includes(searchLower) ||
+            user.clinicName?.toLowerCase().includes(searchLower)
         )
       }
-      
+
       if (state.filters.status !== 'all') {
         filtered = filtered.filter((user) => user.status === state.filters.status)
       }
-      
+
       if (state.filters.role !== 'all') {
         filtered = filtered.filter((user) => user.role === state.filters.role)
       }
-      
+
+      if (state.filters.package !== 'all') {
+        filtered = filtered.filter((user) => user.packagePlan === state.filters.package)
+      }
+
       state.filteredList = filtered
       state.pagination.total = filtered.length
       state.pagination.totalPages = Math.ceil(filtered.length / state.pagination.limit)
       state.pagination.page = 1
     },
     clearFilters: (state) => {
-      state.filters = { search: '', status: 'all', role: 'all' }
+      state.filters = { search: '', status: 'all', role: 'all', package: 'all' }
       state.filteredList = state.list
       state.pagination.total = state.list.length
       state.pagination.totalPages = Math.ceil(state.list.length / state.pagination.limit)
@@ -205,7 +152,10 @@ const userSlice = createSlice({
       }
       const filteredIndex = state.filteredList.findIndex((u) => u.id === action.payload.id)
       if (filteredIndex !== -1) {
-        state.filteredList[filteredIndex] = { ...action.payload, updatedAt: new Date().toISOString() }
+        state.filteredList[filteredIndex] = {
+          ...action.payload,
+          updatedAt: new Date().toISOString(),
+        }
       }
     },
     deleteUser: (state, action: PayloadAction<string>) => {
@@ -239,16 +189,3 @@ export const {
 } = userSlice.actions
 
 export default userSlice.reducer
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -16,6 +16,13 @@ export const USER_STATUSES: SelectOption[] = [
   { value: 'inactive', label: 'Inactive' },
 ]
 
+export const USER_PACKAGES: SelectOption[] = [
+  { value: 'all', label: 'All packages' },
+  { value: 'basic', label: 'Basic' },
+  { value: 'pro', label: 'Pro' },
+  { value: 'enterprise', label: 'Enterprise' },
+]
+
 export const PRODUCT_STATUSES: SelectOption[] = [
   { value: 'all', label: 'All Status' },
   { value: 'active', label: 'Active' },
@@ -30,7 +37,7 @@ export const CATEGORY_STATUSES: SelectOption[] = [
   { value: 'inactive', label: 'Inactive' },
 ]
 
-export const ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100]
+export const ITEMS_PER_PAGE_OPTIONS = [15, 10, 25, 50, 100]
 
 export const DEFAULT_PAGINATION = {
   page: 1,

@@ -20,6 +20,8 @@ interface PaginationProps {
   onItemsPerPageChange?: (limit: number) => void
   className?: string
   showItemsPerPage?: boolean
+  /** Compact footer: "Showing X–Y out of Z" and text Previous / Next links. */
+  variant?: 'default' | 'minimal'
 }
 
 export function Pagination({
@@ -31,9 +33,12 @@ export function Pagination({
   onItemsPerPageChange,
   className,
   showItemsPerPage = true,
+  variant = 'default',
 }: PaginationProps) {
-  const startItem = (currentPage - 1) * itemsPerPage + 1
-  const endItem = Math.min(currentPage * itemsPerPage, totalItems)
+  const startItem =
+    totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1
+  const endItem =
+    totalItems === 0 ? 0 : Math.min(currentPage * itemsPerPage, totalItems)
 
   const canGoPrevious = currentPage > 1
   const canGoNext = currentPage < totalPages
@@ -75,8 +80,75 @@ export function Pagination({
     return pages
   }
 
-  if (totalPages <= 1 && !showItemsPerPage) {
+  if (variant !== 'minimal' && totalPages <= 1 && !showItemsPerPage) {
     return null
+  }
+
+  if (variant === 'minimal' && totalItems === 0) {
+    return null
+  }
+
+  if (variant === 'minimal') {
+    return (
+      <div
+        className={cn(
+          'flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-1 py-4',
+          className
+        )}
+      >
+        <p className="text-sm text-muted-foreground">
+          {totalItems === 0
+            ? `Showing 0 out of 0`
+            : `Showing ${startItem}-${endItem} out of ${totalItems}`}
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-1 sm:justify-end">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={!canGoPrevious}
+            className="gap-1 px-2 text-secondary h-9"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Previous
+          </Button>
+          <div className="flex items-center gap-1 px-1">
+            {getPageNumbers().map((page, index) =>
+              typeof page === 'number' ? (
+                <Button
+                  key={index}
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => onPageChange(page)}
+                  className={cn(
+                    'h-9 w-9 rounded-full font-medium',
+                    currentPage === page
+                      ? 'bg-secondary text-white hover:bg-secondary hover:text-white'
+                      : 'text-muted-foreground hover:text-secondary'
+                  )}
+                >
+                  {page}
+                </Button>
+              ) : (
+                <span key={index} className="px-1 text-muted-foreground tracking-widest text-xs">
+                  ···
+                </span>
+              )
+            )}
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={!canGoNext}
+            className="gap-1 px-2 text-secondary h-9"
+          >
+            Next
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
