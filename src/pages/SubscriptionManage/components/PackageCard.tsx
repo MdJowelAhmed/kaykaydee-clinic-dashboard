@@ -28,9 +28,9 @@ export function PackageCard({ pkg, onToggleEnabled, onEdit, onEditFeatures }: Pa
               {pkg.cycle === 'trial' ? '0' : `$${pkg.price}`} <span className="text-slate-500">{cycleLabel(pkg.cycle)}</span>
             </p>
           </div>
-          <Button type="button" variant="outline" className="rounded-xl" onClick={onEdit}>
+          {/* <Button type="button" variant="outline" className="rounded-xl" onClick={onEdit}>
             Edit
-          </Button>
+          </Button> */}
         </div>
 
         <div className="mt-4 flex items-center justify-between gap-4 border-t border-slate-100 pt-4">
@@ -57,7 +57,7 @@ export function PackageCard({ pkg, onToggleEnabled, onEdit, onEditFeatures }: Pa
         </div>
       </div>
 
-      <div className="p-4 border-t border-slate-100 bg-slate-50/40">
+      <div className="p-4 border-t border-slate-100 bg-slate-50/40 mt-12">
         <Button
           type="button"
           variant="outline"

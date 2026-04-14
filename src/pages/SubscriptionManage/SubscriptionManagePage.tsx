@@ -191,7 +191,7 @@ export default function SubscriptionManagePage() {
               onEdit={() => openEdit(pkg)}
               onEditFeatures={() => openEditFeatures(pkg)}
             />
-            <div className="mt-2 flex justify-end">
+            {/* <div className="mt-2 flex justify-end">
               <button
                 type="button"
                 className="text-xs text-destructive hover:underline"
@@ -199,7 +199,7 @@ export default function SubscriptionManagePage() {
               >
                 Delete
               </button>
-            </div>
+            </div> */}
           </motion.div>
         ))}
       </div>
