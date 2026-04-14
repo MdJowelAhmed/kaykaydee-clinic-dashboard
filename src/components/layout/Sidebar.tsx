@@ -20,6 +20,7 @@ import {
   Package,
   Receipt,
   Layers,
+  UserCog,
   ListChecksIcon,
   LogOut,
   Users,
@@ -125,6 +126,12 @@ const navItems: NavItem[] = [
     title: 'Subscription Manage',
     href: '/subscription-manage',
     icon: Layers,
+    allowedRoles: [UserRole.SUPER_ADMIN],
+  },
+  {
+    title: 'Admin Manage',
+    href: '/admin-manage',
+    icon: UserCog,
     allowedRoles: [UserRole.SUPER_ADMIN],
   },
   {
