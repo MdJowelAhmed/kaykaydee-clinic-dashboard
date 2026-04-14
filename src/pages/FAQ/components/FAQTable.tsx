@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Edit, Trash2 } from 'lucide-react'
-import { cn } from '@/utils/cn'
 import type { FAQ } from '@/types'
 
 interface FAQTableProps {
@@ -15,29 +14,13 @@ export function FAQTable({
   onEdit,
   onDelete,
 }: FAQTableProps) {
-  const getPositionBadgeColor = (position: string) => {
-    switch (position) {
-      case 'top-left':
-        return 'bg-blue-100 text-blue-800'
-      case 'top-right':
-        return 'bg-green-100 text-green-800'
-      case 'bottom-left':
-        return 'bg-purple-100 text-purple-800'
-      case 'bottom-right':
-        return 'bg-orange-100 text-orange-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
-
   return (
     <div className="w-full overflow-auto">
-      <table className="w-full min-w-[900px]">
+      <table className="w-full min-w-[700px]">
         <thead>
           <tr className="bg-[#CCF3F5] text-slate-800">
             <th className="px-6 py-4 text-left text-sm font-bold">Question</th>
             <th className="px-6 py-4 text-left text-sm font-bold">Answer</th>
-            <th className="px-6 py-4 text-left text-sm font-bold">Position</th>
             {/* <th className="px-6 py-4 text-left text-sm font-bold">Created At</th>
             <th className="px-6 py-4 text-left text-sm font-bold">Updated At</th> */}
             <th className="px-6 py-4 text-right text-sm font-bold">Action</th>
@@ -47,7 +30,7 @@ export function FAQTable({
           {faqs.length === 0 ? (
             <tr>
               <td
-                colSpan={6}
+                colSpan={3}
                 className="px-6 py-8 text-center text-gray-500"
               >
                 No FAQs found
@@ -73,18 +56,6 @@ export function FAQTable({
                 <td className="px-6 py-4">
                   <span className="text-sm text-slate-700 line-clamp-2 max-w-lg">
                     {faq.answer}
-                  </span>
-                </td>
-
-                {/* Position Column */}
-                <td className="px-6 py-4">
-                  <span
-                    className={cn(
-                      'inline-flex items-center px-3 py-1 w-28 text-center justify-center  rounded-sm text-xs font-medium',
-                      getPositionBadgeColor(faq.position)
-                    )}
-                  >
-                    {faq.position.replace('-', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
                   </span>
                 </td>
 

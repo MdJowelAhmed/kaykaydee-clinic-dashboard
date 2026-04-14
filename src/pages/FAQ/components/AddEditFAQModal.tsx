@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { HelpCircle, MessageSquare, MapPin } from 'lucide-react'
+import { HelpCircle, MessageSquare } from 'lucide-react'
 import { ModalWrapper } from '@/components/common'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,13 +11,11 @@ import { Textarea } from '@/components/ui/textarea'
 import { useAppDispatch } from '@/redux/hooks'
 import { addFAQ, updateFAQ } from '@/redux/slices/faqSlice'
 import { toast } from '@/utils/toast'
-import type { FAQ, FAQPosition } from '@/types'
-import { cn } from '@/utils/cn'
+import type { FAQ } from '@/types'
 
 const faqSchema = z.object({
   question: z.string().min(5, 'Question must be at least 5 characters'),
   answer: z.string().min(10, 'Answer must be at least 10 characters'),
-  position: z.enum(['top-left', 'top-right', 'bottom-left', 'bottom-right']),
 })
 
 type FAQFormData = z.infer<typeof faqSchema>
@@ -28,13 +26,6 @@ interface AddEditFAQModalProps {
   faq?: FAQ | null
 }
 
-const POSITION_OPTIONS: { value: FAQPosition; label: string }[] = [
-  { value: 'top-left', label: 'Top Left' },
-  { value: 'top-right', label: 'Top Right' },
-  { value: 'bottom-left', label: 'Bottom Left' },
-  { value: 'bottom-right', label: 'Bottom Right' },
-]
-
 export function AddEditFAQModal({ open, onClose, faq }: AddEditFAQModalProps) {
   const dispatch = useAppDispatch()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -44,8 +35,6 @@ export function AddEditFAQModal({ open, onClose, faq }: AddEditFAQModalProps) {
   const {
     register,
     handleSubmit,
-    setValue,
-    watch,
     reset,
     formState: { errors },
   } = useForm<FAQFormData>({
@@ -53,11 +42,8 @@ export function AddEditFAQModal({ open, onClose, faq }: AddEditFAQModalProps) {
     defaultValues: {
       question: '',
       answer: '',
-      position: 'top-left',
     },
   })
-
-  const watchedPosition = watch('position')
 
   // Reset form when modal opens or FAQ changes
   useEffect(() => {
@@ -66,13 +52,11 @@ export function AddEditFAQModal({ open, onClose, faq }: AddEditFAQModalProps) {
         reset({
           question: faq.question,
           answer: faq.answer,
-          position: faq.position,
         })
       } else {
         reset({
           question: '',
           answer: '',
-          position: 'top-left',
         })
       }
     }
@@ -88,7 +72,7 @@ export function AddEditFAQModal({ open, onClose, faq }: AddEditFAQModalProps) {
       id: isEditMode && faq ? faq.id : Date.now().toString(),
       question: data.question,
       answer: data.answer,
-      position: data.position,
+      position: isEditMode && faq ? faq.position : 'top-left',
       createdAt: isEditMode && faq ? faq.createdAt : new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }
@@ -153,34 +137,6 @@ export function AddEditFAQModal({ open, onClose, faq }: AddEditFAQModalProps) {
           />
           {errors.answer && (
             <p className="text-xs text-destructive">{errors.answer.message}</p>
-          )}
-        </div>
-
-        {/* Position */}
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-muted-foreground" />
-            <Label htmlFor="position">Position</Label>
-          </div>
-          <select
-            id="position"
-            value={watchedPosition}
-            onChange={(e) => setValue('position', e.target.value as FAQPosition)}
-            className={cn(
-              'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-              'disabled:cursor-not-allowed disabled:opacity-50',
-              errors.position && 'border-destructive'
-            )}
-          >
-            {POSITION_OPTIONS.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          {errors.position && (
-            <p className="text-xs text-destructive">{errors.position.message}</p>
           )}
         </div>
 
