@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Plus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
+import { createId } from '@/utils/id'
 import {
   tierSeedToAdminPackages,
   type AdminSubscriptionPackage,
@@ -34,7 +35,7 @@ export default function SubscriptionPackagePage() {
 
   const handleSave = (payload: SaveSubscriptionPackageInput) => {
     const next: AdminSubscriptionPackage = {
-      id: payload.id ?? crypto.randomUUID(),
+      id: payload.id ?? createId(),
       name: payload.name,
       price: payload.price,
       billingLabel: payload.billingLabel,

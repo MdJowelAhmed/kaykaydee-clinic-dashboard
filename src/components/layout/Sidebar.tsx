@@ -19,6 +19,7 @@ import {
   Gamepad2,
   Package,
   Receipt,
+  Layers,
   ListChecksIcon,
   LogOut,
   Users,
@@ -121,6 +122,12 @@ const navItems: NavItem[] = [
     allowedRoles: [UserRole.SUPER_ADMIN],
   },
   {
+    title: 'Subscription Manage',
+    href: '/subscription-manage',
+    icon: Layers,
+    allowedRoles: [UserRole.SUPER_ADMIN],
+  },
+  {
     title: 'Subscription',
     href: '/subscription',
     icon: Crown,
@@ -195,7 +202,7 @@ export function Sidebar() {
     if (!item.allowedRoles) return true // No restriction
     if (!user) return false
     const hasAccess = item.allowedRoles.includes(user.role as UserRole)
-    console.log(`🔐 ${item.title}: hasAccess=${hasAccess}, userRole=${user.role}, allowedRoles=${item.allowedRoles.join(', ')}`)
+    // console.log(`🔐 ${item.title}: hasAccess=${hasAccess}, userRole=${user.role}, allowedRoles=${item.allowedRoles.join(', ')}`)
     return hasAccess
   })
 
