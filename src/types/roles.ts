@@ -39,6 +39,7 @@ export const ROUTE_PERMISSIONS: Record<string, UserRole[]> = {
   '/subscription': ALL_APP_ROLES,
   '/notification': ALL_APP_ROLES,
   '/support': ALL_APP_ROLES,
+  '/zealth-ai': ALL_APP_ROLES,
   '/settings/profile': ALL_APP_ROLES,
   '/settings/password': ALL_APP_ROLES,
 }

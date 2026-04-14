@@ -37,6 +37,7 @@ import SubscriptionPackagePage from './pages/SubscriptionPackage/SubscriptionPac
 import SubscriptionInvoicePage from './pages/SubscriptionInvoice/SubscriptionInvoicePage'
 import SubscriptionManagePage from './pages/SubscriptionManage/SubscriptionManagePage'
 import AdminManagePage from './pages/AdminManage/AdminManagePage'
+import ZealthAIPage from './pages/ZealthAI/ZealthAIPage'
 import Support from './pages/Support/Support'
 import FAQ from './pages/FAQ/FAQ'
 import NotFound from './pages/NotFound/NotFound'
@@ -185,6 +186,17 @@ function App() {
             element={
               <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN]}>
                 <AdminManagePage />
+              </RoleBasedRoute>
+            }
+          />
+
+          <Route
+            path="zealth-ai"
+            element={
+              <RoleBasedRoute
+                allowedRoles={[UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS]}
+              >
+                <ZealthAIPage />
               </RoleBasedRoute>
             }
           />

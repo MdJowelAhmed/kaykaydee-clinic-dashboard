@@ -21,10 +21,12 @@ import {
   Receipt,
   Layers,
   UserCog,
+  Sparkles,
   ListChecksIcon,
   LogOut,
   Users,
   Building2,
+  HelpCircle,
 } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -135,6 +137,12 @@ const navItems: NavItem[] = [
     allowedRoles: [UserRole.SUPER_ADMIN],
   },
   {
+    title: 'Zealth AI',
+    href: '/zealth-ai',
+    icon: Sparkles,
+    allowedRoles: [UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS],
+  },
+  {
     title: 'Subscription',
     href: '/subscription',
     icon: Crown,
@@ -180,12 +188,12 @@ const settingsItems: NavItem[] = [
     icon: Info,
     allowedRoles: [UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS],
   },
-  // {
-  //   title: 'FAQ',
-  //   href: '/settings/faq',
-  //   icon: HelpCircle,
-  //   allowedRoles: [UserRole.SUPER_ADMIN],
-  // },
+  {
+    title: 'FAQ',
+    href: '/settings/faq',
+    icon: HelpCircle,
+    allowedRoles: [UserRole.SUPER_ADMIN],
+  },
 ]
 
 export function Sidebar() {
