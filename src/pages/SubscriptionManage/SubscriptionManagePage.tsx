@@ -62,12 +62,6 @@ export default function SubscriptionManagePage() {
     setModalOpen(true)
   }
 
-  const openEdit = (pkg: SubscriptionManagePackage) => {
-    setModalMode('edit')
-    setEditing(pkg)
-    setModalOpen(true)
-  }
-
   const handleSave = (payload: SaveManagePackageInput) => {
     const base = modalMode === 'edit' && editing ? editing : newPackageBase(payload.cycle)
     const next: SubscriptionManagePackage = {
@@ -188,7 +182,6 @@ export default function SubscriptionManagePage() {
             <PackageCard
               pkg={pkg}
               onToggleEnabled={(v) => handleToggleEnabled(pkg.id, v)}
-              onEdit={() => openEdit(pkg)}
               onEditFeatures={() => openEditFeatures(pkg)}
             />
             {/* <div className="mt-2 flex justify-end">

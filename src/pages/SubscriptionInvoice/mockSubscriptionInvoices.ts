@@ -26,6 +26,10 @@ function padId(n: number) {
   return String(265800 + n)
 }
 
+function padPacId(n: number) {
+  return String(326800 + n)
+}
+
 /** Deterministic mock list for filters & pagination (no API yet). */
 export function buildMockSubscriptionInvoices(total = 150): SubscriptionInvoiceRow[] {
   return Array.from({ length: total }, (_, i) => {
@@ -38,14 +42,15 @@ export function buildMockSubscriptionInvoices(total = 150): SubscriptionInvoiceR
 
     return {
       id: padId(i + 1),
+      pacId: `${padPacId((i % 80) + 1)}d`,
       userName: NAMES[i % NAMES.length] + (i > 9 ? ` ${Math.floor(i / 10)}` : ''),
       contact: `+61 ${2000 + (i % 7999)} ${1000 + (i % 8999)}`,
       email: `clinic${i + 1}.demo@mail.com`,
       package: PACKAGES[i % PACKAGES.length],
-      regDate: reg.toISOString(),
+      issueDate: reg.toISOString(),
       status: STATUSES[i % STATUSES.length],
       dateline: due.toISOString(),
-      amount: (49 + (i % 5) * 20).toFixed(2),
+      price: (500 + (i % 5) * 250).toFixed(0),
     }
   })
 }

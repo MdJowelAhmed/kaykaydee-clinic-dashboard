@@ -37,7 +37,7 @@ export function AdminTable({ rows, onInfo, onEdit }: AdminTableProps) {
     <div className="w-full overflow-auto">
       <table className="w-full min-w-[980px]">
         <thead>
-          <tr className="bg-slate-200/70 text-slate-700">
+          <tr className="bg-primary text-white">
             <th className="px-6 py-4 text-left text-sm font-semibold rounded-tl-2xl">Admin Id</th>
             <th className="px-6 py-4 text-left text-sm font-semibold">clinic Name</th>
             <th className="px-6 py-4 text-left text-sm font-semibold">Join Date</th>

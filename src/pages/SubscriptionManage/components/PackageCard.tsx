@@ -6,7 +6,6 @@ import type { SubscriptionManagePackage } from '../types'
 interface PackageCardProps {
   pkg: SubscriptionManagePackage
   onToggleEnabled: (next: boolean) => void
-  onEdit: () => void
   onEditFeatures: () => void
 }
 
@@ -15,7 +14,7 @@ function cycleLabel(cycle: SubscriptionManagePackage['cycle']) {
   return cycle === 'annual' ? ' / year' : ' / month'
 }
 
-export function PackageCard({ pkg, onToggleEnabled, onEdit, onEditFeatures }: PackageCardProps) {
+export function PackageCard({ pkg, onToggleEnabled, onEditFeatures }: PackageCardProps) {
   const flatFeatures = pkg.featureGroups.flatMap((g) => g.items)
 
   return (
@@ -28,9 +27,7 @@ export function PackageCard({ pkg, onToggleEnabled, onEdit, onEditFeatures }: Pa
               {pkg.cycle === 'trial' ? '0' : `$${pkg.price}`} <span className="text-slate-500">{cycleLabel(pkg.cycle)}</span>
             </p>
           </div>
-          <Button type="button" variant="outline" className="rounded-xl" onClick={onEdit}>
-            Edit
-          </Button>
+          
         </div>
 
         <div className="mt-4 flex items-center justify-between gap-4 border-t border-slate-100 pt-4">

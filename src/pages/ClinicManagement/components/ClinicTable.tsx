@@ -14,7 +14,7 @@ export function ClinicTable({ clinics, onInfo }: ClinicTableProps) {
     <div className="w-full overflow-auto rounded-2xl border border-slate-100 bg-white shadow-sm">
       <table className="w-full min-w-[1000px]">
         <thead>
-          <tr className="bg-slate-100 text-slate-700">
+          <tr className="bg-primary text-white">
             <th className="px-6 py-4 text-left text-sm font-semibold">S. Id</th>
             <th className="px-6 py-4 text-left text-sm font-semibold">clinic Name</th>
             <th className="px-6 py-4 text-left text-sm font-semibold">Contact</th>

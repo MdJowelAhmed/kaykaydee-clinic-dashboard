@@ -92,14 +92,14 @@ export default function ClinicManagementPage() {
     >
       <Card className="bg-white border border-slate-100 shadow-sm overflow-hidden">
         <CardContent className="p-5 sm:p-6">
-          <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-            <div className="flex flex-1 flex-col gap-3 min-w-0 sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-end">
+            <div className="flex items-center justify-end gap-4">
               <SearchInput
                 value={search}
                 onChange={handleSearch}
                 placeholder="Search here"
                 className="w-full sm:flex-1 sm:max-w-xl"
-                inputClassName="h-11 rounded-full border-slate-200 bg-white"
+                inputClassName="h-11 rounded-full border-slate-200 bg-white "
               />
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <Select value={packageFilter} onValueChange={handlePackageFilter}>

@@ -8,21 +8,11 @@ import {
   FileText,
   Shield,
   Info,
-  CreditCard,
-
-  ListOrdered,
- 
-  Star,
-  LifeBuoy,
-  ImageIcon,
   Crown,
-  Gamepad2,
-  Package,
   Receipt,
   Layers,
   UserCog,
   Sparkles,
-  ListChecksIcon,
   LogOut,
   Users,
   Building2,
@@ -96,12 +86,12 @@ const navItems: NavItem[] = [
   //   allowedRoles: [UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS],
   // },
 
-  {
-    title: 'Subscription Package',
-    href: '/subscription-packages',
-    icon: Package,
-    allowedRoles: [UserRole.SUPER_ADMIN],
-  },
+  // {
+  //   title: 'Subscription Package',
+  //   href: '/subscription-packages',
+  //   icon: Package,
+  //   allowedRoles: [UserRole.SUPER_ADMIN],
+  // },
   {
     title: 'Subscription Invoice',
     href: '/subscription-invoice',

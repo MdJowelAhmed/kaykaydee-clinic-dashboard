@@ -12,7 +12,10 @@ import {
 export function NotificationPreviewDialog() {
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
-  const preview = MOCK_NOTIFICATIONS.slice(0, NOTIFICATION_MODAL_PREVIEW_COUNT)
+  const preview = MOCK_NOTIFICATIONS.filter((n) => n.box === 'inbox').slice(
+    0,
+    NOTIFICATION_MODAL_PREVIEW_COUNT
+  )
 
   const handleSeeAll = () => {
     setOpen(false)

@@ -17,12 +17,12 @@ import { MOCK_SUBSCRIPTION_INVOICES } from './mockSubscriptionInvoices'
 import {
   formatInvoiceDate,
   matchesDatelineFilter,
-  matchesRegDateFilter,
+  matchesIssueDateFilter,
 } from './utils'
 import type { SubscriptionInvoiceRow } from './types'
 
-const REG_DATE_OPTIONS = [
-  { value: 'all', label: 'Reg. Date' },
+const ISSUE_DATE_OPTIONS = [
+  { value: 'all', label: 'Issue Date' },
   { value: '7d', label: 'Last 7 days' },
   { value: '30d', label: 'Last 30 days' },
   { value: '90d', label: 'Last 90 days' },
@@ -46,7 +46,7 @@ export default function SubscriptionInvoicePage() {
   const { getParam, getNumberParam, setParams } = useUrlParams()
 
   const search = getParam('search', '')
-  const regDate = getParam('regDate', 'all')
+  const issueDate = getParam('issueDate', getParam('regDate', 'all'))
   const status = getParam('status', 'all')
   const dateline = getParam('dateline', 'all')
   const page = getNumberParam('page', 1)
@@ -58,17 +58,18 @@ export default function SubscriptionInvoicePage() {
     const q = search.trim().toLowerCase()
     return MOCK_SUBSCRIPTION_INVOICES.filter((row) => {
       if (status !== 'all' && row.status !== status) return false
-      if (!matchesRegDateFilter(row, regDate)) return false
+      if (!matchesIssueDateFilter(row, issueDate)) return false
       if (!matchesDatelineFilter(row, dateline)) return false
       if (!q) return true
       return (
         row.id.includes(q) ||
+        row.pacId.toLowerCase().includes(q) ||
         row.userName.toLowerCase().includes(q) ||
         row.email.toLowerCase().includes(q) ||
         row.contact.replace(/\s/g, '').toLowerCase().includes(q.replace(/\s/g, ''))
       )
     })
-  }, [search, regDate, status, dateline])
+  }, [search, issueDate, status, dateline])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / limit))
 
@@ -108,14 +109,14 @@ export default function SubscriptionInvoicePage() {
               />
               <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                 <Select
-                  value={regDate}
-                  onValueChange={(v) => setParams({ regDate: v, page: 1 })}
+                  value={issueDate}
+                  onValueChange={(v) => setParams({ issueDate: v, page: 1 })}
                 >
                   <SelectTrigger className="w-full sm:w-[140px] h-11 rounded-full bg-white border-slate-200 text-slate-700">
-                    <SelectValue placeholder="Reg. Date" />
+                    <SelectValue placeholder="Issue Date" />
                   </SelectTrigger>
                   <SelectContent>
-                    {REG_DATE_OPTIONS.map((o) => (
+                    {ISSUE_DATE_OPTIONS.map((o) => (
                       <SelectItem key={o.value} value={o.value}>
                         {o.label}
                       </SelectItem>
@@ -160,7 +161,34 @@ export default function SubscriptionInvoicePage() {
 
       <Card className="bg-white border border-slate-100 shadow-sm overflow-hidden rounded-xl">
         <CardContent className="p-0">
-          <SubscriptionInvoiceTable rows={paginated} onInfo={setDetailRow} />
+          <SubscriptionInvoiceTable
+            rows={paginated}
+            onDownload={(row) => {
+              const payload = [
+                `Subscription Invoice`,
+                `Reg. ID: #${row.id}`,
+                `Pac. ID: ${row.pacId}`,
+                `User Name: ${row.userName}`,
+                `Contact: ${row.contact}`,
+                `Email: ${row.email}`,
+                `Package: ${row.package}`,
+                `Price: $${row.price}`,
+                `Issue Date: ${formatInvoiceDate(row.issueDate)}`,
+                `Dateline: ${formatInvoiceDate(row.dateline)}`,
+                `Status: ${row.status}`,
+              ].join('\n')
+              const blob = new Blob([payload], { type: 'text/plain;charset=utf-8' })
+              const url = URL.createObjectURL(blob)
+              const a = document.createElement('a')
+              a.href = url
+              a.download = `invoice_${row.id}.txt`
+              document.body.appendChild(a)
+              a.click()
+              a.remove()
+              URL.revokeObjectURL(url)
+            }}
+            onInfo={setDetailRow}
+          />
 
           <div className="px-4 sm:px-6 border-t border-slate-100">
             <Pagination
@@ -190,6 +218,10 @@ export default function SubscriptionInvoicePage() {
               <dd className="font-medium text-slate-800">#{detailRow.id}</dd>
             </div>
             <div>
+              <dt className="text-muted-foreground">Pac. ID</dt>
+              <dd className="font-medium text-slate-800">{detailRow.pacId}</dd>
+            </div>
+            <div>
               <dt className="text-muted-foreground">Status</dt>
               <dd className="font-medium text-slate-800 capitalize">{detailRow.status}</dd>
             </div>
@@ -206,13 +238,13 @@ export default function SubscriptionInvoicePage() {
               <dd className="font-medium text-slate-800">{detailRow.package}</dd>
             </div>
             <div>
-              <dt className="text-muted-foreground">Amount</dt>
-              <dd className="font-medium text-slate-800">${detailRow.amount}</dd>
+              <dt className="text-muted-foreground">Price</dt>
+              <dd className="font-medium text-slate-800">${detailRow.price}</dd>
             </div>
             <div>
-              <dt className="text-muted-foreground">Reg. Date</dt>
+              <dt className="text-muted-foreground">Issue Date</dt>
               <dd className="font-medium text-slate-800">
-                {formatInvoiceDate(detailRow.regDate)}
+                {formatInvoiceDate(detailRow.issueDate)}
               </dd>
             </div>
             <div>

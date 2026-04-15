@@ -4,12 +4,13 @@ export type SubscriptionInvoiceStatus = 'paid' | 'pending' | 'overdue'
 
 export interface SubscriptionInvoiceRow {
   id: string
+  pacId: string
   userName: string
   contact: string
   email: string
   package: SubscriptionInvoicePackage
-  regDate: string
+  issueDate: string
   status: SubscriptionInvoiceStatus
   dateline: string
-  amount: string
+  price: string
 }

@@ -12,13 +12,13 @@ export function formatInvoiceDate(iso: string): string {
 
 const MS_DAY = 86400000
 
-export function matchesRegDateFilter(row: SubscriptionInvoiceRow, filter: string): boolean {
+export function matchesIssueDateFilter(row: SubscriptionInvoiceRow, filter: string): boolean {
   if (filter === 'all') return true
-  const reg = new Date(row.regDate).getTime()
+  const issued = new Date(row.issueDate).getTime()
   const now = Date.now()
-  if (filter === '7d') return reg >= now - 7 * MS_DAY && reg <= now
-  if (filter === '30d') return reg >= now - 30 * MS_DAY && reg <= now
-  if (filter === '90d') return reg >= now - 90 * MS_DAY && reg <= now
+  if (filter === '7d') return issued >= now - 7 * MS_DAY && issued <= now
+  if (filter === '30d') return issued >= now - 30 * MS_DAY && issued <= now
+  if (filter === '90d') return issued >= now - 90 * MS_DAY && issued <= now
   return true
 }
 
@@ -31,3 +31,6 @@ export function matchesDatelineFilter(row: SubscriptionInvoiceRow, filter: strin
   if (filter === 'later') return due > now + 14 * MS_DAY
   return true
 }
+
+// Backward-compatible export (older code used regDate naming).
+export const matchesRegDateFilter = matchesIssueDateFilter
