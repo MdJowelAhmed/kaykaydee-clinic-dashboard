@@ -1,14 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './slices/authSlice'
 import userReducer from './slices/userSlice'
-import productReducer from './slices/productSlice'
 import categoryReducer from './slices/categorySlice'
 import uiReducer from './slices/uiSlice'
-import bookingReducer from './slices/bookingSlice'
 import calendarReducer from './slices/calendarSlice'
 import transactionReducer from './slices/transactionSlice'
 import faqReducer from './slices/faqSlice'
-import myListingReducer from './slices/myListingSlice'
 import clinicReducer from './slices/clinicSlice'
 
 export const store = configureStore({
@@ -16,14 +13,11 @@ export const store = configureStore({
     auth: authReducer,
     users: userReducer,
     clinics: clinicReducer,
-    products: productReducer,
     categories: categoryReducer,
     ui: uiReducer,
-    bookings: bookingReducer,
     calendar: calendarReducer,
     transactions: transactionReducer,
     faqs: faqReducer,
-    myListings: myListingReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

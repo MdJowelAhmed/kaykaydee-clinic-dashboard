@@ -68,19 +68,13 @@ const navItems: NavItem[] = [
     allowedRoles: [UserRole.SUPER_ADMIN],
   },
 
-  {
-    title: 'My Listing',
-    href: '/my-listing',
-    icon: ListChecksIcon,
-    allowedRoles: [UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS],
-  },
   
-  {
-    title: 'Booking Management',
-    href: '/booking-management',
-    icon: ListOrdered,
-    allowedRoles: [UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS],
-  },
+  // {
+  //   title: 'Booking Management',
+  //   href: '/booking-management',
+  //   icon: ListOrdered,
+  //   allowedRoles: [UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS],
+  // },
 
   // {
   //   title: 'Calendar',
@@ -88,30 +82,20 @@ const navItems: NavItem[] = [
   //   icon: Calendar,
   //   allowedRoles: [UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS],
   // },
-  {
-    title: 'Transactions History',
-    href: '/transactions-history',
-    icon: CreditCard,
-    allowedRoles: [UserRole.SUPER_ADMIN, UserRole.BUSINESS], // Super Admin only
-  },
-  {
-    title: 'Controller',
-    href: '/controller',
-    icon: Gamepad2,
-    allowedRoles: [UserRole.SUPER_ADMIN],
-  },
-  {
-    title: 'Reviews & Ratings',
-    href: '/reviews-ratings',
-    icon: Star,
-    allowedRoles: [UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS],
-  },
-  {
-    title: 'App Slider',
-    href: '/app-slider',
-    icon: ImageIcon,
-    allowedRoles: [UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS],
-  },
+  // {
+  //   title: 'Transactions History',
+  //   href: '/transactions-history',
+  //   icon: CreditCard,
+  //   allowedRoles: [UserRole.SUPER_ADMIN, UserRole.BUSINESS], // Super Admin only
+  // },
+
+  // {
+  //   title: 'Reviews & Ratings',
+  //   href: '/reviews-ratings',
+  //   icon: Star,
+  //   allowedRoles: [UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS],
+  // },
+
   {
     title: 'Subscription Package',
     href: '/subscription-packages',
@@ -148,12 +132,12 @@ const navItems: NavItem[] = [
     icon: Crown,
     allowedRoles: [UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS],
   },
-  {
-    title: 'Support',
-    href: '/support',
-    icon: LifeBuoy,
-    allowedRoles: [UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS],
-  },
+  // {
+  //   title: 'Support',
+  //   href: '/support',
+  //   icon: LifeBuoy,
+  //   allowedRoles: [UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS],
+  // },
 
 ]
 

@@ -18,21 +18,16 @@ import Dashboard from '@/pages/Dashboard'
 import UserList from '@/pages/Users/UserList'
 import UserDetails from '@/pages/Users/UserDetails'
 import ClinicManagementPage from '@/pages/ClinicManagement/ClinicManagementPage'
-import ProductList from '@/pages/Products/ProductList'
 import CategoryList from '@/pages/Categories/CategoryList'
 import ProfileSettings from '@/pages/Settings/Profile/ProfileSettings'
 import ChangePassword from '@/pages/Settings/ChangePassword/ChangePassword'
 import TermsSettings from '@/pages/Settings/Terms/TermsSettings'
 import PrivacySettings from '@/pages/Settings/Privacy/PrivacySettings'
 import AboutUsSettings from '@/pages/Settings/AboutUs/AboutUsSettings'
-import BookingManagement from './pages/Booking/BookingManagement'
 import Calender from './pages/calender/Calender'
 import TransactionsHistory from './pages/transictions-history/TransactionsHistory'
-import ReviewsRatings from './pages/ReviewsRatings/ReviewsRatings'
-import AppSlider from './pages/AppSlider/AppSlider'
 import Subscription from './pages/Subscription/Subscription'
 import NotificationPage from './pages/Notification/NotificationPage'
-import ControllerPage from './pages/Controller/ControllerPage'
 import SubscriptionPackagePage from './pages/SubscriptionPackage/SubscriptionPackagePage'
 import SubscriptionInvoicePage from './pages/SubscriptionInvoice/SubscriptionInvoicePage'
 import SubscriptionManagePage from './pages/SubscriptionManage/SubscriptionManagePage'
@@ -41,8 +36,6 @@ import ZealthAIPage from './pages/ZealthAI/ZealthAIPage'
 import Support from './pages/Support/Support'
 import FAQ from './pages/FAQ/FAQ'
 import NotFound from './pages/NotFound/NotFound'
-import MyListingPage from './pages/MyListing/MyListingPage'
-import CreateEditListingPage from './pages/MyListing/CreateEditListingPage'
 
 // Component to redirect based on user role
 function RoleBasedRedirect() {
@@ -145,14 +138,6 @@ function App() {
             } 
           />
 
-          <Route
-            path="controller"
-            element={
-              <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN]}>
-                <ControllerPage />
-              </RoleBasedRoute>
-            }
-          />
 
           <Route
             path="subscription-packages"
@@ -201,33 +186,11 @@ function App() {
             }
           />
           
-          {/* Shared Routes - All roles can access */}
-          <Route 
-            path="booking-management" 
-            element={
-              <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS]}>
-                <BookingManagement />
-              </RoleBasedRoute>
-            } 
-          />
+      
 
-          <Route
-            path="reviews-ratings"
-            element={
-              <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS]}>
-                <ReviewsRatings />
-              </RoleBasedRoute>
-            }
-          />
+     
 
-          <Route
-            path="app-slider"
-            element={
-              <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS]}>
-                <AppSlider />
-              </RoleBasedRoute>
-            }
-          />
+       
 
           <Route
             path="subscription"
@@ -256,30 +219,7 @@ function App() {
             }
           />
 
-          <Route
-            path="my-listing/new"
-            element={
-              <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS]}>
-                <CreateEditListingPage />
-              </RoleBasedRoute>
-            }
-          />
-          <Route
-            path="my-listing/:id/edit"
-            element={
-              <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS]}>
-                <CreateEditListingPage />
-              </RoleBasedRoute>
-            }
-          />
-          <Route
-            path="my-listing"
-            element={
-              <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN, UserRole.HOST, UserRole.BUSINESS]}>
-                <MyListingPage />
-              </RoleBasedRoute>
-            }
-          />
+          
      
           
           {/* Calendar - All roles can access */}
@@ -293,8 +233,6 @@ function App() {
           />
           
           
-          {/* Product Management */}
-          <Route path="products" element={<ProductList />} />
           
           {/* Category Management */}
           <Route path="categories" element={<CategoryList />} />
