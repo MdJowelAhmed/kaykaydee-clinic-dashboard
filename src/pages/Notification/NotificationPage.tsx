@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ModalWrapper } from '@/components/common/ModalWrapper'
+import { ConfirmDialog } from '@/components/common/ConfirmDialog'
 import { NotificationListItem } from '@/components/common/NotificationListItem'
 import { Pagination } from '@/components/common/Pagination'
 import { useUrlParams } from '@/hooks/useUrlState'
@@ -29,7 +30,10 @@ export default function NotificationPage() {
   const page = getNumberParam('page', 1)
   const limit = getNumberParam('limit', 15)
 
+  const [items, setItems] = useState<NotificationEntry[]>(MOCK_NOTIFICATIONS)
   const [detailsItem, setDetailsItem] = useState<NotificationEntry | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<NotificationEntry | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
   const [composeOpen, setComposeOpen] = useState(false)
   const [composeConfirmed, setComposeConfirmed] = useState(false)
   const [composeTo, setComposeTo] = useState('')
@@ -47,7 +51,7 @@ export default function NotificationPage() {
     const q = search.trim().toLowerCase()
     const now = Date.now()
     const MS_DAY = 86400000
-    return MOCK_NOTIFICATIONS.filter((n) => {
+    return items.filter((n) => {
       if (n.box !== tab) return false
       if (dateFilter !== 'all') {
         const t = new Date(n.date).getTime()
@@ -73,7 +77,7 @@ export default function NotificationPage() {
         (n.recipientsLabel?.toLowerCase().includes(q) ?? false)
       )
     })
-  }, [tab, search, dateFilter])
+  }, [items, tab, search, dateFilter])
 
   const totalItems = filtered.length
   const totalPages = Math.max(1, Math.ceil(totalItems / limit))
@@ -170,9 +174,7 @@ export default function NotificationPage() {
                   item={item}
                   showActions
                   onInfo={(it) => setDetailsItem(it)}
-                  onDelete={() => {
-                    // mock-only UI: no persistence yet
-                  }}
+                  onDelete={(it) => setDeleteTarget(it)}
                 />
               </motion.div>
             ))
@@ -301,6 +303,33 @@ export default function NotificationPage() {
           </div>
         </div>
       </ModalWrapper>
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        title="Delete notification?"
+        description={
+          deleteTarget
+            ? `This will remove “${deleteTarget.title}”. You can’t undo this action.`
+            : 'This will remove the notification. You can’t undo this action.'
+        }
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+        isLoading={isDeleting}
+        onConfirm={async () => {
+          if (!deleteTarget) return
+          setIsDeleting(true)
+          try {
+            const id = deleteTarget.id
+            setItems((prev) => prev.filter((n) => n.id !== id))
+            if (detailsItem?.id === id) setDetailsItem(null)
+          } finally {
+            setIsDeleting(false)
+          }
+        }}
+        onSuccess={() => setDeleteTarget(null)}
+      />
     </motion.div>
   )
 }
