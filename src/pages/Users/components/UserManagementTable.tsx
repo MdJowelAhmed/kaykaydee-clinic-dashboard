@@ -39,7 +39,7 @@ export function UserManagementTable({ users, onOpenDetails }: UserManagementTabl
     <div className="w-full overflow-auto rounded-b-xl">
       <table className="w-full min-w-[1100px]">
         <thead>
-          <tr className="bg-slate-100 text-slate-800">
+          <tr className="bg-primary text-white">
             <th className="px-6 py-4 text-left text-sm font-semibold">S. No</th>
             <th className="px-6 py-4 text-left text-sm font-semibold">User Name</th>
             <th className="px-6 py-4 text-left text-sm font-semibold">Role</th>

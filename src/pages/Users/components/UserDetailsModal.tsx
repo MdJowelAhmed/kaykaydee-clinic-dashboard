@@ -75,8 +75,8 @@ export function UserDetailsModal({ user, open, onOpenChange }: UserDetailsModalP
   if (!user) return null
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl sm:rounded-2xl">
+    <Dialog open={open} onOpenChange={onOpenChange} >
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl sm:rounded-2xl bg-white">
         <DialogHeader className="space-y-2">
           <DialogTitle className="text-xl font-semibold text-slate-900">
             User details

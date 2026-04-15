@@ -92,26 +92,28 @@ export default function UserList() {
             <h1 className="text-xl font-bold text-slate-800 shrink-0 lg:min-w-[200px]">
               User Management
             </h1>
-            <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-              <SearchInput
-                value={search}
-                onChange={handleSearch}
-                placeholder="Search here"
-                className="w-full min-w-0 flex-1"
-                inputClassName="h-11 rounded-xl border-slate-200 bg-white shadow-sm"
-              />
-              <Select value={status} onValueChange={handleStatusFilter}>
-                <SelectTrigger className="h-11 w-full shrink-0 rounded-xl border-slate-200 bg-white shadow-sm sm:w-[160px]">
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  {USER_STATUSES.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 justify-end">
+              <div className="flex items-center justify-end gap-4">
+                <SearchInput
+                  value={search}
+                  onChange={handleSearch}
+                  placeholder="Search here"
+                  className="w-full min-w-0 flex-1"
+                  inputClassName="h-11 rounded-xl border-slate-200 bg-white shadow-sm max-w-xl"
+                />
+                <Select value={status} onValueChange={handleStatusFilter}>
+                  <SelectTrigger className="h-11 w-full shrink-0 rounded-xl border-slate-200 bg-white shadow-sm sm:w-[160px]">
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {USER_STATUSES.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
         </CardContent>
