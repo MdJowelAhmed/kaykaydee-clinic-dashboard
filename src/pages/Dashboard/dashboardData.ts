@@ -8,11 +8,13 @@ export type ChartDataPoint = {
     orders: number
 }
 
-/** Dashboard overview: revenue trend + subscription volume per month */
+/** Dashboard overview: revenue (bar), subscriptions, activity (line) per month */
 export type OverviewMonthRow = {
     month: string
     revenue: number
     subscriptions: number
+    /** Activity metric for line chart (roughly 1k–10k band) */
+    activity: number
 }
 
 /** Horizontal “subscription plan” bars: label + scale end (5k–50k; bar runs from 50k at left to `endValue`). */
@@ -28,6 +30,11 @@ export const overviewRevenueTrend2026: readonly number[] = [
 
 export const overviewSubscriptionCounts2026: readonly number[] = [
     95, 180, 220, 160, 280, 320, 240, 400, 360, 210, 190, 350,
+]
+
+/** Activity line chart (1k–10k scale) */
+export const overviewActivityTrend2026: readonly number[] = [
+    1800, 3200, 2600, 5800, 5200, 7600, 6900, 9200, 6400, 5800, 8100, 9500,
 ]
 
 /** Horizontal subscription chart — labels fixed above bars; lengths vs 50k–5k scale per design. */
@@ -51,13 +58,22 @@ const overviewSubscriptionCountsByYear: Record<string, readonly number[]> = {
     '2023': [65, 130, 155, 115, 190, 230, 175, 300, 270, 165, 145, 260],
 }
 
+const overviewActivityTrendByYear: Record<string, readonly number[]> = {
+    '2026': overviewActivityTrend2026,
+    '2025': [1500, 2800, 2200, 4800, 4500, 6500, 6000, 8200, 5600, 5000, 7200, 8600],
+    '2024': [1200, 2400, 1900, 4000, 3800, 5400, 5000, 7000, 4800, 4200, 6200, 7400],
+    '2023': [1000, 2000, 1600, 3200, 3000, 4500, 4200, 5800, 4000, 3500, 5200, 6200],
+}
+
 function buildOverviewRows(year: string): OverviewMonthRow[] {
     const rev = overviewRevenueTrendByYear[year] ?? overviewRevenueTrendByYear['2026']
     const sub = overviewSubscriptionCountsByYear[year] ?? overviewSubscriptionCountsByYear['2026']
+    const act = overviewActivityTrendByYear[year] ?? overviewActivityTrendByYear['2026']
     return MONTHS.map((month, i) => ({
         month,
         revenue: rev[i] ?? 0,
         subscriptions: sub[i] ?? 0,
+        activity: act[i] ?? 0,
     }))
 }
 

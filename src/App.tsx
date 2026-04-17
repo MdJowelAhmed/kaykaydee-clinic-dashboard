@@ -34,6 +34,10 @@ import SubscriptionInvoicePage from './pages/SubscriptionInvoice/SubscriptionInv
 import SubscriptionManagePage from './pages/SubscriptionManage/SubscriptionManagePage'
 import AdminManagePage from './pages/AdminManage/AdminManagePage'
 import ZealthAIPage from './pages/ZealthAI/ZealthAIPage'
+import WaitingListPage from './pages/WaitingList/WaitingListPage'
+import ClientListPage from './pages/ClientList/ClientListPage'
+import ReportsPage from './pages/Reports/ReportsPage'
+import ExercisesPage from './pages/Exercises/ExercisesPage'
 import Support from './pages/Support/Support'
 import FAQ from './pages/FAQ/FAQ'
 import NotFound from './pages/NotFound/NotFound'
@@ -174,6 +178,42 @@ function App() {
             element={
               <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
                 <ZealthAIPage />
+              </RoleBasedRoute>
+            }
+          />
+
+          <Route
+            path="waiting-list"
+            element={
+              <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
+                <WaitingListPage />
+              </RoleBasedRoute>
+            }
+          />
+
+          <Route
+            path="client-list"
+            element={
+              <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
+                <ClientListPage />
+              </RoleBasedRoute>
+            }
+          />
+
+          <Route
+            path="reports"
+            element={
+              <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
+                <ReportsPage />
+              </RoleBasedRoute>
+            }
+          />
+
+          <Route
+            path="exercises"
+            element={
+              <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
+                <ExercisesPage />
               </RoleBasedRoute>
             }
           />

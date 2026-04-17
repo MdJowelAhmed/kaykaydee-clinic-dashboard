@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react'
-import { Building2, Users, UserCog, CircleDollarSign } from 'lucide-react'
+import { Building2, CircleDollarSign, User, Users } from 'lucide-react'
 import { OverviewKpiCard } from './OverviewKpiCard'
-import { RevenueTrendChart } from './RevenueTrendChart'
-import { SubscriptionDistributionCharts } from './SubscriptionDistributionCharts'
+import { DashboardMessagePanel } from './DashboardMessagePanel'
+import { DashboardRevenueBarChart } from './DashboardRevenueBarChart'
+import { DashboardActivityLineChart } from './DashboardActivityLineChart'
 import { overviewByYear, overviewYears } from './dashboardData'
 import { formatNumber } from '@/utils/formatters'
 
@@ -16,23 +17,23 @@ function formatUsd0(amount: number): string {
 }
 
 export default function Dashboard() {
-  const [selectedYear, setSelectedYear] = useState(overviewYears[0] ?? '2026')
+  const [chartYear, setChartYear] = useState(overviewYears[0] ?? '2026')
 
-  const overviewRows = useMemo(() => overviewByYear[selectedYear] ?? [], [selectedYear])
+  const overviewRows = useMemo(() => overviewByYear[chartYear] ?? [], [chartYear])
 
   const kpis = useMemo(
     () => [
       {
-        title: 'Total Revenue',
-        value: formatUsd0(35000),
-        change: 8,
+        title: 'Monthly Revenue',
+        value: formatUsd0(512612),
+        change: 2,
         changeLabel: 'from last month',
         icon: CircleDollarSign,
         featured: true as const,
       },
       {
-        title: 'Active Clinics',
-        value: formatNumber(12),
+        title: 'Pending Payment',
+        value: formatUsd0(6458),
         change: 2,
         changeLabel: 'from last month',
         icon: Building2,
@@ -40,18 +41,18 @@ export default function Dashboard() {
       },
       {
         title: 'Total Patients',
-        value: formatNumber(12536),
-        change: 2,
+        value: formatNumber(2536),
+        change: 8,
         changeLabel: 'from last month',
-        icon: Users,
+        icon: User,
         featured: false as const,
       },
       {
-        title: 'Platform Users',
-        value: formatNumber(620),
-        change: 2,
+        title: 'Payment Rate',
+        value: '80%',
+        change: -2,
         changeLabel: 'from last month',
-        icon: UserCog,
+        icon: Users,
         featured: false as const,
       },
     ],
@@ -66,17 +67,23 @@ export default function Dashboard() {
         ))}
       </div>
 
-      <RevenueTrendChart
-        data={overviewRows}
-        selectedYear={selectedYear}
-        onYearChange={setSelectedYear}
-      />
-
-      <SubscriptionDistributionCharts
-        monthlyData={overviewRows}
-        selectedYear={selectedYear}
-        onYearChange={setSelectedYear}
-      />
+      <div className="grid gap-6 lg:grid-cols-2 lg:items-stretch">
+        <div className="min-h-[560px] lg:min-h-[620px]">
+          <DashboardMessagePanel />
+        </div>
+        <div className="flex min-h-0 flex-col gap-6">
+          <DashboardRevenueBarChart
+            data={overviewRows}
+            selectedYear={chartYear}
+            onYearChange={setChartYear}
+          />
+          <DashboardActivityLineChart
+            data={overviewRows}
+            selectedYear={chartYear}
+            onYearChange={setChartYear}
+          />
+        </div>
+      </div>
     </div>
   )
 }

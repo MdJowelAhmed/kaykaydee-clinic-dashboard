@@ -16,6 +16,10 @@ import {
   Users,
   Building2,
   HelpCircle,
+  ClipboardList,
+  Contact,
+  FileBarChart,
+  Dumbbell,
 } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -42,6 +46,30 @@ const navItems: NavItem[] = [
     title: 'Dashboard',
     href: '/dashboard',
     icon: LayoutDashboard,
+    allowedRoles: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
+  },
+  {
+    title: 'Waiting list',
+    href: '/waiting-list',
+    icon: ClipboardList,
+    allowedRoles: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
+  },
+  {
+    title: 'Client list',
+    href: '/client-list',
+    icon: Contact,
+    allowedRoles: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
+  },
+  {
+    title: 'Reports',
+    href: '/reports',
+    icon: FileBarChart,
+    allowedRoles: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
+  },
+  {
+    title: 'Exercises',
+    href: '/exercises',
+    icon: Dumbbell,
     allowedRoles: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
   },
   {
