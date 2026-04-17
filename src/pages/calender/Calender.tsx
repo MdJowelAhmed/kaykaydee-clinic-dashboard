@@ -1,479 +1,165 @@
-import React, { useState } from 'react'
-import CalendarView, { type CalendarBooking } from './components/CalendarView'
-
-// Pickup calendar data with varied dates and times
-const pickupBookings: CalendarBooking[] = [
-  // Day 0 - Multiple bookings at same time
-  {
-    id: 'DK-12345',
-    dayIndex: 0,
-    time: '8:00 AM',
-    car: 'Toyota Corolla',
-    plate: 'DK-12345',
-    client: 'Michael Don',
-  },
-  {
-    id: 'DK-12346',
-    dayIndex: 0,
-    time: '8:00 AM',
-    car: 'Honda Civic',
-    plate: 'DK-12346',
-    client: 'Sarah Johnson',
-  },
-  {
-    id: 'DK-12347',
-    dayIndex: 0,
-    time: '8:00 AM',
-    car: 'BMW X5',
-    plate: 'DK-12347',
-    client: 'John Smith',
-  },
-  {
-    id: 'DK-12348',
-    dayIndex: 0,
-    time: '2:00 PM',
-    car: 'Mercedes C-Class',
-    plate: 'DK-12348',
-    client: 'Emma Wilson',
-  },
-  {
-    id: 'DK-12349',
-    dayIndex: 0,
-    time: '2:00 PM',
-    car: 'Audi A4',
-    plate: 'DK-12349',
-    client: 'David Brown',
-  },
-  // Day 1
-  {
-    id: 'DK-22345',
-    dayIndex: 1,
-    time: '9:00 AM',
-    car: 'Ford Mustang',
-    plate: 'DK-22345',
-    client: 'Lisa Anderson',
-  },
-  {
-    id: 'DK-22346',
-    dayIndex: 1,
-    time: '11:00 AM',
-    car: 'Tesla Model 3',
-    plate: 'DK-22346',
-    client: 'Robert Taylor',
-  },
-  {
-    id: 'DK-22347',
-    dayIndex: 1,
-    time: '3:00 PM',
-    car: 'Nissan Altima',
-    plate: 'DK-22347',
-    client: 'Maria Garcia',
-  },
-  {
-    id: 'DK-22348',
-    dayIndex: 1,
-    time: '3:00 PM',
-    car: 'Hyundai Elantra',
-    plate: 'DK-22348',
-    client: 'James Martinez',
-  },
-  {
-    id: 'DK-22349',
-    dayIndex: 1,
-    time: '3:00 PM',
-    car: 'Chevrolet Camaro',
-    plate: 'DK-22349',
-    client: 'Patricia Lee',
-  },
-  // Day 2
-  {
-    id: 'DK-32345',
-    dayIndex: 2,
-    time: '10:00 AM',
-    car: 'Volkswagen Jetta',
-    plate: 'DK-32345',
-    client: 'William Harris',
-  },
-  {
-    id: 'DK-32346',
-    dayIndex: 2,
-    time: '1:00 PM',
-    car: 'Subaru Impreza',
-    plate: 'DK-32346',
-    client: 'Jennifer Clark',
-  },
-  {
-    id: 'DK-32347',
-    dayIndex: 2,
-    time: '5:00 PM',
-    car: 'Mazda CX-5',
-    plate: 'DK-32347',
-    client: 'Richard Lewis',
-  },
-  // Day 3
-  {
-    id: 'DK-42345',
-    dayIndex: 3,
-    time: '7:00 AM',
-    car: 'Kia Optima',
-    plate: 'DK-42345',
-    client: 'Susan Walker',
-  },
-  {
-    id: 'DK-42346',
-    dayIndex: 3,
-    time: '12:00 PM',
-    car: 'Jeep Wrangler',
-    plate: 'DK-42346',
-    client: 'Joseph Hall',
-  },
-  {
-    id: 'DK-42347',
-    dayIndex: 3,
-    time: '12:00 PM',
-    car: 'Toyota RAV4',
-    plate: 'DK-42347',
-    client: 'Nancy Allen',
-  },
-  {
-    id: 'DK-42348',
-    dayIndex: 3,
-    time: '4:00 PM',
-    car: 'Honda CR-V',
-    plate: 'DK-42348',
-    client: 'Thomas Young',
-  },
-  // Day 4
-  {
-    id: 'DK-52345',
-    dayIndex: 4,
-    time: '6:00 AM',
-    car: 'Ford F-150',
-    plate: 'DK-52345',
-    client: 'Karen King',
-  },
-  {
-    id: 'DK-52346',
-    dayIndex: 4,
-    time: '9:00 AM',
-    car: 'Ram 1500',
-    plate: 'DK-52346',
-    client: 'Christopher Wright',
-  },
-  // Day 5
-  {
-    id: 'DK-62345',
-    dayIndex: 5,
-    time: '8:00 AM',
-    car: 'GMC Sierra',
-    plate: 'DK-62345',
-    client: 'Betty Lopez',
-  },
-  {
-    id: 'DK-62346',
-    dayIndex: 5,
-    time: '2:00 PM',
-    car: 'Chevrolet Silverado',
-    plate: 'DK-62346',
-    client: 'Daniel Hill',
-  },
-  {
-    id: 'DK-62347',
-    dayIndex: 5,
-    time: '2:00 PM',
-    car: 'Toyota Tundra',
-    plate: 'DK-62347',
-    client: 'Dorothy Green',
-  },
-  // Day 6
-  {
-    id: 'DK-72345',
-    dayIndex: 6,
-    time: '10:00 AM',
-    car: 'Nissan Frontier',
-    plate: 'DK-72345',
-    client: 'Matthew Adams',
-  },
-  {
-    id: 'DK-72346',
-    dayIndex: 6,
-    time: '6:00 PM',
-    car: 'Honda Pilot',
-    plate: 'DK-72346',
-    client: 'Sharon Baker',
-  },
-  // Day 7
-  {
-    id: 'DK-82345',
-    dayIndex: 7,
-    time: '11:00 AM',
-    car: 'Toyota Highlander',
-    plate: 'DK-82345',
-    client: 'Anthony Nelson',
-  },
-  {
-    id: 'DK-82346',
-    dayIndex: 7,
-    time: '11:00 AM',
-    car: 'Ford Explorer',
-    plate: 'DK-82346',
-    client: 'Michelle Carter',
-  },
-  {
-    id: 'DK-82347',
-    dayIndex: 7,
-    time: '11:00 AM',
-    car: 'Chevrolet Tahoe',
-    plate: 'DK-82347',
-    client: 'Mark Mitchell',
-  },
-  // Day 8
-  {
-    id: 'DK-92345',
-    dayIndex: 8,
-    time: '1:00 PM',
-    car: 'GMC Yukon',
-    plate: 'DK-92345',
-    client: 'Laura Perez',
-  },
-  // Day 9
-  {
-    id: 'DK-A2345',
-    dayIndex: 9,
-    time: '9:00 AM',
-    car: 'Cadillac Escalade',
-    plate: 'DK-A2345',
-    client: 'Steven Roberts',
-  },
-  {
-    id: 'DK-A2346',
-    dayIndex: 9,
-    time: '9:00 AM',
-    car: 'Lincoln Navigator',
-    plate: 'DK-A2346',
-    client: 'Donna Turner',
-  },
-  {
-    id: 'DK-A2348',
-    dayIndex: 9,
-    time: '02:00 AM',
-    car: 'Lincoln Navigator',
-    plate: 'DK-A2346',
-    client: 'Donna Turner',
-  },
-]
-
-// Return calendar data with varied dates and times
-const returnBookings: CalendarBooking[] = [
-  // Day 0
-  {
-    id: 'RT-12345',
-    dayIndex: 0,
-    time: '10:00 AM',
-    car: 'Toyota Corolla',
-    plate: 'DK-12345',
-    client: 'Michael Don',
-  },
-  {
-    id: 'RT-12346',
-    dayIndex: 0,
-    time: '4:00 PM',
-    car: 'Honda Civic',
-    plate: 'DK-12346',
-    client: 'Sarah Johnson',
-  },
-  // Day 1
-  {
-    id: 'RT-22345',
-    dayIndex: 1,
-    time: '11:00 AM',
-    car: 'BMW X5',
-    plate: 'DK-12347',
-    client: 'John Smith',
-  },
-  {
-    id: 'RT-22346',
-    dayIndex: 1,
-    time: '5:00 PM',
-    car: 'Mercedes C-Class',
-    plate: 'DK-12348',
-    client: 'Emma Wilson',
-  },
-  {
-    id: 'RT-22347',
-    dayIndex: 1,
-    time: '5:00 PM',
-    car: 'Audi A4',
-    plate: 'DK-12349',
-    client: 'David Brown',
-  },
-  // Day 2
-  {
-    id: 'RT-32345',
-    dayIndex: 2,
-    time: '12:00 PM',
-    car: 'Ford Mustang',
-    plate: 'DK-22345',
-    client: 'Lisa Anderson',
-  },
-  // Day 3
-  {
-    id: 'RT-42345',
-    dayIndex: 3,
-    time: '2:00 PM',
-    car: 'Tesla Model 3',
-    plate: 'DK-22346',
-    client: 'Robert Taylor',
-  },
-  {
-    id: 'RT-42346',
-    dayIndex: 3,
-    time: '6:00 PM',
-    car: 'Nissan Altima',
-    plate: 'DK-22347',
-    client: 'Maria Garcia',
-  },
-  // Day 4
-  {
-    id: 'RT-52345',
-    dayIndex: 4,
-    time: '3:00 PM',
-    car: 'Volkswagen Jetta',
-    plate: 'DK-32345',
-    client: 'William Harris',
-  },
-  // Day 5
-  {
-    id: 'RT-62345',
-    dayIndex: 5,
-    time: '1:00 PM',
-    car: 'Subaru Impreza',
-    plate: 'DK-32346',
-    client: 'Jennifer Clark',
-  },
-  {
-    id: 'RT-62346',
-    dayIndex: 5,
-    time: '1:00 PM',
-    car: 'Mazda CX-5',
-    plate: 'DK-32347',
-    client: 'Richard Lewis',
-  },
-  // Day 6
-  {
-    id: 'RT-72345',
-    dayIndex: 6,
-    time: '9:00 AM',
-    car: 'Kia Optima',
-    plate: 'DK-42345',
-    client: 'Susan Walker',
-  },
-  // Day 7
-  {
-    id: 'RT-82345',
-    dayIndex: 7,
-    time: '12:00 PM',
-    car: 'Jeep Wrangler',
-    plate: 'DK-42346',
-    client: 'Joseph Hall',
-  },
-  {
-    id: 'RT-82346',
-    dayIndex: 7,
-    time: '12:00 PM',
-    car: 'Toyota RAV4',
-    plate: 'DK-42347',
-    client: 'Nancy Allen',
-  },
-  {
-    id: 'RT-82347',
-    dayIndex: 7,
-    time: '12:00 PM',
-    car: 'Honda CR-V',
-    plate: 'DK-42348',
-    client: 'Thomas Young',
-  },
-  // Day 8
-  {
-    id: 'RT-92345',
-    dayIndex: 8,
-    time: '7:00 AM',
-    car: 'Ford F-150',
-    plate: 'DK-52345',
-    client: 'Karen King',
-  },
-  // Day 9
-  {
-    id: 'RT-A2345',
-    dayIndex: 9,
-    time: '8:00 AM',
-    car: 'Ram 1500',
-    plate: 'DK-52346',
-    client: 'Christopher Wright',
-  },
-]
+import React, { useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
+import CalendarView from './components/CalendarView'
+import {
+  CLINIC_CALENDAR_EVENTS,
+  CATEGORY_FILTER_OPTIONS,
+  type ClinicEventCategory,
+} from './clinicCalendarData'
+import { Card, CardContent } from '@/components/ui/card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import { setSelectedDate } from '@/redux/slices/calendarSlice'
+import { cn } from '@/utils/cn'
 
 const Calender: React.FC = () => {
-  const [activeView, setActiveView] = useState<'pickup' | 'return'>('pickup')
+  const [category, setCategory] = useState<ClinicEventCategory | 'all'>('all')
   const [searchValue, setSearchValue] = useState('')
+  const dispatch = useAppDispatch()
+  const { days, selectedDate } = useAppSelector((state) => state.calendar)
 
-  const currentBookings = activeView === 'pickup' ? pickupBookings : returnBookings
+  const todayISO = new Date().toISOString().split('T')[0]
+  const nextDayISO = (() => {
+    const d = new Date()
+    d.setDate(d.getDate() + 1)
+    return d.toISOString().split('T')[0]
+  })()
+
+  const maxDay = days.length
+
+  const eventsInWindow = useMemo(
+    () => CLINIC_CALENDAR_EVENTS.filter((e) => e.dayIndex < maxDay),
+    [maxDay]
+  )
+
+  const calendarEvents = useMemo(() => {
+    if (category === 'all') return eventsInWindow
+    return eventsInWindow.filter((e) => e.category === category)
+  }, [eventsInWindow, category])
 
   return (
-    <div className="space-y-4">
-      {/* Pickup / Return toggle */}
-      <div className="flex items-center gap-6">
-        <button
-          onClick={() => setActiveView('pickup')}
-          className={`flex items-center gap-2 text-sm font-medium transition-colors ${
-            activeView === 'pickup'
-              ? 'text-[#21A366]'
-              : 'text-[#9CA3AF] hover:text-[#6B7280]'
-          }`}
-        >
-          <span
-            className={`inline-flex h-4 w-4 items-center justify-center rounded-full border ${
-              activeView === 'pickup'
-                ? 'border-[#21A366]'
-                : 'border-[#D1D5DB]'
-            }`}
-          >
-            {activeView === 'pickup' && (
-              <span className="h-2 w-2 rounded-full bg-[#21A366]" />
-            )}
-          </span>
-          Pickup
-        </button>
-        <button
-          onClick={() => setActiveView('return')}
-          className={`flex items-center gap-2 text-sm font-medium transition-colors ${
-            activeView === 'return'
-              ? 'text-[#21A366]'
-              : 'text-[#9CA3AF] hover:text-[#6B7280]'
-          }`}
-        >
-          <span
-            className={`inline-flex h-4 w-4 items-center justify-center rounded-full border ${
-              activeView === 'return'
-                ? 'border-[#21A366]'
-                : 'border-[#D1D5DB]'
-            }`}
-          >
-            {activeView === 'return' && (
-              <span className="h-2 w-2 rounded-full bg-[#21A366]" />
-            )}
-          </span>
-          Return
-        </button>
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Clinic schedule</h1>
+        <p className="mt-1 max-w-2xl text-sm text-slate-600">
+          Hospital and clinic operations at a glance: patient appointments, diagnostics, procedures,
+          and supporting tasks—each block includes a short summary for your team.
+        </p>
       </div>
 
-      {/* Reusable Calendar View */}
-      <CalendarView
-        bookings={currentBookings}
-        searchValue={searchValue}
-        onSearchChange={setSearchValue}
-      />
-    </div>
+      {/* <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {statCards.map((card, i) => {
+          const Icon = card.icon
+          return (
+            <motion.div
+              key={card.title}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 * i }}
+            >
+              <Card className={cn('rounded-2xl border shadow-sm', card.className)}>
+                <CardContent className="flex items-start gap-3 p-5">
+                  <div
+                    className={cn(
+                      'flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/80 shadow-sm',
+                      card.iconClass
+                    )}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-medium text-slate-600">{card.title}</p>
+                    <p className="mt-1 text-2xl font-bold text-slate-900">{card.value}</p>
+                    <p className="mt-0.5 text-[11px] text-slate-500">{card.hint}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )
+        })}
+      </div> */}
+
+      <Card className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <CardContent className="space-y-4 p-5 sm:p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <h2 className="text-lg font-semibold text-slate-900">Weekly grid</h2>
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => dispatch(setSelectedDate(todayISO))}
+                  className={cn(
+                    'h-9 rounded-full border px-3 text-xs font-semibold transition-colors',
+                    selectedDate === todayISO
+                      ? 'border-violet-200 bg-violet-50 text-violet-700'
+                      : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                  )}
+                >
+                  Today
+                </button>
+                <button
+                  type="button"
+                  onClick={() => dispatch(setSelectedDate(nextDayISO))}
+                  className={cn(
+                    'h-9 rounded-full border px-3 text-xs font-semibold transition-colors',
+                    selectedDate === nextDayISO
+                      ? 'border-violet-200 bg-violet-50 text-violet-700'
+                      : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                  )}
+                >
+                  Next day
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <label className="text-xs font-medium text-slate-600">Date</label>
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => dispatch(setSelectedDate(e.target.value))}
+                  className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                />
+              </div>
+
+              <div className="w-full sm:w-[220px]">
+                <Select
+                  value={category}
+                  onValueChange={(v) => setCategory(v as ClinicEventCategory | 'all')}
+                >
+                  <SelectTrigger className="h-10 rounded-xl border-slate-200">
+                    <SelectValue placeholder="Filter by type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CATEGORY_FILTER_OPTIONS.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          <CalendarView
+            events={calendarEvents}
+            searchValue={searchValue}
+            onSearchChange={setSearchValue}
+          />
+        </CardContent>
+      </Card>
+    </motion.div>
   )
 }
 

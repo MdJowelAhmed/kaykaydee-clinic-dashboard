@@ -372,7 +372,7 @@ export interface BookingFormData {
 }
 
 // ==================== Calendar Types ====================
-export type CalendarViewRange = 10 | 15 | 30
+export type CalendarViewRange = 7 | 10 | 15 | 30
 
 export type CalendarPeriod = 'current' | 'previous'
 

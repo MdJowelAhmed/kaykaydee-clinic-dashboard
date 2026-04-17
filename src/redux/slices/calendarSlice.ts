@@ -6,6 +6,10 @@ interface CalendarState {
   period: CalendarPeriod
   startDate: string // ISO string for the first day in the range
   days: CalendarDay[]
+  /** ISO date string the user selected (defaults to today). */
+  selectedDate: string
+  /** Selected time-row label (e.g. "8:00 AM"). Empty means none. */
+  selectedTime: string
 }
 
 const toISODate = (date: Date) => date.toISOString().split('T')[0]
@@ -36,10 +40,12 @@ const buildInitialState = (): CalendarState => {
   const startDate = toISODate(today)
 
   return {
-    viewRange: 10,
+    viewRange: 7,
     period: 'current',
     startDate,
-    days: generateDays(today, 10),
+    days: generateDays(today, 7),
+    selectedDate: startDate,
+    selectedTime: '',
   }
 }
 
@@ -54,6 +60,12 @@ const recalculateDays = (state: CalendarState) => {
 
   state.startDate = toISODate(baseDate)
   state.days = generateDays(baseDate, state.viewRange)
+
+  // Keep selected date inside the visible window; otherwise snap to the first day.
+  const selectedInWindow = state.days.some((d) => d.date === state.selectedDate)
+  if (!selectedInWindow) {
+    state.selectedDate = state.startDate
+  }
 }
 
 const initialState: CalendarState = buildInitialState()
@@ -78,14 +90,34 @@ const calendarSlice = createSlice({
       }
       recalculateDays(state)
     },
+    setSelectedDate: (state, action: PayloadAction<string>) => {
+      state.selectedDate = action.payload
+      if (!action.payload) return
+      // If the chosen date is outside the current window, shift the window to start there.
+      const selectedInWindow = state.days.some((d) => d.date === state.selectedDate)
+      if (!selectedInWindow) {
+        const base = new Date(action.payload)
+        if (!Number.isNaN(base.getTime())) {
+          state.period = 'current'
+          state.startDate = toISODate(base)
+          state.days = generateDays(base, state.viewRange)
+        }
+      }
+    },
+    setSelectedTime: (state, action: PayloadAction<string>) => {
+      state.selectedTime = action.payload
+    },
     goToToday: (state) => {
       state.period = 'current'
       recalculateDays(state)
+      state.selectedDate = state.startDate
+      state.selectedTime = ''
     },
   },
 })
 
-export const { setViewRange, setPeriod, goToToday } = calendarSlice.actions
+export const { setViewRange, setPeriod, setSelectedDate, setSelectedTime, goToToday } =
+  calendarSlice.actions
 
 export default calendarSlice.reducer
 

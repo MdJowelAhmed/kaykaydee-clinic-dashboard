@@ -20,6 +20,7 @@ import {
   Contact,
   FileBarChart,
   Dumbbell,
+  Calendar,
 } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -93,12 +94,12 @@ const navItems: NavItem[] = [
   //   allowedRoles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.BUSINESS],
   // },
 
-  // {
-  //   title: 'Calendar',
-  //   href: '/calender',
-  //   icon: Calendar,
-  //   allowedRoles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.BUSINESS],
-  // },
+  {
+    title: 'Calendar',
+    href: '/calender',
+    icon: Calendar,
+    allowedRoles: [UserRole.SUPER_ADMIN, ],
+  },
   // {
   //   title: 'Transactions History',
   //   href: '/transactions-history',
@@ -399,10 +400,10 @@ function SidebarNavItem({ item, collapsed }: SidebarNavItemProps) {
       className={({ isActive }) =>
         cn(
           'flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all duration-200',
-          'hover:bg-[#CEF8DA] hover:text-[#0C5822]',
+          'hover:bg-[#FDF8FF] hover:text-[#7946CD]',
           collapsed && 'justify-center',
           isActive
-            ? 'bg-[#CEF8DA] text-[#0C5822] shadow-md'
+            ? 'bg-[#FDF8FF] text-[#7946CD] shadow'
             : 'text-[#656565]'
         )
       }
