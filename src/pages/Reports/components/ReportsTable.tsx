@@ -30,7 +30,7 @@ export function ReportsTable({ rows, onOpenDetails, onDownload }: ReportsTablePr
     <div className="w-full overflow-auto rounded-b-xl">
       <table className="w-full min-w-[1400px]">
         <thead>
-          <tr className="bg-[#E9ECEF] text-slate-900">
+          <tr className="bg-primary text-white">
             <th className="px-4 py-4 text-left text-sm font-semibold first:rounded-tl-xl">
               R. No
             </th>

@@ -8,7 +8,7 @@ interface DataItem {
   [key: string]: string | number | undefined
 }
 
-/** Super Admin and Admin see all rows; Business sees only its scope. */
+/** Head Admin and Manager see all rows. */
 export const useRoleBasedData = <T extends DataItem>(data: T[]): T[] => {
   const { user } = useAppSelector((state) => state.auth)
 
@@ -19,32 +19,26 @@ export const useRoleBasedData = <T extends DataItem>(data: T[]): T[] => {
       return data
     }
 
-    if (user.role === UserRole.BUSINESS && user.businessId) {
-      return data.filter(
-        (item) =>
-          item.businessId === user.businessId || item.userId === user.id
-      )
-    }
-
     return []
   }, [data, user])
 }
 
-/** True when the logged-in user is Admin (non–super-admin). */
+/** True when the logged-in user is Manager. */
 export const useIsAdmin = (): boolean => {
   const { user } = useAppSelector((state) => state.auth)
-  return user?.role === UserRole.ADMIN
+  return user?.role === UserRole.MANAGER
 }
 
 /** @deprecated Use `useIsAdmin` (legacy name for the admin role). */
 export const useIsHost = (): boolean => {
   const { user } = useAppSelector((state) => state.auth)
-  return user?.role === UserRole.ADMIN
+  return user?.role === UserRole.MANAGER
 }
 
 export const useIsBusiness = (): boolean => {
   const { user } = useAppSelector((state) => state.auth)
-  return user?.role === UserRole.BUSINESS
+  void user
+  return false
 }
 
 export const useBusinessId = (): string | undefined => {
@@ -61,9 +55,6 @@ export const useCanModifyItem = (item: DataItem): boolean => {
     return true
   }
 
-  if (user.role === UserRole.BUSINESS) {
-    return item.businessId === user.businessId || item.userId === user.id
-  }
-
+  void item
   return false
 }

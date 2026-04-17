@@ -7,15 +7,15 @@ import { formatClientJoinDate } from '../utils'
 
 interface ClientListTableProps {
   rows: ClientListEntry[]
-  onOpenDetails: (row: ClientListEntry) => void
+  onViewDetails: (row: ClientListEntry) => void
 }
 
-export function ClientListTable({ rows, onOpenDetails }: ClientListTableProps) {
+export function ClientListTable({ rows, onViewDetails }: ClientListTableProps) {
   return (
     <div className="w-full overflow-auto rounded-b-xl">
       <table className="w-full min-w-[960px]">
         <thead>
-          <tr className="bg-[#E9ECEF] text-slate-900">
+          <tr className="bg-primary text-white">
             <th className="px-6 py-4 text-left text-sm font-semibold first:rounded-tl-xl">
               ID. No
             </th>
@@ -75,7 +75,7 @@ export function ClientListTable({ rows, onOpenDetails }: ClientListTableProps) {
                       size="icon"
                       className="h-9 w-9 rounded-full text-slate-600 hover:bg-slate-200/80 hover:text-slate-900"
                       aria-label="View details"
-                      onClick={() => onOpenDetails(row)}
+                      onClick={() => onViewDetails(row)}
                     >
                       <Info className="h-5 w-5" strokeWidth={2} />
                     </Button>

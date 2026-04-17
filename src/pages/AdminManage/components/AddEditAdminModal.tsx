@@ -10,7 +10,7 @@ import type { SelectOption } from '@/types'
 
 const ROLE_OPTIONS: SelectOption[] = [
   { value: 'head-admin', label: 'Head Admin' },
-  { value: 'admin', label: 'Admin' },
+  { value: 'manager', label: 'Manager' },
 ]
 
 const STATUS_OPTIONS: SelectOption[] = [
@@ -22,7 +22,7 @@ const schema = z.object({
   clinicName: z.string().min(1, 'Clinic name is required'),
   email: z.string().email('Enter a valid email'),
   phone: z.string().min(1, 'Phone is required'),
-  role: z.enum(['head-admin', 'admin']),
+  role: z.enum(['head-admin', 'manager']),
   status: z.enum(['active', 'inactive']),
 })
 
@@ -49,7 +49,7 @@ export function AddEditAdminModal({ open, onClose, mode, admin, onSave }: AddEdi
       clinicName: '',
       email: '',
       phone: '',
-      role: 'admin',
+      role: 'manager',
       status: 'active',
     },
   })
@@ -69,7 +69,7 @@ export function AddEditAdminModal({ open, onClose, mode, admin, onSave }: AddEdi
         clinicName: '',
         email: '',
         phone: '',
-        role: 'admin',
+        role: 'manager',
         status: 'active',
       })
     }

@@ -14,14 +14,15 @@ import { SearchInput } from '@/components/common/SearchInput'
 import { Pagination } from '@/components/common/Pagination'
 import { useUrlParams } from '@/hooks/useUrlState'
 import { ClientListTable } from './components/ClientListTable'
-import { ClientListDetailsModal } from './components/ClientListDetailsModal'
 import { IncludePatientModal } from './components/IncludePatientModal'
 import { INITIAL_CLIENT_LIST, CLIENT_LIST_DATE_OPTIONS } from './clientListData'
 import { clientJoinMonthKey } from './utils'
 import type { ClientListEntry } from './types'
+import { useNavigate } from 'react-router-dom'
 
 export default function ClientListPage() {
   const { getParam, getNumberParam, setParams } = useUrlParams()
+  const navigate = useNavigate()
 
   const search = getParam('search', '')
   const dateMonth = getParam('date', 'all')
@@ -29,8 +30,6 @@ export default function ClientListPage() {
   const limit = getNumberParam('limit', 15)
 
   const [entries, setEntries] = useState<ClientListEntry[]>(INITIAL_CLIENT_LIST)
-  const [detailsEntry, setDetailsEntry] = useState<ClientListEntry | null>(null)
-  const [detailsOpen, setDetailsOpen] = useState(false)
   const [includeOpen, setIncludeOpen] = useState(false)
 
   const filteredList = useMemo(() => {
@@ -67,10 +66,12 @@ export default function ClientListPage() {
     setParams({ limit: newLimit, page: 1 })
   }
 
-  const handleOpenDetails = useCallback((row: ClientListEntry) => {
-    setDetailsEntry(row)
-    setDetailsOpen(true)
-  }, [])
+  const handleViewDetails = useCallback(
+    (row: ClientListEntry) => {
+      navigate(`/client-list/${row.id}`)
+    },
+    [navigate]
+  )
 
   const handleCreated = useCallback((entry: ClientListEntry) => {
     setEntries((prev) => [entry, ...prev])
@@ -113,7 +114,7 @@ export default function ClientListPage() {
                 onClick={() => setIncludeOpen(true)}
               >
                 <Plus className="mr-2 h-4 w-4" />
-                Include Patient
+               Add Client
               </Button>
             </div>
           </div>
@@ -122,7 +123,7 @@ export default function ClientListPage() {
 
       <Card className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
         <CardContent className="p-0">
-          <ClientListTable rows={paginatedData} onOpenDetails={handleOpenDetails} />
+          <ClientListTable rows={paginatedData} onViewDetails={handleViewDetails} />
 
           <div className="border-t border-slate-100 px-4 sm:px-6">
             <Pagination
@@ -138,15 +139,6 @@ export default function ClientListPage() {
           </div>
         </CardContent>
       </Card>
-
-      <ClientListDetailsModal
-        entry={detailsEntry}
-        open={detailsOpen}
-        onOpenChange={(open) => {
-          setDetailsOpen(open)
-          if (!open) setDetailsEntry(null)
-        }}
-      />
 
       <IncludePatientModal
         open={includeOpen}

@@ -86,7 +86,7 @@ function matchesDateFilter(updatedAt: number, filter: DateFilter) {
 
 export default function AboutUsSettings() {
   const { user } = useAppSelector((state) => state.auth)
-  const canManage = user?.role === UserRole.SUPER_ADMIN
+  const canManage = user?.role === UserRole.HEAD_ADMIN
 
   const [sections, setSections] = useState<AboutSection[]>(initialSections)
   const [search, setSearch] = useState('')

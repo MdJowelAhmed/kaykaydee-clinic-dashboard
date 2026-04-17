@@ -19,6 +19,8 @@ export function ReportDetailsModal({ entry, open, onOpenChange }: ReportDetailsM
       title="Report details"
       description={`Reference #${entry.reportNo}`}
       size="md"
+      className="bg-white max-w-2xl"
+
     >
       <dl className="grid gap-3 text-sm sm:grid-cols-2">
         <div>

@@ -36,8 +36,11 @@ import AdminManagePage from './pages/AdminManage/AdminManagePage'
 import ZealthAIPage from './pages/ZealthAI/ZealthAIPage'
 import WaitingListPage from './pages/WaitingList/WaitingListPage'
 import ClientListPage from './pages/ClientList/ClientListPage'
+import ClientDetailsPage from './pages/ClientList/ClientDetailsPage'
 import ReportsPage from './pages/Reports/ReportsPage'
 import ExercisesPage from './pages/Exercises/ExercisesPage'
+import BranchManagePage from './pages/BranchManage/BranchManagePage'
+import DoctorsManagePage from './pages/DoctorsManage/DoctorsManagePage'
 import Support from './pages/Support/Support'
 import FAQ from './pages/FAQ/FAQ'
 import NotFound from './pages/NotFound/NotFound'
@@ -87,7 +90,7 @@ function App() {
         >
           <Route index element={<RoleBasedRedirect />} />
           
-          {/* Dashboard — Super Admin + Admin only */}
+          {/* Dashboard — Head Admin + Manager */}
           <Route
             path="dashboard"
             element={
@@ -97,11 +100,11 @@ function App() {
             }
           />
           
-          {/* User Management - Super Admin Only */}
+          {/* User Management - Head Admin only */}
           <Route 
             path="users" 
             element={
-              <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN]}>
+              <RoleBasedRoute allowedRoles={[UserRole.HEAD_ADMIN]}>
                 <UserList />
               </RoleBasedRoute>
             } 
@@ -109,7 +112,7 @@ function App() {
           <Route 
             path="users/:id" 
             element={
-              <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN]}>
+              <RoleBasedRoute allowedRoles={[UserRole.HEAD_ADMIN]}>
                 <UserDetails />
               </RoleBasedRoute>
             } 
@@ -118,7 +121,7 @@ function App() {
           <Route
             path="clinic-management"
             element={
-              <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN]}>
+              <RoleBasedRoute allowedRoles={[UserRole.HEAD_ADMIN]}>
                 <ClinicManagementPage />
               </RoleBasedRoute>
             }
@@ -126,11 +129,11 @@ function App() {
           
       
           
-          {/* Transactions History - Super Admin Only */}
+          {/* Transactions History - Head Admin only */}
           <Route 
             path="transactions-history" 
             element={
-              <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN]}>
+              <RoleBasedRoute allowedRoles={[UserRole.HEAD_ADMIN]}>
                 <TransactionsHistory />
               </RoleBasedRoute>
             } 
@@ -140,7 +143,7 @@ function App() {
           <Route
             path="subscription-packages"
             element={
-              <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN]}>
+              <RoleBasedRoute allowedRoles={[UserRole.HEAD_ADMIN]}>
                 <SubscriptionPackagePage />
               </RoleBasedRoute>
             }
@@ -149,7 +152,7 @@ function App() {
           <Route
             path="subscription-invoice"
             element={
-              <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN]}>
+              <RoleBasedRoute allowedRoles={[UserRole.HEAD_ADMIN]}>
                 <SubscriptionInvoicePage />
               </RoleBasedRoute>
             }
@@ -158,7 +161,7 @@ function App() {
           <Route
             path="subscription-manage"
             element={
-              <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN]}>
+              <RoleBasedRoute allowedRoles={[UserRole.HEAD_ADMIN]}>
                 <SubscriptionManagePage />
               </RoleBasedRoute>
             }
@@ -167,7 +170,7 @@ function App() {
           <Route
             path="admin-manage"
             element={
-              <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN]}>
+              <RoleBasedRoute allowedRoles={[UserRole.HEAD_ADMIN]}>
                 <AdminManagePage />
               </RoleBasedRoute>
             }
@@ -199,12 +202,38 @@ function App() {
               </RoleBasedRoute>
             }
           />
+          <Route
+            path="client-list/:id"
+            element={
+              <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
+                <ClientDetailsPage />
+              </RoleBasedRoute>
+            }
+          />
 
           <Route
             path="reports"
             element={
               <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
                 <ReportsPage />
+              </RoleBasedRoute>
+            }
+          />
+
+          <Route
+            path="branch-manage"
+            element={
+              <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
+                <BranchManagePage />
+              </RoleBasedRoute>
+            }
+          />
+
+          <Route
+            path="doctors-manage"
+            element={
+              <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
+                <DoctorsManagePage />
               </RoleBasedRoute>
             }
           />
@@ -321,7 +350,7 @@ function App() {
             <Route 
               path="faq" 
               element={
-                <RoleBasedRoute allowedRoles={[UserRole.SUPER_ADMIN]}>
+                <RoleBasedRoute allowedRoles={[UserRole.HEAD_ADMIN]}>
                   <FAQ />
                 </RoleBasedRoute>
               } 

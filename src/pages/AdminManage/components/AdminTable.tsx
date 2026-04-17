@@ -7,7 +7,7 @@ import { AdminRowActions } from './AdminRowActions'
 function RolePill({ role }: { role: AdminRow['role'] }) {
   return (
     <span className="inline-flex min-w-[110px] justify-center rounded-md bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
-      {role === 'head-admin' ? 'Head Admin' : 'Admin'}
+      {role === 'head-admin' ? 'Head Admin' : 'Manager'}
     </span>
   )
 }

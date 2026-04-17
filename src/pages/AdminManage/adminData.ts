@@ -20,7 +20,7 @@ function makeAdmin(i: number): AdminRow {
     id: String(23598 + i),
     clinicName: CLINICS[i % CLINICS.length],
     joinDate: join,
-    role: i % 9 === 0 ? 'head-admin' : 'admin',
+    role: i % 9 === 0 ? 'head-admin' : 'manager',
     status: i % 7 === 0 ? 'inactive' : 'active',
     email: `admin${i + 1}@demo.mail`,
     phone: `+61 ${2000 + (i % 7999)} ${1000 + (i % 8999)}`,

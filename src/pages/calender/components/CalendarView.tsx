@@ -232,8 +232,17 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, searchValue, onSear
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-    
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative max-w-md flex-1">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Search patient, room, task, staff…"
+            value={searchValue}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="h-10 w-full rounded-full border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500"
+          />
+        </div>
 
         <div className="inline-flex flex-wrap rounded-full bg-slate-100 p-1">
           {viewOptions.map((option) => (

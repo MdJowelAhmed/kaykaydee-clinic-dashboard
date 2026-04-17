@@ -1,22 +1,25 @@
-// Auth roles — exactly three (dashboard: super-admin + admin only)
+// Auth roles — exactly two (Head Admin + Manager)
 export enum UserRole {
-  SUPER_ADMIN = 'super-admin',
-  ADMIN = 'admin',
-  BUSINESS = 'business',
+  HEAD_ADMIN = 'head-admin',
+  MANAGER = 'manager',
 }
 
-/** Legacy API/storage value; normalized to `UserRole.ADMIN` in `normalizeAuthRole`. */
+/** Legacy API/storage values from earlier builds/APIs. */
 export const LEGACY_ADMIN_ROLE_KEY = 'host' as const
+export const LEGACY_SUPER_ADMIN_ROLE_KEY = 'super-admin' as const
+export const LEGACY_MANAGER_ROLE_KEY = 'admin' as const
 
-/** Super Admin + Admin (non–super-admin operators). */
+/** Head Admin + Manager may use the dashboard shell. */
 export const DASHBOARD_ALLOWED_ROLES: readonly UserRole[] = [
-  UserRole.SUPER_ADMIN,
-  UserRole.ADMIN,
+  UserRole.HEAD_ADMIN,
+  UserRole.MANAGER,
 ]
 
-/** Map legacy `host` to admin for permission checks and persisted sessions. */
+/** Normalize role keys (handles legacy values). */
 export function normalizeRoleKey(role: string): string {
-  if (role === LEGACY_ADMIN_ROLE_KEY) return UserRole.ADMIN
+  if (role === LEGACY_SUPER_ADMIN_ROLE_KEY) return UserRole.HEAD_ADMIN
+  if (role === LEGACY_MANAGER_ROLE_KEY) return UserRole.MANAGER
+  if (role === LEGACY_ADMIN_ROLE_KEY) return UserRole.MANAGER
   return role
 }
 
@@ -25,7 +28,7 @@ export function canAccessDashboard(role: string): boolean {
   return DASHBOARD_ALLOWED_ROLES.includes(key as UserRole)
 }
 
-const ALL_DASHBOARD_ROLES = [UserRole.SUPER_ADMIN, UserRole.ADMIN]
+const ALL_DASHBOARD_ROLES = [UserRole.HEAD_ADMIN, UserRole.MANAGER]
 
 export interface RoutePermission {
   path: string
@@ -36,16 +39,16 @@ export interface RoutePermission {
 /** Route → allowed roles (extend as you add routes) */
 export const ROUTE_PERMISSIONS: Record<string, UserRole[]> = {
   '/dashboard': ALL_DASHBOARD_ROLES,
-  '/users': [UserRole.SUPER_ADMIN],
-  '/clinic-management': [UserRole.SUPER_ADMIN],
-  '/controller': [UserRole.SUPER_ADMIN],
-  '/subscription-packages': [UserRole.SUPER_ADMIN],
-  '/subscription-invoice': [UserRole.SUPER_ADMIN],
-  '/subscription-manage': [UserRole.SUPER_ADMIN],
-  '/admin-manage': [UserRole.SUPER_ADMIN],
-  '/agency-management': [UserRole.SUPER_ADMIN],
-  '/transactions-history': [UserRole.SUPER_ADMIN],
-  '/settings/faq': [UserRole.SUPER_ADMIN],
+  '/users': [UserRole.HEAD_ADMIN],
+  '/clinic-management': [UserRole.HEAD_ADMIN],
+  '/controller': [UserRole.HEAD_ADMIN],
+  '/subscription-packages': [UserRole.HEAD_ADMIN],
+  '/subscription-invoice': [UserRole.HEAD_ADMIN],
+  '/subscription-manage': [UserRole.HEAD_ADMIN],
+  '/admin-manage': [UserRole.HEAD_ADMIN],
+  '/agency-management': [UserRole.HEAD_ADMIN],
+  '/transactions-history': [UserRole.HEAD_ADMIN],
+  '/settings/faq': [UserRole.HEAD_ADMIN],
   '/settings/terms': ALL_DASHBOARD_ROLES,
   '/settings/privacy': ALL_DASHBOARD_ROLES,
   '/settings/about-us': ALL_DASHBOARD_ROLES,
@@ -62,6 +65,7 @@ export const ROUTE_PERMISSIONS: Record<string, UserRole[]> = {
   '/zealth-ai': ALL_DASHBOARD_ROLES,
   '/waiting-list': ALL_DASHBOARD_ROLES,
   '/client-list': ALL_DASHBOARD_ROLES,
+  '/client-list/': ALL_DASHBOARD_ROLES,
   '/reports': ALL_DASHBOARD_ROLES,
   '/exercises': ALL_DASHBOARD_ROLES,
   '/settings/profile': ALL_DASHBOARD_ROLES,
@@ -91,11 +95,8 @@ export const hasRouteAccess = (userRole: string, routePath: string): boolean => 
   return false
 }
 
-/** Business may see scoped data on these areas */
 export const shouldFilterData = (userRole: string, routePath: string): boolean => {
-  const sharedRoutes = ['/cars', '/booking-management', '/calender']
-  return (
-    userRole === UserRole.BUSINESS &&
-    sharedRoutes.some((route) => routePath.startsWith(route))
-  )
+  void userRole
+  void routePath
+  return false
 }

@@ -1,4 +1,4 @@
-export type AdminRole = 'head-admin' | 'admin'
+export type AdminRole = 'head-admin' | 'manager'
 
 export type AdminStatus = 'active' | 'inactive'
 

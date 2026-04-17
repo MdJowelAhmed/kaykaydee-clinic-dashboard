@@ -23,6 +23,7 @@ export function WaitingListDetailsModal({
       title="Appointment details"
       description={`Reference #${entry.serialNo}`}
       size="md"
+      className="bg-white"
     >
       <dl className="grid gap-3 text-sm sm:grid-cols-2">
         <div>

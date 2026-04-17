@@ -21,15 +21,11 @@ export const addBusinessIdToMockData = <T extends Record<string, unknown>>(
 export const filterDataByRole = <T extends Record<string, unknown>>(
   data: T[],
   userRole: string,
-  userBusinessId?: string,
-  businessIdField: string = 'businessId'
+  _userBusinessId?: string,
+  _businessIdField: string = 'businessId'
 ): T[] => {
   if (canAccessDashboard(userRole)) {
     return data
-  }
-
-  if (userRole === UserRole.BUSINESS && userBusinessId) {
-    return data.filter((item) => item[businessIdField] === userBusinessId)
   }
 
   return []
@@ -38,28 +34,23 @@ export const filterDataByRole = <T extends Record<string, unknown>>(
 export const canAccessItem = (
   item: Record<string, unknown>,
   userRole: string,
-  userBusinessId?: string,
-  businessIdField: string = 'businessId'
+  _userBusinessId?: string,
+  _businessIdField: string = 'businessId'
 ): boolean => {
   if (canAccessDashboard(userRole)) {
     return true
   }
 
-  if (userRole === UserRole.BUSINESS && userBusinessId) {
-    return item[businessIdField] === userBusinessId
-  }
-
+  void item
   return false
 }
 
 export const getRoleBadgeColor = (role: string): string => {
   switch (normalizeRoleKey(role)) {
-    case UserRole.SUPER_ADMIN:
+    case UserRole.HEAD_ADMIN:
       return 'bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-100'
-    case UserRole.ADMIN:
+    case UserRole.MANAGER:
       return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-    case UserRole.BUSINESS:
-      return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
     default:
       return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
   }
@@ -67,12 +58,10 @@ export const getRoleBadgeColor = (role: string): string => {
 
 export const getRoleDisplayName = (role: string): string => {
   switch (normalizeRoleKey(role)) {
-    case UserRole.SUPER_ADMIN:
-      return 'Super Admin'
-    case UserRole.ADMIN:
-      return 'Admin'
-    case UserRole.BUSINESS:
-      return 'Business'
+    case UserRole.HEAD_ADMIN:
+      return 'Head Admin'
+    case UserRole.MANAGER:
+      return 'Manager'
     default:
       return 'Unknown'
   }

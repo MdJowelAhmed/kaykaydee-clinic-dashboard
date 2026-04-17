@@ -15,7 +15,7 @@ export function ExercisesTable({ rows, onOpenDetails, onToggleEnabled }: Exercis
     <div className="w-full overflow-auto rounded-b-xl">
       <table className="w-full min-w-[800px]">
         <thead>
-          <tr className="bg-[#E9ECEF] text-slate-900">
+          <tr className="bg-primary text-white">
             <th className="px-6 py-4 text-left text-sm font-semibold first:rounded-tl-xl">
               Exercise Name
             </th>

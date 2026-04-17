@@ -26,6 +26,9 @@ import {
 } from './reportsData'
 import { reportIssueMonthKey } from './utils'
 import type { ReportEntry } from './types'
+import { ReportsUtilisationChart } from './components/ReportsUtilisationChart'
+import { ReportsRevenueChart } from './components/ReportsRevenueChart'
+import { REPORTS_WEEK_POINTS } from './reportsChartsData'
 
 export default function ReportsPage() {
   const { getParam, getNumberParam, setParams } = useUrlParams()
@@ -111,6 +114,15 @@ export default function ReportsPage() {
       transition={{ duration: 0.3 }}
       className="flex flex-col gap-6"
     >
+
+<div className="space-y-4">
+       
+
+       <div className="grid gap-4 lg:grid-cols-2">
+         <ReportsUtilisationChart data={REPORTS_WEEK_POINTS} />
+         <ReportsRevenueChart data={REPORTS_WEEK_POINTS} />
+       </div>
+     </div>
       <Card className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
         <CardContent className="p-5 sm:p-6">
           <div className="flex flex-col gap-4">
@@ -199,6 +211,8 @@ export default function ReportsPage() {
           </div>
         </CardContent>
       </Card>
+
+    
 
       <Card className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
         <CardContent className="p-0">

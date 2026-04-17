@@ -38,38 +38,28 @@ type DemoAccount = {
   businessName?: string
 }
 
-/** Mock auth: Super Admin + Admin + Business (business is rejected at sign-in). */
+/** Mock auth: Head Admin + Manager. */
 const demoAccounts: DemoAccount[] = [
   {
     id: '1',
-    email: 'superadmin@example.com',
+    email: 'headadmin@example.com',
     password: 'password',
-    displayRole: 'Super Admin',
-    role: 'super-admin',
-    firstName: 'Super Admin',
+    displayRole: 'Head Admin',
+    role: 'head-admin',
+    firstName: 'Head Admin',
   },
-  // {
-  //   id: '2',
-  //   email: 'admin@example.com',
-  //   password: 'password',
-  //   displayRole: 'Admin',
-  //   role: 'admin',
-  //   firstName: 'Admin',
-  // },
-  // {
-  //   id: '3',
-  //   email: 'business@example.com',
-  //   password: 'password',
-  //   displayRole: 'Business (no access)',
-  //   role: 'business',
-  //   firstName: 'Business',
-  //   businessId: 'business-demo-001',
-  //   businessName: 'Demo Property Co.',
-  // },
+  {
+    id: '2',
+    email: 'manager@example.com',
+    password: 'password',
+    displayRole: 'Manager',
+    role: 'manager',
+    firstName: 'Manager',
+  },
 ]
 
 const ACCESS_DENIED_MESSAGE =
-  'This dashboard is only for Super Admin and Admin accounts.'
+  'This dashboard is only for Head Admin and Manager accounts.'
 
 export default function Login() {
   const navigate = useNavigate()

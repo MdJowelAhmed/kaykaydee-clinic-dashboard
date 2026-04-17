@@ -1,5 +1,5 @@
 import { RootState } from '../store'
-import { UserRole, canAccessDashboard } from '@/types/roles'
+import { canAccessDashboard } from '@/types/roles'
 import { Car } from '@/types'
 
 export const selectRoleBasedCars = (state: RootState): Car[] => {
@@ -21,17 +21,13 @@ export const selectRoleBasedTotalPages = (state: RootState): number => {
 
 export const selectCanModifyItem = (
   state: RootState,
-  itemBusinessId?: string
+  _itemBusinessId?: string
 ): boolean => {
   const { user } = state.auth
   if (!user) return false
 
   if (canAccessDashboard(user.role)) {
     return true
-  }
-
-  if (user.role === UserRole.BUSINESS && user.businessId) {
-    return itemBusinessId === user.businessId
   }
 
   return false

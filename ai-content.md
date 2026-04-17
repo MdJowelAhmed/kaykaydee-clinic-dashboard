@@ -22,7 +22,7 @@
 │                          App.tsx                                 │
 │  Routes: /auth/* | / (Protected) | * (404)                        │
 │  Layouts: AuthLayout | DashboardLayout (ProtectedRoute)           │
-│  Access model: super-admin + admin (`UserRole.ADMIN`) only         │
+│  Access model: head-admin + manager only                          │
 └─────────────────────────────────────────────────────────────────┘
                                     │
         ┌───────────────────────────┼───────────────────────────┐
@@ -40,7 +40,7 @@
 - **API:** RTK Query (`baseApi` + `injectEndpoints`) → auto caching, invalidation
 - **Local State:** Redux slices (createSlice) → `useAppDispatch`, `useAppSelector`
 - **Auth:** `authSlice` + localStorage (token, user) → `loadUserFromStorage` on mount
-- **Access model:** dashboard shell for `super-admin` and `admin`; legacy API value `host` is normalized to `admin` in `authSlice`. `business` is rejected at login and by `DashboardAccessGuard`.
+- **Access model:** dashboard shell for `head-admin` and `manager`. Legacy API/storage values (`super-admin`, `admin`, `host`) are normalized to the new keys via `normalizeRoleKey` in `src/types/roles.ts`.
 
 ## 2. Folder Structure
 
@@ -132,20 +132,32 @@ src/
 
 - **Auth:** `/auth/login`, `/auth/forgot-password`, `/auth/verify-email`, `/auth/reset-password`
 - **Protected:** All routes under `/` require `ProtectedRoute`
-- **Access control:** Auth enum `super-admin`, `admin`, `business` — only the first two may use this dashboard; see `src/types/roles.ts` (`UserRole`, `ROUTE_PERMISSIONS`, `normalizeRoleKey`, `getDefaultRouteForRole`)
+- **Access control:** Auth enum `head-admin`, `manager` — both may use this dashboard; see `src/types/roles.ts` (`UserRole`, `ROUTE_PERMISSIONS`, `normalizeRoleKey`, `getDefaultRouteForRole`)
 - **Redirect:** After login, allowed roles → `/dashboard`; others → `/auth/login`
 
 ### Role Rules (auth enum)
 
-- **super-admin:** Full dashboard; super-admin-only nav items (users, clinics, subscriptions admin, FAQ, etc.)
-- **admin (`UserRole.ADMIN`, string `admin`):** Shared dashboard areas with super-admin where `allowedRoles` includes both; no separate “host” product role in code
-- **business:** Not permitted on this dashboard (blocked at login / guard). Legacy `host` from API/storage maps to `admin` via `normalizeAuthRole`
+- **head-admin (`UserRole.HEAD_ADMIN`, string `head-admin`):** Full dashboard; head-admin-only nav items (users, clinics, subscriptions admin, FAQ, etc.)
+- **manager (`UserRole.MANAGER`, string `manager`):** Shared dashboard areas with head-admin; cannot access head-admin-only areas
+- **legacy mapping:** `super-admin` → `head-admin`, `admin`/`host` → `manager` via `normalizeRoleKey`
 
 ### Modal Rules
 
 - Add/Edit/Delete modals per feature
 - Use `ModalWrapper` or Radix Dialog
 - State: `showAddModal`, `showEditModal`, `showDeleteModal` (local state)
+
+### Branch manage (new)
+
+- **Route**: `/branch-manage`
+- **UI**: Search + Status filter + “Add Branch” button; table actions (details/edit/delete)
+- **Dialogs**: `ModalWrapper` for add/edit/details, `ConfirmDialog` for delete confirmation
+
+### Doctors manage (new)
+
+- **Route**: `/doctors-manage`
+- **UI**: Search + Status filter + “Add Doctor” button; table columns (clinic/join date/branch/designation/status) and actions (details/edit/delete)
+- **Dialogs**: `ModalWrapper` for add/edit/details, `ConfirmDialog` for delete confirmation
 
 ---
 

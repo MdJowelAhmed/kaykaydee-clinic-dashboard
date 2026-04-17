@@ -13,7 +13,7 @@ function UnauthorizedRoleRedirect() {
     if (didLogout.current) return
     didLogout.current = true
     dispatch(logout())
-    toast.error('This dashboard is only for Super Admin and Admin users.')
+    toast.error('This dashboard is only for Head Admin and Manager users.')
   }, [dispatch])
 
   return <Navigate to="/auth/login" replace />
@@ -23,7 +23,7 @@ interface DashboardAccessGuardProps {
   children: ReactNode
 }
 
-/** Only Super Admin and Admin (`UserRole.ADMIN`) may use the dashboard shell. */
+/** Only Head Admin and Manager may use the dashboard shell. */
 export function DashboardAccessGuard({ children }: DashboardAccessGuardProps) {
   const { user, isAuthenticated } = useAppSelector((state) => state.auth)
   const location = useLocation()
