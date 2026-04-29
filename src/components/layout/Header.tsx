@@ -1,5 +1,5 @@
-import { useLocation, useNavigate } from 'react-router-dom'
-import { Menu, LogOut, User, Settings } from 'lucide-react'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { Menu, LogOut, Moon, Sun, User, Settings } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -11,41 +11,20 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { toggleSidebar } from '@/redux/slices/uiSlice'
+import { toggleSidebar, toggleTheme } from '@/redux/slices/uiSlice'
 import { logout } from '@/redux/slices/authSlice'
 import { getInitials } from '@/utils/formatters'
 import { NotificationPreviewDialog } from '@/components/layout/NotificationPreviewDialog'
 import { useState } from 'react'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
-
-const routeTitles: Record<string, string> = {
-  '/dashboard': 'Dashboard',
-  '/cars': 'Car List',
-  '/my-listing': 'My Listing',
-  '/booking-management': 'Booking Management',
-  '/calender': 'Calendar',
-  '/transactions-history': 'Transactions History',
-  '/reviews-ratings': 'Reviews & Ratings',
-  '/notification': 'Notification',
-  '/subscription-packages': 'Subscription Package',
-  '/support': 'Support',
-  '/client-management': 'Client Management',
-  '/agency-management': 'Agency Management',
-  '/users': 'User Management',
-  '/controller': 'Controller',
-  '/products': 'Product Management',
-  '/categories': 'Category Management',
-  '/settings/profile': 'Profile Settings',
-  '/settings/password': 'Change Password',
-  '/settings/terms': 'Terms & Conditions',
-  '/settings/privacy': 'Privacy Policy',
-  '/settings/about-us': 'About Us',
-}
+import { headerNav, routeTitles } from '@/components/layout/navigation'
+import { cn } from '@/utils/cn'
+import { hasRouteAccess } from '@/types/roles'
 
 export function Header() {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
-  // const { theme } = useAppSelector((state) => state.ui)
+  const { theme } = useAppSelector((state) => state.ui)
   const { user } = useAppSelector((state) => state.auth)
   const location = useLocation()
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
@@ -64,7 +43,7 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-30 h-20 shadow-md bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="fixed top-0 left-0 right-0 z-50 h-20 shadow-md bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-full items-center justify-between px-4 lg:px-6">
         {/* Left side */}
         <div className="flex items-center gap-4">
@@ -76,30 +55,46 @@ export function Header() {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <div>
+          {/* <div>
             <h1 className="text-xl font-semibold text-accent">{pageTitle}</h1>
             <p className="text-sm text-accent hidden sm:block">
               Welcome back, {user?.firstName || 'Admin'}
             </p>
+          </div> */}
+
+          <div className="text-primary text-white font-bold text-lg">
+            <img src="/logo.png" alt="Booking Dashboard" className="h-16 w-28" />
+            {/* <img src="/assets/logo3.png" alt="Booking Dashboard" className="h-8 w-20 object-contain" /> */}
           </div>
         </div>
 
-        {/* Center - Search (hidden on mobile) */}
-        {/* <div className="hidden md:flex flex-1 max-w-md mx-8">
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search anything..."
-              className="pl-9 bg-muted/50"
-            />
+        {/* Center - Top routes (scrollable) */}
+        <nav className="hidden lg:flex flex-1 justify-center px-6">
+          <div className="flex items-center gap-10 overflow-x-auto scrollbar-thin">
+            {headerNav
+              .filter((item) => (user ? hasRouteAccess(user.role, item.href) : false))
+              .map((item) => (
+                <NavLink
+                  key={item.href}
+                  to={item.href}
+                  className={({ isActive }) =>
+                    cn(
+                      'px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors',
+                      'text-muted-foreground hover:text-accent hover:bg-muted/30',
+                      isActive && 'text-accent bg-muted/40'
+                    )
+                  }
+                >
+                  {item.title}
+                </NavLink>
+              ))}
           </div>
-        </div> */}
+        </nav>
 
         {/* Right side */}
         <div className="flex items-center gap-5">
           {/* Theme toggle */}
-          {/* <Button
+          <Button
             variant="ghost"
             size="icon"
             onClick={() => dispatch(toggleTheme())}
@@ -109,7 +104,7 @@ export function Header() {
             ) : (
               <Sun className="h-5 w-5 text-accent" />
             )}
-          </Button> */}
+          </Button>
 
           {/* Notifications — anchored popover under bell */}
           <NotificationPreviewDialog />

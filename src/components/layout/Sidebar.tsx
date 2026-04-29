@@ -253,7 +253,7 @@ export function Sidebar() {
       {/* Mobile overlay */}
       <div
         className={cn(
-          'fixed inset-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden transition-opacity',
+          'fixed inset-x-0 bottom-0 top-20 z-40 bg-black/50 backdrop-blur-sm lg:hidden transition-opacity',
           sidebarCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
         )}
         onClick={() => dispatch(toggleSidebar())}
@@ -262,7 +262,7 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed top-0 left-0 z-50 h-full bg-card shadow-xl transition-all duration-300',
+          'fixed top-20 left-0 z-40 h-[calc(100vh-5rem)] bg-card shadow-xl transition-all duration-300',
           'flex flex-col',
           sidebarCollapsed ? 'w-[80px]' : 'w-[280px]',
           'lg:translate-x-0',
@@ -270,7 +270,7 @@ export function Sidebar() {
         )}
       >
         {/* Logo */}
-        <div className="flex items-center justify-between h-36 px-4 border-b">
+        {/* <div className="flex items-center justify-between h-36 px-4 border-b">
           <div className="flex items-center gap-3">
             <div className="h-32 w-full mx-auto rounded-lg flex items-center justify-center ">
               <div className="text-primary text-white font-bold text-lg">
@@ -278,11 +278,9 @@ export function Sidebar() {
                 <img src="/assets/logo3.png" alt="Booking Dashboard" className="h-8 w-20 object-contain" />
               </div>
             </div>
-            {/* {!sidebarCollapsed && (
-              <span className="font-display font-bold text-xl text-accent">Dashboard</span>
-            )} */}
+        
           </div>
-          {/* <Button
+          <Button
             variant="ghost"
             size="icon-sm"
             onClick={() => dispatch(toggleSidebar())}
@@ -293,8 +291,8 @@ export function Sidebar() {
             ) : (
               <ChevronLeft className="h-4 w-4 text-accent" />
             )}
-          </Button> */}
-        </div>
+          </Button>
+        </div> */}
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto scrollbar-thin p-3 space-y-1">

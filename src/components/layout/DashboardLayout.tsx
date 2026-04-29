@@ -9,15 +9,15 @@ export default function DashboardLayout() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Header />
       <Sidebar />
       <div
         className={cn(
-          'transition-all duration-300',
+          'pt-20 transition-all duration-300',
           sidebarCollapsed ? 'lg:ml-[80px]' : 'lg:ml-[280px]'
         )}
       >
-        <Header />
-        <main className="p-6 lg:p-8 bg-[#F0F8FF] min-h-[calc(100vh-80px)]">
+        <main className="p-6 lg:p-8 bg-muted/10 min-h-[calc(100vh-80px)]">
           <Outlet />
         </main>
       </div>

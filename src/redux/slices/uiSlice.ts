@@ -1,6 +1,26 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { ModalType } from '@/types'
 
+const THEME_STORAGE_KEY = 'theme'
+type ThemeMode = 'light' | 'dark'
+
+function getInitialTheme(): ThemeMode {
+  if (typeof window === 'undefined') return 'light'
+  const stored = window.localStorage.getItem(THEME_STORAGE_KEY)
+  return stored === 'dark' ? 'dark' : 'light'
+}
+
+function applyThemeToDom(theme: ThemeMode) {
+  if (typeof document === 'undefined') return
+  if (theme === 'dark') document.documentElement.classList.add('dark')
+  else document.documentElement.classList.remove('dark')
+}
+
+function persistTheme(theme: ThemeMode) {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(THEME_STORAGE_KEY, theme)
+}
+
 interface ModalState {
   isOpen: boolean
   type: ModalType
@@ -10,7 +30,7 @@ interface ModalState {
 interface UIState {
   modal: ModalState
   sidebarCollapsed: boolean
-  theme: 'light' | 'dark'
+  theme: ThemeMode
   globalLoading: boolean
   toast: {
     isOpen: boolean
@@ -26,7 +46,7 @@ const initialState: UIState = {
     data: null,
   },
   sidebarCollapsed: false,
-  theme: 'light',
+  theme: getInitialTheme(),
   globalLoading: false,
   toast: {
     isOpen: false,
@@ -34,6 +54,8 @@ const initialState: UIState = {
     message: '',
   },
 }
+
+applyThemeToDom(initialState.theme)
 
 const uiSlice = createSlice({
   name: 'ui',
@@ -55,22 +77,16 @@ const uiSlice = createSlice({
     setSidebarCollapsed: (state, action: PayloadAction<boolean>) => {
       state.sidebarCollapsed = action.payload
     },
-    setTheme: (state, action: PayloadAction<'light' | 'dark'>) => {
+    setTheme: (state, action: PayloadAction<ThemeMode>) => {
       state.theme = action.payload
-      if (action.payload === 'dark') {
-        document.documentElement.classList.add('dark')
-      } else {
-        document.documentElement.classList.remove('dark')
-      }
+      applyThemeToDom(action.payload)
+      persistTheme(action.payload)
     },
     toggleTheme: (state) => {
       const newTheme = state.theme === 'light' ? 'dark' : 'light'
       state.theme = newTheme
-      if (newTheme === 'dark') {
-        document.documentElement.classList.add('dark')
-      } else {
-        document.documentElement.classList.remove('dark')
-      }
+      applyThemeToDom(newTheme)
+      persistTheme(newTheme)
     },
     setGlobalLoading: (state, action: PayloadAction<boolean>) => {
       state.globalLoading = action.payload
