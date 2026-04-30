@@ -41,38 +41,38 @@ export function ClinicsInvoiceTable({
     <div className="w-full overflow-x-auto scrollbar-thin rounded-b-2xl">
       <table className="w-full min-w-[1200px]">
         <thead>
-          <tr className="bg-muted/35 dark:bg-muted/25">
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent first:rounded-tl-xl sm:px-6 sm:py-4">
+          <tr className="bg-primary text-accent-foreground">
+            <th className="px-4 py-3 text-left text-sm font-semibold  first:rounded-tl-xl sm:px-6 sm:py-4">
               S. No
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">
+            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
               Service
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">
+            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
               Patient Name
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">
+            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
               Patient ID
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">
+            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
               Doctor
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">
+            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
               Date
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">
+            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
               Price
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">
+            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
               Due
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">
+            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
               Paid
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">
+            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
               Status
             </th>
-            <th className="px-4 py-3 text-right text-sm font-semibold text-accent last:rounded-tr-xl sm:px-6 sm:py-4">
+            <th className="px-4 py-3 text-right text-sm font-semibold  last:rounded-tr-xl sm:px-6 sm:py-4">
               Action
             </th>
           </tr>
@@ -97,19 +97,19 @@ export function ClinicsInvoiceTable({
                   <span className="text-sm font-medium text-accent">#{row.serialNo}</span>
                 </td>
                 <td className="px-4 py-3 sm:px-6 sm:py-4">
-                  <span className="text-sm text-accent/80">{row.service}</span>
+                  <span className="text-sm text-accent">{row.service}</span>
                 </td>
                 <td className="px-4 py-3 sm:px-6 sm:py-4">
-                  <span className="text-sm text-accent/80">{row.patientName}</span>
+                  <span className="text-sm text-accent">{row.patientName}</span>
                 </td>
                 <td className="px-4 py-3 sm:px-6 sm:py-4">
-                  <span className="text-sm text-accent/80">{row.patientId}</span>
+                  <span className="text-sm text-accent">{row.patientId}</span>
                 </td>
                 <td className="px-4 py-3 sm:px-6 sm:py-4">
-                  <span className="text-sm text-accent/80">{row.doctor}</span>
+                  <span className="text-sm text-accent">{row.doctor}</span>
                 </td>
                 <td className="px-4 py-3 sm:px-6 sm:py-4">
-                  <span className="whitespace-nowrap text-sm text-accent/80">
+                  <span className="whitespace-nowrap text-sm text-accent">
                     {formatInvoiceDate(row.dateIso)}
                   </span>
                 </td>
@@ -162,7 +162,7 @@ export function ClinicsInvoiceTable({
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9 rounded-full text-accent hover:bg-muted"
+                      className="h-9 w-9 rounded-full text-accent-foreground hover:bg-muted"
                       aria-label="View details"
                       onClick={() => onOpenDetails(row)}
                     >
