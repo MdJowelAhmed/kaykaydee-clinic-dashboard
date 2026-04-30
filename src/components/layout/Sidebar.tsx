@@ -92,18 +92,7 @@ const navItems: NavItem[] = [
     icon: Dumbbell,
     allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
   },
-  {
-    title: 'Branch manage',
-    href: '/branch-manage',
-    icon: GitBranch,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  {
-    title: 'Doctors manage',
-    href: '/doctors-manage',
-    icon: Stethoscope,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
+
   // {
   //   title: 'User Management',
   //   href: '/users',
@@ -158,6 +147,18 @@ const navItems: NavItem[] = [
   //   icon: Layers,
   //   allowedRoles: [UserRole.HEAD_ADMIN],
   // },
+  {
+    title: 'Branch manage',
+    href: '/branch-manage',
+    icon: GitBranch,
+    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  },
+  {
+    title: 'Doctors manage',
+    href: '/doctors-manage',
+    icon: Stethoscope,
+    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  },
   {
     title: 'Admin Manage',
     href: '/admin-manage',

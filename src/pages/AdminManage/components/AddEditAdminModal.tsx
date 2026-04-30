@@ -137,11 +137,9 @@ export function AddEditAdminModal({ open, onClose, mode, admin, onSave }: AddEdi
         </div>
 
         <div className="flex justify-end gap-3 pt-2">
-          <Button type="button" variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
+          
           <Button type="submit" className="bg-secondary hover:bg-secondary/90 text-white">
-            {mode === 'create' ? 'Add' : 'Save'}
+            {mode === 'create' ? 'Add Admin' : 'Save Admin'}
           </Button>
         </div>
       </form>
