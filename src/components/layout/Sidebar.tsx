@@ -20,6 +20,7 @@ import {
   Stethoscope,
   Calendar,
   Receipt,
+  Package,
 } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -139,12 +140,12 @@ const navItems: NavItem[] = [
   //   allowedRoles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.BUSINESS],
   // },
 
-  // {
-  //   title: 'Subscription Package',
-  //   href: '/subscription-packages',
-  //   icon: Package,
-  //   allowedRoles: [UserRole.SUPER_ADMIN],
-  // },
+  {
+    title: 'Subscription Package',
+    href: '/subscription-packages',
+    icon: Package,
+    allowedRoles: [UserRole.HEAD_ADMIN],
+  },
   // {
   //   title: 'Subscription Invoice',
   //   href: '/subscription-invoice',

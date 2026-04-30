@@ -38,7 +38,7 @@ export function SubscriptionPackageCard({
         <p className="text-sm text-muted-foreground">{pkg.billingLabel}</p>
       </div>
 
-      <ul className="mt-6 flex flex-1 flex-col gap-3 text-sm text-slate-700">
+      <ul className="mt-6 flex flex-1 flex-col gap-10 text-sm text-slate-700">
         {pkg.featureLabels.map((label, i) => {
           const ok = pkg.features[i]
           return (
