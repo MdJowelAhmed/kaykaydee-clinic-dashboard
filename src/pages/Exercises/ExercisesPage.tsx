@@ -95,7 +95,7 @@ export default function ExercisesPage() {
         Connect to Physitrack to view and follow your prescribed exercises
       </div>
 
-      <Card className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+      <Card className="overflow-hidden rounded-2xl   bg-card shadow-sm">
         <CardContent className="p-5 sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <h1 className="text-xl font-bold text-slate-800 shrink-0">Exercises</h1>
@@ -142,7 +142,7 @@ export default function ExercisesPage() {
         </CardContent>
       </Card>
 
-      <Card className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+      <Card className="overflow-hidden rounded-2xl border bg-card shadow-sm">
         <CardContent className="p-0">
           <ExercisesTable
             rows={paginatedData}

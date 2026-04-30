@@ -18,24 +18,24 @@ export function BranchDetailsModal({ entry, open, onOpenChange }: BranchDetailsM
       title="Branch details"
       description={entry.branchName}
       size="md"
-      className="bg-white rounded-2xl"
+      className="bg-card rounded-2xl"
     >
       <dl className="grid gap-3 text-sm sm:grid-cols-2">
         <div className="sm:col-span-2">
           <dt className="text-muted-foreground">Branch name</dt>
-          <dd className="font-medium text-slate-900">{entry.branchName}</dd>
+          <dd className="font-medium text-accent">{entry.branchName}</dd>
         </div>
         <div>
           <dt className="text-muted-foreground">Join date</dt>
-          <dd className="font-medium text-slate-900">{formatBranchJoinDate(entry.joinDate)}</dd>
+          <dd className="font-medium text-accent">{formatBranchJoinDate(entry.joinDate)}</dd>
         </div>
         <div>
           <dt className="text-muted-foreground">Email</dt>
-          <dd className="font-medium text-slate-900 break-all">{entry.email}</dd>
+          <dd className="font-medium text-accent break-all">{entry.email}</dd>
         </div>
         <div>
           <dt className="text-muted-foreground">Status</dt>
-          <dd className="font-medium text-slate-900 capitalize">{entry.status}</dd>
+          <dd className="font-medium text-accent capitalize">{entry.status}</dd>
         </div>
       </dl>
     </ModalWrapper>

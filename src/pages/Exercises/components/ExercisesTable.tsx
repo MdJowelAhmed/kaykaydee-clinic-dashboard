@@ -15,7 +15,7 @@ export function ExercisesTable({ rows, onOpenDetails, onToggleEnabled }: Exercis
     <div className="w-full overflow-auto rounded-b-xl">
       <table className="w-full min-w-[800px]">
         <thead>
-          <tr className="bg-primary text-white">
+          <tr className="bg-primary text-accent-foreground">
             <th className="px-6 py-4 text-left text-sm font-semibold first:rounded-tl-xl">
               Exercise Name
             </th>
@@ -27,10 +27,10 @@ export function ExercisesTable({ rows, onOpenDetails, onToggleEnabled }: Exercis
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-200 bg-white">
+        <tbody className="divide-y divide-slate-200 bg-card text-accent-foreground">
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
+              <td colSpan={5} className="px-6 py-8 text-center text-accent">
                 No exercises found
               </td>
             </tr>
@@ -41,16 +41,16 @@ export function ExercisesTable({ rows, onOpenDetails, onToggleEnabled }: Exercis
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.02 * index }}
-                className="transition-colors hover:bg-slate-50/90"
+                className=" "
               >
                 <td className="px-6 py-4">
-                  <span className="text-sm font-medium text-slate-900">{row.exerciseName}</span>
+                  <span className="text-sm font-medium text-accent">{row.exerciseName}</span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="text-sm text-slate-800">{row.categoryName}</span>
+                  <span className="text-sm text-accent">{row.categoryName}</span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="text-sm text-slate-800">{row.description}</span>
+                  <span className="text-sm text-accent">{row.description}</span>
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
@@ -60,7 +60,7 @@ export function ExercisesTable({ rows, onOpenDetails, onToggleEnabled }: Exercis
                       className="data-[state=unchecked]:bg-[#1A2B4C] data-[state=checked]:bg-green-600"
                       aria-label={row.enabled ? 'Disable exercise' : 'Enable exercise'}
                     />
-                    <span className="text-sm text-slate-800">
+                    <span className="text-sm text-accent">
                       {row.enabled ? 'Enable' : 'Disable'}
                     </span>
                   </div>
@@ -71,7 +71,7 @@ export function ExercisesTable({ rows, onOpenDetails, onToggleEnabled }: Exercis
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9 rounded-full text-slate-600 hover:bg-slate-200/80 hover:text-slate-900"
+                      className="h-9 w-9 rounded-full text-accent hover:bg-slate-200/80 hover:text-accent"
                       aria-label="View details"
                       onClick={() => onOpenDetails(row)}
                     >
