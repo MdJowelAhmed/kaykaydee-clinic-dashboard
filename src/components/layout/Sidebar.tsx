@@ -67,6 +67,12 @@ const navItems: NavItem[] = [
     allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
   },
   {
+    title: 'Contact list',
+    href: '/contact-list',
+    icon: Contact,
+    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  },
+  {
     title: 'Reports',
     href: '/reports',
     icon: FileBarChart,

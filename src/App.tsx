@@ -39,6 +39,10 @@ import ClientListPage from './pages/ClientList/ClientListPage'
 import ClientDetailsPage from './pages/ClientList/ClientDetailsPage'
 import ClientFormPage from './pages/ClientList/ClientFormPage'
 import { ClientListLayout } from './pages/ClientList/ClientListLayout'
+import ContactListPage from './pages/ContactList/ContactListPage'
+import ContactDetailsPage from './pages/ContactList/ContactDetailsPage'
+import ContactFormPage from './pages/ContactList/ContactFormPage'
+import { ContactListLayout } from './pages/ContactList/ContactListLayout'
 import ReportsPage from './pages/Reports/ReportsPage'
 import ExercisesPage from './pages/Exercises/ExercisesPage'
 import BranchManagePage from './pages/BranchManage/BranchManagePage'
@@ -208,6 +212,20 @@ function App() {
             <Route path="new" element={<ClientFormPage />} />
             <Route path=":id/edit" element={<ClientFormPage />} />
             <Route path=":id" element={<ClientDetailsPage />} />
+          </Route>
+
+          <Route
+            path="contact-list"
+            element={
+              <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
+                <ContactListLayout />
+              </RoleBasedRoute>
+            }
+          >
+            <Route index element={<ContactListPage />} />
+            <Route path="new" element={<ContactFormPage />} />
+            <Route path=":id/edit" element={<ContactFormPage />} />
+            <Route path=":id" element={<ContactDetailsPage />} />
           </Route>
 
           <Route
