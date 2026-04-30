@@ -87,8 +87,8 @@ export default function ExercisesPage() {
     >
       <div
         className={cn(
-          'rounded-2xl border border-red-200/80 bg-red-50 px-4 py-3 sm:px-5',
-          'text-sm font-medium text-red-700 sm:text-base'
+          'rounded-2xl border  bg-card px-4 py-3 sm:px-5',
+          'text-sm font-medium text-accent sm:text-base'
         )}
         role="status"
       >
@@ -98,20 +98,20 @@ export default function ExercisesPage() {
       <Card className="overflow-hidden rounded-2xl   bg-card shadow-sm">
         <CardContent className="p-5 sm:p-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <h1 className="text-xl font-bold text-slate-800 shrink-0">Exercises</h1>
+            <h1 className="text-xl font-bold text-accent shrink-0">Exercises</h1>
             <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
               <SearchInput
                 value={search}
                 onChange={handleSearch}
                 placeholder="Search here"
                 className="w-full min-w-0 sm:max-w-md lg:max-w-xl"
-                inputClassName="h-11 rounded-xl border-slate-200 bg-white shadow-sm"
+                inputClassName="h-11 rounded-xl   shadow-sm"
               />
               <Select
                 value={enableFilter}
                 onValueChange={(v) => setParams({ enable: v, page: 1 })}
               >
-                <SelectTrigger className="h-11 w-full shrink-0 rounded-xl border-slate-200 bg-white shadow-sm sm:w-[140px]">
+                <SelectTrigger className="h-11 w-full shrink-0 rounded-xl   shadow-sm sm:w-[140px] bg-background text-accent">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -126,7 +126,7 @@ export default function ExercisesPage() {
                 value={category}
                 onValueChange={(v) => setParams({ category: v, page: 1 })}
               >
-                <SelectTrigger className="h-11 w-full shrink-0 rounded-xl border-slate-200 bg-white shadow-sm sm:w-[140px]">
+                <SelectTrigger className="h-11 w-full shrink-0 rounded-xl   shadow-sm sm:w-[140px] bg-background text-accent">
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
