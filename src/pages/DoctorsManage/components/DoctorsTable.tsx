@@ -11,7 +11,7 @@ function StatusPill({ status }: { status: DoctorEntry['status'] }) {
     <span
       className={cn(
         'inline-flex min-w-[84px] justify-center rounded-md px-3 py-1 text-xs font-semibold',
-        isActive ? 'bg-[#0F1F44] text-white' : 'bg-slate-200 text-slate-700'
+        isActive ? 'bg-secondary text-white' : 'bg-muted text-muted-foreground'
       )}
     >
       {isActive ? 'Active' : 'Inactive'}
@@ -21,7 +21,7 @@ function StatusPill({ status }: { status: DoctorEntry['status'] }) {
 
 function DesignationPill({ value }: { value: string }) {
   return (
-    <span className="inline-flex rounded-md bg-slate-200/70 px-3 py-1 text-xs font-medium text-slate-700">
+    <span className="inline-flex rounded-md bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
       {value}
     </span>
   )
@@ -36,26 +36,26 @@ interface DoctorsTableProps {
 
 export function DoctorsTable({ rows, onInfo, onEdit, onDelete }: DoctorsTableProps) {
   return (
-    <div className="w-full overflow-auto rounded-b-xl">
+    <div className="w-full overflow-x-auto scrollbar-thin rounded-b-2xl">
       <table className="w-full min-w-[980px]">
         <thead>
-          <tr className="bg-primary text-white">
-            <th className="px-6 py-4 text-left text-sm font-semibold first:rounded-tl-xl">
+          <tr className="bg-muted/35 dark:bg-muted/25">
+            <th className="px-4 py-3 text-left text-sm font-semibold text-accent first:rounded-tl-xl sm:px-6 sm:py-4">
               clinic Name
             </th>
-            <th className="px-6 py-4 text-left text-sm font-semibold">Join Date</th>
-            <th className="px-6 py-4 text-left text-sm font-semibold">Branch</th>
-            <th className="px-6 py-4 text-left text-sm font-semibold">Designation</th>
-            <th className="px-6 py-4 text-left text-sm font-semibold">Status</th>
-            <th className="px-6 py-4 text-right text-sm font-semibold last:rounded-tr-xl">
+            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">Join Date</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">Branch</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">Designation</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">Status</th>
+            <th className="px-4 py-3 text-right text-sm font-semibold text-accent last:rounded-tr-xl sm:px-6 sm:py-4">
               Action
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-200 bg-white">
+        <tbody className="divide-y divide-border bg-card">
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={6} className="px-6 py-10 text-center text-slate-500 text-sm">
+              <td colSpan={6} className="px-6 py-10 text-center text-muted-foreground text-sm">
                 No doctors found
               </td>
             </tr>
@@ -66,32 +66,32 @@ export function DoctorsTable({ rows, onInfo, onEdit, onDelete }: DoctorsTablePro
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: Math.min(0.02 * index, 0.25) }}
-                className="transition-colors hover:bg-slate-50/90"
+                className="transition-colors hover:bg-muted/15"
               >
-                <td className="px-6 py-4">
-                  <span className="text-sm text-slate-800">{row.clinicName}</span>
+                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                  <span className="text-sm text-accent">{row.clinicName}</span>
                 </td>
-                <td className="px-6 py-4">
-                  <span className="text-sm text-slate-800 whitespace-nowrap">
+                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                  <span className="text-sm text-accent whitespace-nowrap">
                     {formatDoctorJoinDate(row.joinDate)}
                   </span>
                 </td>
-                <td className="px-6 py-4">
-                  <span className="text-sm text-slate-800">{row.branch}</span>
+                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                  <span className="text-sm text-accent">{row.branch}</span>
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-4 py-3 sm:px-6 sm:py-4">
                   <DesignationPill value={row.designation} />
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-4 py-3 sm:px-6 sm:py-4">
                   <StatusPill status={row.status} />
                 </td>
-                <td className="px-6 py-4">
-                  <div className="flex justify-end gap-2">
+                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                  <div className="flex justify-end gap-1">
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9 rounded-full text-slate-600 hover:bg-slate-200/80 hover:text-slate-900"
+                      className="h-9 w-9 rounded-full text-accent hover:bg-muted"
                       aria-label="View details"
                       onClick={() => onInfo(row)}
                     >
@@ -101,7 +101,7 @@ export function DoctorsTable({ rows, onInfo, onEdit, onDelete }: DoctorsTablePro
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9 rounded-full text-slate-600 hover:bg-slate-200/80 hover:text-slate-900"
+                      className="h-9 w-9 rounded-full text-accent hover:bg-muted"
                       aria-label="Edit doctor"
                       onClick={() => onEdit(row)}
                     >
@@ -111,7 +111,7 @@ export function DoctorsTable({ rows, onInfo, onEdit, onDelete }: DoctorsTablePro
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9 rounded-full text-slate-600 hover:bg-slate-200/80 hover:text-rose-700"
+                      className="h-9 w-9 rounded-full text-destructive hover:bg-destructive/10"
                       aria-label="Delete doctor"
                       onClick={() => onDelete(row)}
                     >

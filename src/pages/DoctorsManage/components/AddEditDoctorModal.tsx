@@ -70,7 +70,7 @@ export function AddEditDoctorModal({ open, onClose, mode, entry, onSave }: AddEd
       onClose={onClose}
       title={mode === 'create' ? 'Add doctor' : 'Edit doctor'}
       size="md"
-      className="bg-white rounded-2xl"
+      className="bg-card rounded-2xl"
     >
       <form onSubmit={handleSubmit(submit)} className="space-y-4 pt-2">
         <FormInput label="Clinic name" required {...register('clinicName')} error={errors.clinicName?.message} />
@@ -100,7 +100,7 @@ export function AddEditDoctorModal({ open, onClose, mode, entry, onSave }: AddEd
           <Button type="button" variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button type="submit" className="bg-[#0F1F44] hover:bg-[#0F1F44]/90 text-white">
+          <Button type="submit" className="bg-secondary hover:bg-secondary/90 text-white">
             {mode === 'create' ? 'Add' : 'Save'}
           </Button>
         </div>
