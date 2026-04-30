@@ -19,6 +19,7 @@ import {
   GitBranch,
   Stethoscope,
   Calendar,
+  Receipt,
 } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
@@ -70,6 +71,12 @@ const navItems: NavItem[] = [
     title: 'Contact list',
     href: '/contact-list',
     icon: Contact,
+    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  },
+  {
+    title: 'Clinics Invoice',
+    href: '/clinics-invoice',
+    icon: Receipt,
     allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
   },
   {

@@ -68,6 +68,8 @@ export const ROUTE_PERMISSIONS: Record<string, UserRole[]> = {
   '/client-list/': ALL_DASHBOARD_ROLES,
   '/contact-list': ALL_DASHBOARD_ROLES,
   '/contact-list/': ALL_DASHBOARD_ROLES,
+  '/clinics-invoice': ALL_DASHBOARD_ROLES,
+  '/clinics-invoice/': ALL_DASHBOARD_ROLES,
   '/reports': ALL_DASHBOARD_ROLES,
   '/exercises': ALL_DASHBOARD_ROLES,
   '/settings/profile': ALL_DASHBOARD_ROLES,

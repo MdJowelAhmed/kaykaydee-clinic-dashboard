@@ -43,6 +43,7 @@ import ContactListPage from './pages/ContactList/ContactListPage'
 import ContactDetailsPage from './pages/ContactList/ContactDetailsPage'
 import ContactFormPage from './pages/ContactList/ContactFormPage'
 import { ContactListLayout } from './pages/ContactList/ContactListLayout'
+import ClinicsInvoicePage from './pages/ClinicsInvoice/ClinicsInvoicePage'
 import ReportsPage from './pages/Reports/ReportsPage'
 import ExercisesPage from './pages/Exercises/ExercisesPage'
 import BranchManagePage from './pages/BranchManage/BranchManagePage'
@@ -227,6 +228,15 @@ function App() {
             <Route path=":id/edit" element={<ContactFormPage />} />
             <Route path=":id" element={<ContactDetailsPage />} />
           </Route>
+
+          <Route
+            path="clinics-invoice"
+            element={
+              <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
+                <ClinicsInvoicePage />
+              </RoleBasedRoute>
+            }
+          />
 
           <Route
             path="reports"
