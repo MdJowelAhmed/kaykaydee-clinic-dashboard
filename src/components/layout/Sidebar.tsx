@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import {
-  LayoutDashboard,
+  // LayoutDashboard,
   Settings,
   User,
   Lock,
@@ -12,13 +12,13 @@ import {
   Sparkles,
   LogOut,
   HelpCircle,
-  ClipboardList,
-  Contact,
-  FileBarChart,
+  // ClipboardList,
+  // Contact,
+  // FileBarChart,
   Dumbbell,
   GitBranch,
   Stethoscope,
-  Calendar,
+  // Calendar,
   Receipt,
   Package,
 } from 'lucide-react'
@@ -44,46 +44,47 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  {
-    title: 'Dashboard',
-    href: '/dashboard',
-    icon: LayoutDashboard,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  {
-    title: 'Calendar',
-    href: '/calender',
-    icon: Calendar,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  {
-    title: 'Waiting list',
-    href: '/waiting-list',
-    icon: ClipboardList,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  {
-    title: 'Client list',
-    href: '/client-list',
-    icon: Contact,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  {
-    title: 'Contact list',
-    href: '/contact-list',
-    icon: Contact,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
+  // {
+  //   title: 'Dashboard',
+  //   href: '/dashboard',
+  //   icon: LayoutDashboard,
+  //   allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  // },
+  // {
+  //   title: 'Calendar',
+  //   href: '/calender',
+  //   icon: Calendar,
+  //   allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  // },
+  // {
+  //   title: 'Waiting list',
+  //   href: '/waiting-list',
+  //   icon: ClipboardList,
+  //   allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  // },
+  // {
+  //   title: 'Client list',
+  //   href: '/client-list',
+  //   icon: Contact,
+  //   allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  // },
+  // {
+  //   title: 'Contact list',
+  //   href: '/contact-list',
+  //   icon: Contact,
+  //   allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  // },
+ 
+  // {
+  //   title: 'Reports',
+  //   href: '/reports',
+  //   icon: FileBarChart,
+  //   allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  // },
   {
     title: 'Clinics Invoice',
     href: '/clinics-invoice',
     icon: Receipt,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  {
-    title: 'Reports',
-    href: '/reports',
-    icon: FileBarChart,
     allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
   },
   {
