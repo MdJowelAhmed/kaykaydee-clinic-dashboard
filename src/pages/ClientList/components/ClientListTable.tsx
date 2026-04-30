@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Pencil, Trash2 } from 'lucide-react'
+import { Eye, Pencil, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { truncateText } from '@/utils/formatters'
 import type { ClientListEntry } from '../types'
@@ -75,6 +75,16 @@ export function ClientListTable({ rows, onOpenProfile, onEdit, onDelete }: Clien
                 </td>
                 <td className="px-4 py-3 sm:px-6 sm:py-4">
                   <div className="flex justify-end gap-1">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-9 w-9 rounded-full text-accent hover:bg-muted"
+                      aria-label="View details"
+                      onClick={() => onOpenProfile(row)}
+                    >
+                      <Eye className="h-4 w-4" strokeWidth={2} />
+                    </Button>
                     <Button
                       type="button"
                       variant="ghost"
