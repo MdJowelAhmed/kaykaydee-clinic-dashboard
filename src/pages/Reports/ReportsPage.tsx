@@ -1,7 +1,7 @@
-import { useMemo, useState, useCallback } from 'react'
+import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Plus } from 'lucide-react'
-import { toast } from 'sonner'
+import { Paperclip, Send } from 'lucide-react'
+import { format } from 'date-fns'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Select,
@@ -11,101 +11,35 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
-import { SearchInput } from '@/components/common/SearchInput'
-import { Pagination } from '@/components/common/Pagination'
-import { useUrlParams } from '@/hooks/useUrlState'
-import { ReportsTable } from './components/ReportsTable'
-import { ReportDetailsModal } from './components/ReportDetailsModal'
-import { AddReportModal } from './components/AddReportModal'
-import {
-  INITIAL_REPORTS,
-  REPORT_STATUS_OPTIONS,
-  REPORT_DATE_OPTIONS,
-  getServiceOptionsFromReports,
-  getReportByOptionsFromReports,
-} from './reportsData'
-import { reportIssueMonthKey } from './utils'
-import type { ReportEntry } from './types'
-import { ReportsUtilisationChart } from './components/ReportsUtilisationChart'
-import { ReportsRevenueChart } from './components/ReportsRevenueChart'
-import { REPORTS_WEEK_POINTS } from './reportsChartsData'
+import { Input } from '@/components/ui/input'
+import { cn } from '@/utils/cn'
 
 export default function ReportsPage() {
-  const { getParam, getNumberParam, setParams } = useUrlParams()
+  const [tab, setTab] = useState<'clients' | 'doctors' | 'branch'>('branch')
+  const todayLabel = useMemo(() => format(new Date(), 'd, MMM yyyy').toLowerCase(), [])
 
-  const search = getParam('search', '')
-  const service = getParam('service', 'all')
-  const status = getParam('status', 'all')
-  const reportBy = getParam('reportBy', 'all')
-  const dateMonth = getParam('date', 'all')
-  const page = getNumberParam('page', 1)
-  const limit = getNumberParam('limit', 15)
+  const [toValue, setToValue] = useState('')
+  const [patientName, setPatientName] = useState('')
+  const [patientId, setPatientId] = useState('')
+  const [reportType, setReportType] = useState('')
+  const [reportNo, setReportNo] = useState('')
+  const [subject, setSubject] = useState('')
+  const [note, setNote] = useState('')
+  const [fileName, setFileName] = useState<string | null>(null)
 
-  const [entries, setEntries] = useState<ReportEntry[]>(INITIAL_REPORTS)
-  const [detailsEntry, setDetailsEntry] = useState<ReportEntry | null>(null)
-  const [detailsOpen, setDetailsOpen] = useState(false)
-  const [addOpen, setAddOpen] = useState(false)
+  const isBranch = tab === 'branch'
+  const toPlaceholder = isBranch ? 'Add Branch' : tab === 'doctors' ? 'Add Doctors' : 'Add Clients'
 
-  const serviceOptions = useMemo(() => getServiceOptionsFromReports(entries), [entries])
-  const reportByOptions = useMemo(() => getReportByOptionsFromReports(entries), [entries])
-
-  const filteredList = useMemo(() => {
-    const q = search.trim().toLowerCase()
-    return entries.filter((row) => {
-      if (service !== 'all' && row.service !== service) return false
-      if (status !== 'all' && row.status !== status) return false
-      if (reportBy !== 'all' && row.reportBy !== reportBy) return false
-      if (dateMonth !== 'all' && reportIssueMonthKey(row.issueDate) !== dateMonth) {
-        return false
-      }
-      if (!q) return true
-      const hay = [
-        row.reportNo,
-        row.service,
-        row.patientName,
-        row.patientId,
-        row.contactNo,
-        row.reportBy,
-        row.internalDocId,
-      ]
-        .join(' ')
-        .toLowerCase()
-      return hay.includes(q)
-    })
-  }, [entries, search, service, status, reportBy, dateMonth])
-
-  const totalPages = Math.max(1, Math.ceil(filteredList.length / limit))
-
-  const paginatedData = useMemo(() => {
-    const safePage = Math.min(page, totalPages)
-    const startIndex = (safePage - 1) * limit
-    return filteredList.slice(startIndex, startIndex + limit)
-  }, [filteredList, page, limit, totalPages])
-
-  const handleSearch = (value: string) => {
-    setParams({ search: value, page: 1 })
-  }
-
-  const handlePageChange = (newPage: number) => {
-    setParams({ page: newPage })
-  }
-
-  const handleItemsPerPageChange = (newLimit: number) => {
-    setParams({ limit: newLimit, page: 1 })
-  }
-
-  const handleOpenDetails = useCallback((row: ReportEntry) => {
-    setDetailsEntry(row)
-    setDetailsOpen(true)
-  }, [])
-
-  const handleDownload = useCallback((row: ReportEntry) => {
-    toast.success(`Downloading report #${row.reportNo}…`)
-  }, [])
-
-  const handleAddCreated = useCallback((entry: ReportEntry) => {
-    setEntries((prev) => [entry, ...prev])
-  }, [])
+  const reportTypeOptions = [
+    { value: 'include_message_topic', label: 'Include message topic' },
+    { value: 'progress', label: 'Progress report' },
+    { value: 'diagnostic', label: 'Diagnostic report' },
+  ]
+  const reportNoOptions = [
+    { value: 'include_message_topic', label: 'Include message topic' },
+    { value: 'rpt-1001', label: 'RPT-1001' },
+    { value: 'rpt-1002', label: 'RPT-1002' },
+  ]
 
   return (
     <motion.div
@@ -114,146 +48,166 @@ export default function ReportsPage() {
       transition={{ duration: 0.3 }}
       className="flex flex-col gap-6"
     >
+      <Card className="overflow-hidden rounded-2xl border border-border shadow-sm">
+        <CardContent className="space-y-5 p-5 sm:p-6">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-accent">Reports</h1>
+              <p className="mt-1 text-sm text-muted-foreground">Manage Report of your system</p>
+            </div>
+            <p className="text-xs text-muted-foreground sm:pt-1">{todayLabel}</p>
+          </div>
 
-<div className="space-y-4">
-       
+          <p className="max-w-2xl text-sm text-muted-foreground">
+            he Straight Leg Raise (SLR) is one of the most commonly prescribed physiotherapy exercises for
+          </p>
 
-       <div className="grid gap-4 lg:grid-cols-2">
-         <ReportsUtilisationChart data={REPORTS_WEEK_POINTS} />
-         <ReportsRevenueChart data={REPORTS_WEEK_POINTS} />
-       </div>
-     </div>
-      <Card className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-        <CardContent className="p-5 sm:p-6">
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-              <h1 className="text-xl font-bold text-slate-800 shrink-0">Reports</h1>
-              <div className="flex min-w-0 flex-1 flex-col gap-3 lg:flex-row lg:items-center lg:justify-end lg:gap-3">
-                <SearchInput
-                  value={search}
-                  onChange={handleSearch}
-                  placeholder="Search here"
-                  className="w-full min-w-0 lg:max-w-md xl:max-w-lg"
-                  inputClassName="h-11 rounded-xl border-slate-200 bg-white shadow-sm"
-                />
-                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                  <Select
-                    value={service}
-                    onValueChange={(v) => setParams({ service: v, page: 1 })}
-                  >
-                    <SelectTrigger className="h-11 w-full min-w-[120px] shrink-0 rounded-xl border-slate-200 bg-white shadow-sm sm:w-[130px]">
-                      <SelectValue placeholder="Service" />
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="inline-flex w-full max-w-md rounded-full bg-muted/40 p-1">
+              {(
+                [
+                  { id: 'clients', label: 'Clients' },
+                  { id: 'doctors', label: 'Doctors' },
+                  { id: 'branch', label: 'Branch' },
+                ] as const
+              ).map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => setTab(t.id)}
+                  className={cn(
+                    'flex-1 rounded-full px-4 py-2 text-sm font-medium transition-colors',
+                    tab === t.id ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-accent'
+                  )}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div>
+              <div className="mb-2 flex items-center justify-between">
+                <label className="text-sm text-muted-foreground">To :</label>
+                <span className="rounded-full bg-primary/10 px-4 py-1 text-xs font-semibold text-primary">
+                  All
+                </span>
+              </div>
+              <Input
+                value={toValue}
+                onChange={(e) => setToValue(e.target.value)}
+                placeholder={toPlaceholder}
+                className="rounded-xl"
+              />
+            </div>
+
+            {isBranch ? (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <label className="text-sm text-muted-foreground">Patient Name</label>
+                  <Input
+                    value={patientName}
+                    onChange={(e) => setPatientName(e.target.value)}
+                    placeholder="Include message topic"
+                    className="rounded-xl"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm text-muted-foreground">Patient ID</label>
+                  <Input
+                    value={patientId}
+                    onChange={(e) => setPatientId(e.target.value)}
+                    placeholder="Include message topic"
+                    className="rounded-xl"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm text-muted-foreground">Report Type</label>
+                  <Select value={reportType} onValueChange={setReportType}>
+                    <SelectTrigger className="h-11 rounded-xl border-border bg-background text-accent">
+                      <SelectValue placeholder="Include message topic" />
                     </SelectTrigger>
                     <SelectContent>
-                      {serviceOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
+                      {reportTypeOptions.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <Select
-                    value={status}
-                    onValueChange={(v) => setParams({ status: v, page: 1 })}
-                  >
-                    <SelectTrigger className="h-11 w-full min-w-[120px] shrink-0 rounded-xl border-slate-200 bg-white shadow-sm sm:w-[130px]">
-                      <SelectValue placeholder="Status" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-sm text-muted-foreground">Report no</label>
+                  <Select value={reportNo} onValueChange={setReportNo}>
+                    <SelectTrigger className="h-11 rounded-xl border-border bg-background text-accent">
+                      <SelectValue placeholder="Include message topic" />
                     </SelectTrigger>
                     <SelectContent>
-                      {REPORT_STATUS_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
+                      {reportNoOptions.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  <Select
-                    value={reportBy}
-                    onValueChange={(v) => setParams({ reportBy: v, page: 1 })}
-                  >
-                    <SelectTrigger className="h-11 w-full min-w-[120px] shrink-0 rounded-xl border-slate-200 bg-white shadow-sm sm:w-[130px]">
-                      <SelectValue placeholder="Report By" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {reportByOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select
-                    value={dateMonth}
-                    onValueChange={(v) => setParams({ date: v, page: 1 })}
-                  >
-                    <SelectTrigger className="h-11 w-full min-w-[120px] shrink-0 rounded-xl border-slate-200 bg-white shadow-sm sm:w-[130px]">
-                      <SelectValue placeholder="Date" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {REPORT_DATE_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    type="button"
-                    className="h-11 shrink-0 rounded-xl bg-[#1A2B4C] px-4 text-white hover:bg-[#152238]"
-                    onClick={() => setAddOpen(true)}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Report
-                  </Button>
                 </div>
               </div>
+            ) : (
+              <div className="space-y-1.5">
+                <label className="text-sm text-muted-foreground">Subject</label>
+                <Input
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  placeholder="Include message topic"
+                  className="rounded-xl"
+                />
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <label className="text-sm text-muted-foreground">Attachments</label>
+              <div className="flex flex-wrap items-center gap-3">
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-muted/40 px-4 py-2 text-sm font-medium text-accent hover:bg-muted/50">
+                  <Paperclip className="h-4 w-4" />
+                  Attach file
+                  <input
+                    type="file"
+                    className="hidden"
+                    onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)}
+                  />
+                </label>
+                <p className="text-sm text-muted-foreground">
+                  {fileName ? fileName : 'PDF,DOC, or image'}
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm text-muted-foreground">Note</label>
+              <textarea
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                className="min-h-[140px] w-full resize-none rounded-xl border border-border bg-background px-3 py-3 text-sm text-accent outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+              />
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-2">
+              <p className="text-sm text-muted-foreground">Confirm changes of this message</p>
+              <Button
+                type="button"
+                className="h-11 w-full gap-2 rounded-xl bg-secondary px-10 text-white hover:bg-secondary/90 sm:w-auto"
+                onClick={() => {
+                  /* UI only */
+                }}
+              >
+                <Send className="h-4 w-4" />
+                Send
+              </Button>
             </div>
           </div>
         </CardContent>
       </Card>
-
-    
-
-      <Card className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-        <CardContent className="p-0">
-          <ReportsTable
-            rows={paginatedData}
-            onOpenDetails={handleOpenDetails}
-            onDownload={handleDownload}
-          />
-
-          <div className="border-t border-slate-100 px-4 sm:px-6">
-            <Pagination
-              variant="minimal"
-              currentPage={Math.min(page, totalPages)}
-              totalPages={totalPages}
-              totalItems={filteredList.length}
-              itemsPerPage={limit}
-              onPageChange={handlePageChange}
-              onItemsPerPageChange={handleItemsPerPageChange}
-              showItemsPerPage={false}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      <ReportDetailsModal
-        entry={detailsEntry}
-        open={detailsOpen}
-        onOpenChange={(open) => {
-          setDetailsOpen(open)
-          if (!open) setDetailsEntry(null)
-        }}
-      />
-
-      <AddReportModal
-        open={addOpen}
-        onClose={() => setAddOpen(false)}
-        serviceOptions={serviceOptions}
-        reportByOptions={reportByOptions}
-        existingEntries={entries}
-        onCreated={handleAddCreated}
-      />
     </motion.div>
   )
 }
