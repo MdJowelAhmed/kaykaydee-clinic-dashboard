@@ -46,10 +46,10 @@
     --secondary: 215 28% 17%;
     --secondary-foreground: 213 31% 91%;
     --muted: 215 28% 17%;
-    --muted-foreground: 215 20% 65%;
+    --muted-foreground: #a6afbb;
     --accent: #ffffffcc;
     --accent-foreground: #ffffffcc;
-    --destructive: 0 84% 60%;
+    --destructive: #ef4444;
     --destructive-foreground: 0 0% 100%;
     --border: 215 28% 17%;
     --input: #181c1f;

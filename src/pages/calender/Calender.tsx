@@ -51,8 +51,8 @@ const Calender: React.FC = () => {
       className="space-y-6"
     >
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Clinic schedule</h1>
-        <p className="mt-1 max-w-2xl text-sm text-slate-600">
+        <h1 className="text-2xl font-bold tracking-tight text-accent">Clinic schedule</h1>
+        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
           Hospital and clinic operations at a glance: patient appointments, diagnostics, procedures,
           and supporting tasks—each block includes a short summary for your team.
         </p>
@@ -90,10 +90,10 @@ const Calender: React.FC = () => {
         })}
       </div> */}
 
-      <Card className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <Card className="rounded-2xl border border-border bg-card shadow-sm">
         <CardContent className="space-y-4 p-5 sm:p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-lg font-semibold text-slate-900">Weekly grid</h2>
+            <h2 className="text-lg font-semibold text-accent">Weekly grid</h2>
             <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
               <div className="flex flex-wrap items-center gap-2">
                 <button
@@ -102,8 +102,8 @@ const Calender: React.FC = () => {
                   className={cn(
                     'h-9 rounded-full border px-3 text-xs font-semibold transition-colors',
                     selectedDate === todayISO
-                      ? 'border-violet-200 bg-violet-50 text-violet-700'
-                      : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                      ? 'border-primary/30 bg-primary/10 text-primary'
+                      : 'border-border bg-background text-accent hover:bg-muted/30'
                   )}
                 >
                   Today
@@ -114,8 +114,8 @@ const Calender: React.FC = () => {
                   className={cn(
                     'h-9 rounded-full border px-3 text-xs font-semibold transition-colors',
                     selectedDate === nextDayISO
-                      ? 'border-violet-200 bg-violet-50 text-violet-700'
-                      : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                      ? 'border-primary/30 bg-primary/10 text-primary'
+                      : 'border-border bg-background text-accent hover:bg-muted/30'
                   )}
                 >
                   Next day
@@ -123,12 +123,12 @@ const Calender: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-2">
-                <label className="text-xs font-medium text-slate-600">Date</label>
+                <label className="text-xs font-medium text-muted-foreground">Date</label>
                 <input
                   type="date"
                   value={selectedDate}
                   onChange={(e) => dispatch(setSelectedDate(e.target.value))}
-                  className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500"
+                  className="h-10 rounded-xl border border-border bg-background px-3 text-sm text-accent outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                 />
               </div>
 
@@ -137,7 +137,7 @@ const Calender: React.FC = () => {
                   value={category}
                   onValueChange={(v) => setCategory(v as ClinicEventCategory | 'all')}
                 >
-                  <SelectTrigger className="h-10 rounded-xl border-slate-200">
+                  <SelectTrigger className="h-10 rounded-xl border-border bg-background text-accent">
                     <SelectValue placeholder="Filter by type" />
                   </SelectTrigger>
                   <SelectContent>

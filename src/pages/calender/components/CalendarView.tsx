@@ -55,13 +55,13 @@ function EventCompactRow({ ev, className }: { ev: ClinicCalendarEvent; className
       )}
     >
       <div className="flex items-start justify-between gap-1">
-        <span className="line-clamp-2 font-semibold leading-tight text-slate-900">{ev.taskTitle}</span>
+        <span className="line-clamp-2 font-semibold leading-tight text-accent">{ev.taskTitle}</span>
         <span className={cn('shrink-0 font-bold', styles.accent)}>{ev.id}</span>
       </div>
-      <p className="mt-0.5 line-clamp-2 leading-snug text-slate-600">{ev.summary}</p>
-      <div className="mt-0.5 flex items-center justify-between gap-1 text-[9px] text-slate-700">
+      <p className="mt-0.5 line-clamp-2 leading-snug text-muted-foreground">{ev.summary}</p>
+      <div className="mt-0.5 flex items-center justify-between gap-1 text-[9px] text-accent">
         <span className="truncate font-medium">{truncateText(ev.patientName, 12)}</span>
-        <span className="shrink-0 text-slate-500">{ev.room}</span>
+        <span className="shrink-0 text-muted-foreground">{ev.room}</span>
       </div>
     </div>
   )
@@ -72,23 +72,23 @@ function EventTooltipScrollBody({ ev }: { ev: ClinicCalendarEvent }) {
   const st = CATEGORY_CELL_STYLES[ev.category]
   return (
     <div className="space-y-2 text-xs">
-      <p className="leading-relaxed text-slate-700">{ev.summary}</p>
-      <dl className="space-y-1 text-[11px] text-slate-600">
+      <p className="leading-relaxed text-accent">{ev.summary}</p>
+      <dl className="space-y-1 text-[11px] text-muted-foreground">
         <div className="flex gap-2">
-          <dt className="shrink-0 font-medium text-slate-500">Patient</dt>
-          <dd className="text-slate-800">{ev.patientName}</dd>
+          <dt className="shrink-0 font-medium text-muted-foreground">Patient</dt>
+          <dd className="text-accent">{ev.patientName}</dd>
         </div>
         <div className="flex gap-2">
-          <dt className="shrink-0 font-medium text-slate-500">Room</dt>
-          <dd className="text-slate-800">{ev.room}</dd>
+          <dt className="shrink-0 font-medium text-muted-foreground">Room</dt>
+          <dd className="text-accent">{ev.room}</dd>
         </div>
         <div className="flex gap-2">
-          <dt className="shrink-0 font-medium text-slate-500">Staff</dt>
+          <dt className="shrink-0 font-medium text-muted-foreground">Staff</dt>
           <dd className={cn('font-medium', st.accent)}>{ev.staffName}</dd>
         </div>
         <div className="flex gap-2">
-          <dt className="shrink-0 font-medium text-slate-500">Time</dt>
-          <dd className="text-slate-800">{ev.time}</dd>
+          <dt className="shrink-0 font-medium text-muted-foreground">Time</dt>
+          <dd className="text-accent">{ev.time}</dd>
         </div>
       </dl>
     </div>
@@ -117,14 +117,14 @@ function CellEventCard({ ev }: { ev: ClinicCalendarEvent }) {
         align="start"
         className={cn(
           'z-50 flex w-[min(22rem,calc(100vw-2rem))] max-h-[min(32rem,70vh)] flex-col overflow-hidden p-0',
-          'border border-slate-200 bg-white text-slate-900 shadow-lg'
+          'border border-border bg-card text-accent shadow-lg'
         )}
       >
-        <div className="shrink-0 border-b border-slate-100 bg-white p-2">
+        <div className="shrink-0 border-b border-border bg-card p-2">
           <EventCompactRow ev={ev} className="shadow-none" />
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-2 [scrollbar-width:thin]">
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
             Full details
           </p>
           <EventTooltipScrollBody ev={ev} />
@@ -240,11 +240,11 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, searchValue, onSear
             placeholder="Search patient, room, task, staff…"
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="h-10 w-full rounded-full border border-slate-200 bg-white pl-9 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-violet-500 focus:outline-none focus:ring-1 focus:ring-violet-500"
+            className="h-10 w-full rounded-full border border-border bg-background pl-9 pr-3 text-sm text-accent placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
 
-        <div className="inline-flex flex-wrap rounded-full bg-slate-100 p-1">
+        <div className="inline-flex flex-wrap rounded-full bg-muted/40 p-1">
           {viewOptions.map((option) => (
             <button
               key={option.label}
@@ -253,8 +253,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, searchValue, onSear
               className={cn(
                 'rounded-full px-3 py-1.5 text-xs font-semibold transition-colors',
                 isActiveOption(option)
-                  ? 'bg-violet-600 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-primary text-white shadow-sm'
+                  : 'text-muted-foreground hover:text-accent'
               )}
             >
               {option.label}
@@ -263,21 +263,21 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, searchValue, onSear
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <p className="border-b border-slate-100 bg-slate-50/80 px-3 py-2 text-center text-[11px] text-slate-500">
-          <span className="font-medium text-slate-600">Sideways:</span> hold and drag the grey{' '}
-          <span className="font-medium text-slate-600">time</span> cell on the left ·{' '}
-          <span className="font-medium text-slate-600">Stacked visits:</span> scroll inside the cell
+      <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
+        <p className="border-b border-border bg-muted/20 px-3 py-2 text-center text-[11px] text-muted-foreground">
+          <span className="font-medium text-accent">Sideways:</span> hold and drag the grey{' '}
+          <span className="font-medium text-accent">time</span> cell on the left ·{' '}
+          <span className="font-medium text-accent">Stacked visits:</span> scroll inside the cell
         </p>
         <div ref={horizontalScrollRef} className="overflow-x-auto overflow-y-visible">
           <div
-            className="grid w-max border-b border-slate-200 bg-slate-50 text-xs font-semibold text-slate-600"
+            className="grid w-max border-b border-border bg-muted/20 text-xs font-semibold text-muted-foreground"
             style={{
               gridTemplateColumns: gridTemplateColumns(days.length, dayColWidthPx),
             }}
           >
             <div
-              className="sticky left-0 z-10 flex shrink-0 items-center justify-center border-r border-slate-200 bg-slate-50 py-3"
+              className="sticky left-0 z-10 flex shrink-0 items-center justify-center border-r border-border bg-muted/20 py-3 text-accent"
               style={{
                 width: TIME_COL_WIDTH_PX,
                 minWidth: TIME_COL_WIDTH_PX,
@@ -293,10 +293,10 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, searchValue, onSear
                 tabIndex={0}
                 onClick={() => onDayHeaderClick(day)}
                 className={cn(
-                  'flex min-w-0 cursor-pointer flex-col items-center justify-center border-r border-slate-200 py-3 transition-colors',
-                  day.date === selectedDate && 'bg-violet-50',
-                  day.date !== selectedDate && day.date === todayISO && 'bg-sky-50/80',
-                  day.date !== selectedDate && day.date === nextDayISO && 'bg-emerald-50/70'
+                  'flex min-w-0 cursor-pointer flex-col items-center justify-center border-r border-border py-3 transition-colors',
+                  day.date === selectedDate && 'bg-primary/10',
+                  day.date !== selectedDate && day.date === todayISO && 'bg-sky-500/10',
+                  day.date !== selectedDate && day.date === nextDayISO && 'bg-emerald-500/10'
                 )}
                 style={{
                   width: dayColWidthPx,
@@ -304,10 +304,10 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, searchValue, onSear
                   maxWidth: dayColWidthPx,
                 }}
               >
-                <span className="text-[11px] uppercase tracking-wide text-slate-400">
+                <span className="text-[11px] uppercase tracking-wide text-muted-foreground">
                   {day.label}
                 </span>
-                <span className="mt-1 text-base font-semibold text-slate-900">
+                <span className="mt-1 text-base font-semibold text-accent">
                   {day.dayNumber.toString().padStart(2, '0')}
                 </span>
               </div>
@@ -324,8 +324,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, searchValue, onSear
                   onRowSelect(time)
                 }}
                 className={cn(
-                  'grid w-max min-h-[7rem] items-stretch border-b border-slate-200 last:border-b-0',
-                  selectedTime === time && 'bg-violet-50/40'
+                  'grid w-max min-h-[7rem] items-stretch border-b border-border last:border-b-0',
+                  selectedTime === time && 'bg-primary/5'
                 )}
                 style={{
                   gridTemplateColumns: gridTemplateColumns(days.length, dayColWidthPx),
@@ -336,7 +336,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, searchValue, onSear
                   tabIndex={0}
                   title="Drag to scroll the calendar sideways"
                   className={cn(
-                    'sticky left-0 z-10 flex shrink-0 select-none items-start justify-center self-stretch border-r border-slate-200 bg-slate-50 px-2 py-4 text-xs font-medium text-slate-600',
+                    'sticky left-0 z-10 flex shrink-0 select-none items-start justify-center self-stretch border-r border-border bg-muted/20 px-2 py-4 text-xs font-medium text-accent',
                     horizontalGrab ? 'cursor-grabbing' : 'cursor-grab active:cursor-grabbing'
                   )}
                   style={{
@@ -366,8 +366,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, searchValue, onSear
                         onCellSelect(day)
                       }}
                       className={cn(
-                        'relative flex min-h-0 min-w-0 flex-col border-r border-slate-100 p-1 transition-colors',
-                        day.date === selectedDate && 'bg-violet-50/40',
+                        'relative flex min-h-0 min-w-0 flex-col border-r border-border p-1 transition-colors',
+                        day.date === selectedDate && 'bg-primary/5',
                         // Keep "today/next day" coloring in header only (avoid mixed colors in each row).
                         day.date !== selectedDate && 'bg-transparent'
                       )}
@@ -383,7 +383,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, searchValue, onSear
                           className="flex max-h-44 min-h-0 flex-1 flex-col gap-1 overflow-y-auto overflow-x-hidden overscroll-y-contain pr-0.5 [scrollbar-width:thin]"
                         >
                           {count > 1 && (
-                            <p className="sticky top-0 z-[1] -mx-0.5 mb-0.5 rounded bg-violet-600/90 px-1.5 py-0.5 text-center text-[9px] font-semibold text-white shadow-sm">
+                            <p className="sticky top-0 z-[1] -mx-0.5 mb-0.5 rounded bg-primary/90 px-1.5 py-0.5 text-center text-[9px] font-semibold text-accent shadow-sm">
                               {count} in slot — scroll
                             </p>
                           )}

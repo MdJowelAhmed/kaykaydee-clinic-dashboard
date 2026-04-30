@@ -35,12 +35,30 @@ export const CATEGORY_CELL_STYLES: Record<
   ClinicEventCategory,
   { card: string; accent: string }
 > = {
-  consultation: { card: 'bg-sky-50 border-sky-200/80', accent: 'text-sky-700' },
-  follow_up: { card: 'bg-violet-50 border-violet-200/80', accent: 'text-violet-700' },
-  diagnostics: { card: 'bg-amber-50 border-amber-200/80', accent: 'text-amber-800' },
-  procedure: { card: 'bg-rose-50 border-rose-200/80', accent: 'text-rose-700' },
-  staff: { card: 'bg-slate-100 border-slate-200/80', accent: 'text-slate-700' },
-  admin: { card: 'bg-emerald-50 border-emerald-200/80', accent: 'text-emerald-800' },
+  consultation: {
+    card: 'bg-sky-50 border-sky-200/80 dark:bg-sky-500/10 dark:border-sky-500/20',
+    accent: 'text-sky-700 dark:text-sky-300',
+  },
+  follow_up: {
+    card: 'bg-violet-50 border-violet-200/80 dark:bg-violet-500/10 dark:border-violet-500/20',
+    accent: 'text-violet-700 dark:text-violet-300',
+  },
+  diagnostics: {
+    card: 'bg-amber-50 border-amber-200/80 dark:bg-amber-500/10 dark:border-amber-500/20',
+    accent: 'text-amber-800 dark:text-amber-300',
+  },
+  procedure: {
+    card: 'bg-rose-50 border-rose-200/80 dark:bg-rose-500/10 dark:border-rose-500/20',
+    accent: 'text-rose-700 dark:text-rose-300',
+  },
+  staff: {
+    card: 'bg-muted/40 border-border dark:bg-muted/25',
+    accent: 'text-accent/80',
+  },
+  admin: {
+    card: 'bg-emerald-50 border-emerald-200/80 dark:bg-emerald-500/10 dark:border-emerald-500/20',
+    accent: 'text-emerald-800 dark:text-emerald-300',
+  },
 }
 
 /** Core mock clinic schedule (10+ day indices; grid clips to active view range) */

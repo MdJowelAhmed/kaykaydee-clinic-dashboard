@@ -16,20 +16,20 @@ export function ClientListTable({ rows, onOpenProfile, onEdit, onDelete }: Clien
     <div className="w-full overflow-x-auto scrollbar-thin rounded-b-2xl">
       <table className="w-full min-w-[640px]">
         <thead>
-          <tr className="bg-muted/35 dark:bg-muted/25">
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent first:rounded-tl-xl sm:px-6 sm:py-4">
+          <tr className="bg-primary text-accent-foreground">
+            <th className="px-4 py-3 text-left text-sm font-semibold  first:rounded-tl-xl sm:px-6 sm:py-4">
               Patient Name
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">
+            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
               Contact No
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">
+            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
               Email
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">
+            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
               Address
             </th>
-            <th className="px-4 py-3 text-right text-sm font-semibold text-accent last:rounded-tr-xl sm:px-6 sm:py-4">
+            <th className="px-4 py-3 text-right text-sm font-semibold  last:rounded-tr-xl sm:px-6 sm:py-4">
               Action
             </th>
           </tr>
@@ -39,7 +39,7 @@ export function ClientListTable({ rows, onOpenProfile, onEdit, onDelete }: Clien
             <tr>
               <td
                 colSpan={5}
-                className="px-6 py-8 text-center text-sm text-muted-foreground"
+                className="px-6 py-8 text-center text-sm text-accent"
               >
                 No clients found
               </td>
@@ -99,7 +99,7 @@ export function ClientListTable({ rows, onOpenProfile, onEdit, onDelete }: Clien
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9 rounded-full text-destructive hover:bg-destructive/10"
+                      className="h-9 w-9 rounded-full text-accent hover:bg-destructive/10"
                       aria-label="Delete client"
                       onClick={() => onDelete(row)}
                     >

@@ -111,7 +111,7 @@ export default function ClientListPage() {
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="shrink-0 space-y-1">
               <h1 className="text-xl font-bold text-accent sm:text-2xl">Clients Details</h1>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-accent">
                 Manage your all registered patients
               </p>
             </div>

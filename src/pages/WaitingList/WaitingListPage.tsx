@@ -101,7 +101,7 @@ export default function WaitingListPage() {
   }, [])
 
   const filterInputClass =
-    'h-11 rounded-xl border-border bg-background text-accent shadow-sm placeholder:text-muted-foreground'
+    'h-11 rounded-xl border-border bg-background text-accent shadow-sm placeholder:text-accent'
 
   return (
     <motion.div
@@ -115,7 +115,7 @@ export default function WaitingListPage() {
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="shrink-0 space-y-1">
               <h1 className="text-xl font-bold text-accent sm:text-2xl">waiting list</h1>
-              <p className="text-sm text-muted-foreground">Manage appointment system</p>
+              <p className="text-sm text-accent">Manage appointment system</p>
             </div>
 
             <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
