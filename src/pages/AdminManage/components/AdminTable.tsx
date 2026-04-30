@@ -37,21 +37,21 @@ export function AdminTable({ rows, onInfo, onEdit }: AdminTableProps) {
     <div className="w-full overflow-x-auto scrollbar-thin rounded-b-2xl">
       <table className="w-full min-w-[980px]">
         <thead>
-          <tr className="bg-muted/35 dark:bg-muted/25">
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent rounded-tl-2xl sm:px-6 sm:py-4">Admin Id</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">clinic Name</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">Join Date</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">Role</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">Status</th>
-            <th className="px-4 py-3 text-right text-sm font-semibold text-accent rounded-tr-2xl sm:px-6 sm:py-4">
+          <tr className="bg-primary text-accent-foreground">
+            <th className="px-4 py-3 text-left text-sm font-semibold  rounded-tl-2xl sm:px-6 sm:py-4">Admin Id</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">clinic Name</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">Join Date</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">Role</th>
+            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">Status</th>
+            <th className="px-4 py-3 text-right text-sm font-semibold  rounded-tr-2xl sm:px-6 sm:py-4">
               Action
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border bg-card">
+        <tbody className="divide-y divide-border bg-card text-accent-foreground">
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={6} className="px-6 py-10 text-center text-muted-foreground text-sm">
+              <td colSpan={6} className="px-6 py-10 text-center text-accent text-sm">
                 No admins found
               </td>
             </tr>
@@ -64,9 +64,9 @@ export function AdminTable({ rows, onInfo, onEdit }: AdminTableProps) {
                 transition={{ delay: Math.min(0.04 * index, 0.4) }}
                 className="hover:bg-muted/15 transition-colors"
               >
-                <td className="px-4 py-3 text-sm text-accent/80 sm:px-6 sm:py-4">{row.id}</td>
-                <td className="px-4 py-3 text-sm text-accent/80 sm:px-6 sm:py-4">{row.clinicName}</td>
-                <td className="px-4 py-3 text-sm text-accent/80 sm:px-6 sm:py-4">
+                <td className="px-4 py-3 text-sm text-accent sm:px-6 sm:py-4">{row.id}</td>
+                <td className="px-4 py-3 text-sm text-accent sm:px-6 sm:py-4">{row.clinicName}</td>
+                <td className="px-4 py-3 text-sm text-accent sm:px-6 sm:py-4">
                   {formatDate(row.joinDate, 'd MMM yyyy')}
                 </td>
                 <td className="px-4 py-3 sm:px-6 sm:py-4">
