@@ -25,7 +25,7 @@ type FormValues = z.infer<typeof schema>
 
 const statusOptions = [
   { value: 'pending', label: 'Pending' },
-  { value: 'completed', label: 'Completed' },
+  { value: 'completed', label: 'Confirmed' },
   { value: 'cancelled', label: 'Cancel' },
 ]
 

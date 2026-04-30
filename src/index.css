@@ -18,7 +18,7 @@
     --muted: #638FC1;
     --muted-foreground:#364355;
     --accent: #262626;
-    --accent-foreground: #364355;
+    --accent-foreground: #ffffffcc;
     --destructive: #ef4444;
     --destructive-foreground: 0 0% 100%;
     --border: 220 13% 91%;
@@ -41,14 +41,14 @@
     --card-foreground: 213 31% 91%;
     --popover: 224 71% 6%;
     --popover-foreground: 213 31% 91%;
-    --primary: 262 83% 58%;
+    --primary:#181c1f;
     --primary-foreground: 0 0% 100%;
     --secondary: 215 28% 17%;
     --secondary-foreground: 213 31% 91%;
     --muted: 215 28% 17%;
     --muted-foreground: 215 20% 65%;
     --accent: #ffffffcc;
-    --accent-foreground: 0 0% 100%;
+    --accent-foreground: #ffffffcc;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 215 28% 17%;

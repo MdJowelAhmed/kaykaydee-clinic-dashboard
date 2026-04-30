@@ -47,7 +47,7 @@ export const INITIAL_WAITING_LIST: WaitingListEntry[] = Array.from({ length: 150
 
 export const WAITING_LIST_STATUS_OPTIONS = [
   { value: 'all', label: 'Status' },
-  { value: 'completed', label: 'Completed' },
+  { value: 'completed', label: 'Confirmed' },
   { value: 'pending', label: 'Pending' },
   { value: 'cancelled', label: 'Cancel' },
 ]

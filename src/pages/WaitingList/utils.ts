@@ -14,7 +14,7 @@ export function appointmentMonthKey(dateIso: string): string {
 export function statusLabel(status: 'completed' | 'pending' | 'cancelled'): string {
   switch (status) {
     case 'completed':
-      return 'Completed'
+      return 'Confirmed'
     case 'pending':
       return 'Pending'
     case 'cancelled':

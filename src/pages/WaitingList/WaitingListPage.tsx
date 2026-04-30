@@ -30,9 +30,7 @@ export default function WaitingListPage() {
   const { getParam, getNumberParam, setParams } = useUrlParams()
 
   const search = getParam('search', '')
-  const service = getParam('service', 'all')
   const status = getParam('status', 'all')
-  const doctor = getParam('doctor', 'all')
   const dateMonth = getParam('date', 'all')
   const page = getNumberParam('page', 1)
   const limit = getNumberParam('limit', 15)
@@ -42,15 +40,14 @@ export default function WaitingListPage() {
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [addOpen, setAddOpen] = useState(false)
 
+  // Kept for Add modal selections.
   const serviceOptions = useMemo(() => getServiceOptionsFromEntries(entries), [entries])
   const doctorOptions = useMemo(() => getDoctorOptionsFromEntries(entries), [entries])
 
   const filteredList = useMemo(() => {
     const q = search.trim().toLowerCase()
     return entries.filter((row) => {
-      if (service !== 'all' && row.service !== service) return false
       if (status !== 'all' && row.status !== status) return false
-      if (doctor !== 'all' && row.doctor !== doctor) return false
       if (dateMonth !== 'all' && appointmentMonthKey(row.appointmentAt) !== dateMonth) {
         return false
       }
@@ -68,7 +65,7 @@ export default function WaitingListPage() {
         .toLowerCase()
       return hay.includes(q)
     })
-  }, [entries, search, service, status, doctor, dateMonth])
+  }, [entries, search, status, dateMonth])
 
   const totalPages = Math.max(1, Math.ceil(filteredList.length / limit))
 
@@ -95,9 +92,16 @@ export default function WaitingListPage() {
     setDetailsOpen(true)
   }, [])
 
+  const handleChangeStatus = useCallback((id: string, next: WaitingListEntry['status']) => {
+    setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, status: next } : e)))
+  }, [])
+
   const handleAddCreated = useCallback((entry: WaitingListEntry) => {
     setEntries((prev) => [entry, ...prev])
   }, [])
+
+  const filterInputClass =
+    'h-11 rounded-xl border-border bg-background text-accent shadow-sm placeholder:text-muted-foreground'
 
   return (
     <motion.div
@@ -106,100 +110,71 @@ export default function WaitingListPage() {
       transition={{ duration: 0.3 }}
       className="flex flex-col gap-6"
     >
-      <Card className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+      <Card className="overflow-hidden rounded-2xl border border-border shadow-sm">
         <CardContent className="p-5 sm:p-6">
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-              <h1 className="text-xl font-bold text-slate-800 shrink-0">Waiting list</h1>
-              <div className="flex min-w-0 flex-1 flex-col gap-3 lg:flex-row lg:items-center lg:justify-end lg:gap-3">
-                <SearchInput
-                  value={search}
-                  onChange={handleSearch}
-                  placeholder="Search here"
-                  className="w-full min-w-0 lg:max-w-md xl:max-w-lg"
-                  inputClassName="h-11 rounded-xl border-slate-200 bg-white shadow-sm"
-                />
-                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                  <Select
-                    value={service}
-                    onValueChange={(v) => setParams({ service: v, page: 1 })}
-                  >
-                    <SelectTrigger className="h-11 w-full min-w-[120px] shrink-0 rounded-xl border-slate-200 bg-white shadow-sm sm:w-[130px]">
-                      <SelectValue placeholder="Service" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {serviceOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select
-                    value={status}
-                    onValueChange={(v) => setParams({ status: v, page: 1 })}
-                  >
-                    <SelectTrigger className="h-11 w-full min-w-[120px] shrink-0 rounded-xl border-slate-200 bg-white shadow-sm sm:w-[130px]">
-                      <SelectValue placeholder="Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {WAITING_LIST_STATUS_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select
-                    value={doctor}
-                    onValueChange={(v) => setParams({ doctor: v, page: 1 })}
-                  >
-                    <SelectTrigger className="h-11 w-full min-w-[120px] shrink-0 rounded-xl border-slate-200 bg-white shadow-sm sm:w-[130px]">
-                      <SelectValue placeholder="Doctor" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {doctorOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select
-                    value={dateMonth}
-                    onValueChange={(v) => setParams({ date: v, page: 1 })}
-                  >
-                    <SelectTrigger className="h-11 w-full min-w-[120px] shrink-0 rounded-xl border-slate-200 bg-white shadow-sm sm:w-[130px]">
-                      <SelectValue placeholder="Date" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {WAITING_LIST_DATE_OPTIONS.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    type="button"
-                    className="h-11 shrink-0 rounded-xl bg-slate-900 px-4 text-white hover:bg-slate-800"
-                    onClick={() => setAddOpen(true)}
-                  >
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Appointment
-                  </Button>
-                </div>
-              </div>
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="shrink-0 space-y-1">
+              <h1 className="text-xl font-bold text-accent sm:text-2xl">waiting list</h1>
+              <p className="text-sm text-muted-foreground">Manage appointment system</p>
+            </div>
+
+            <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
+              <SearchInput
+                value={search}
+                onChange={handleSearch}
+                placeholder="Search here"
+                className="w-full min-w-0 sm:max-w-md lg:max-w-xl"
+                inputClassName={filterInputClass}
+              />
+
+              <Select value={dateMonth} onValueChange={(v) => setParams({ date: v, page: 1 })}>
+                <SelectTrigger className={`h-11 w-full shrink-0 sm:w-[160px] ${filterInputClass}`}>
+                  <SelectValue placeholder="Appoint Date" />
+                </SelectTrigger>
+                <SelectContent>
+                  {WAITING_LIST_DATE_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={status} onValueChange={(v) => setParams({ status: v, page: 1 })}>
+                <SelectTrigger className={`h-11 w-full shrink-0 sm:w-[140px] ${filterInputClass}`}>
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {WAITING_LIST_STATUS_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Button
+                type="button"
+                className="h-11 shrink-0 rounded-xl bg-secondary px-4 text-white hover:bg-secondary/90"
+                onClick={() => setAddOpen(true)}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                Add Provider
+              </Button>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-        <CardContent className="p-0">
-          <WaitingListTable rows={paginatedData} onOpenDetails={handleOpenDetails} />
+      <Card className="overflow-hidden rounded-2xl border border-border shadow-sm">
+        <CardContent className="bg-card p-0 text-card-foreground">
+          <WaitingListTable
+            rows={paginatedData}
+            onOpenDetails={handleOpenDetails}
+            onChangeStatus={handleChangeStatus}
+          />
 
-          <div className="border-t border-slate-100 px-4 sm:px-6">
+          <div className="border-t border-border px-4 sm:px-6">
             <Pagination
               variant="minimal"
               currentPage={Math.min(page, totalPages)}
