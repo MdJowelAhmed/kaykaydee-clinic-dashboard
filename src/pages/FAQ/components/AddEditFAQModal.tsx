@@ -101,7 +101,7 @@ export function AddEditFAQModal({ open, onClose, faq }: AddEditFAQModalProps) {
       onClose={onClose}
       title={isEditMode ? 'Edit FAQ' : 'Add New FAQ'}
       size="lg"
-      className="max-w-2xl bg-white"
+      className="max-w-2xl bg-card"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
         {/* Question */}
@@ -141,14 +141,14 @@ export function AddEditFAQModal({ open, onClose, faq }: AddEditFAQModalProps) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex justify-end gap-3 pt-4 border-t border-border">
           <Button type="button" variant="outline" onClick={onClose}>
             Cancel
           </Button>
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="bg-green-600 hover:bg-green-700 text-white"
+            className="bg-secondary hover:bg-secondary/90 text-white"
           >
             {isSubmitting
               ? 'Saving...'

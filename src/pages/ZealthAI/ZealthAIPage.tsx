@@ -95,17 +95,17 @@ export default function ZealthAIPage() {
       transition={{ duration: 0.3 }}
       className="space-y-6"
     >
-      <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
         <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px]">
           {/* Main chat */}
           <div className="min-h-[720px] flex flex-col">
-            <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
+            <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full bg-gradient-to-br from-sky-100 via-purple-100 to-pink-100 flex items-center justify-center">
-                  <Bot className="h-5 w-5 text-slate-700" />
+                  <Bot className="h-5 w-5 text-accent" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-slate-900">Ask Your AI</p>
+                  <p className="text-sm font-semibold text-accent">Ask Your AI</p>
                   <p className="text-xs text-muted-foreground">Zealth AI</p>
                 </div>
               </div>
@@ -123,15 +123,15 @@ export default function ZealthAIPage() {
 
             <div
               ref={listRef}
-              className="flex-1 overflow-auto px-6 py-10 bg-white"
+              className="flex-1 overflow-auto px-6 py-10 bg-card"
             >
               {messages.length <= 1 ? (
                 <div className="max-w-2xl mx-auto text-center py-16">
                   <div className="h-16 w-16 rounded-full bg-gradient-to-br from-sky-100 via-purple-100 to-pink-100 mx-auto flex items-center justify-center">
-                    <Bot className="h-7 w-7 text-slate-700" />
+                    <Bot className="h-7 w-7 text-accent" />
                   </div>
-                  <p className="mt-6 text-base text-slate-700">Hi Enrico !</p>
-                  <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+                  <p className="mt-6 text-base text-muted-foreground">Hi Enrico !</p>
+                  <h2 className="mt-2 text-3xl font-bold tracking-tight text-accent">
                     Where Should We Start?
                   </h2>
                 </div>
@@ -145,15 +145,15 @@ export default function ZealthAIPage() {
                           className={cn(
                             'max-w-[720px] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap',
                             isUser
-                              ? 'bg-[#9CCB6B] text-white'
-                              : 'bg-slate-100 text-slate-900'
+                              ? 'bg-success text-success-foreground'
+                              : 'bg-muted/50 text-accent'
                           )}
                         >
                           {m.content}
                           <div
                             className={cn(
                               'mt-2 text-[11px]',
-                              isUser ? 'text-white/80' : 'text-slate-500'
+                              isUser ? 'text-white/80' : 'text-muted-foreground'
                             )}
                           >
                             {formatTime(m.createdAt)}
@@ -165,11 +165,11 @@ export default function ZealthAIPage() {
 
                   {isTyping && (
                     <div className="flex justify-start">
-                      <div className="max-w-[520px] rounded-2xl px-4 py-3 text-sm bg-slate-100 text-slate-900">
+                      <div className="max-w-[520px] rounded-2xl px-4 py-3 text-sm bg-muted/50 text-accent">
                         <div className="flex items-center gap-2">
-                          <span className="h-2 w-2 rounded-full bg-slate-400 animate-pulse" />
-                          <span className="h-2 w-2 rounded-full bg-slate-400 animate-pulse [animation-delay:120ms]" />
-                          <span className="h-2 w-2 rounded-full bg-slate-400 animate-pulse [animation-delay:240ms]" />
+                          <span className="h-2 w-2 rounded-full bg-muted-foreground animate-pulse" />
+                          <span className="h-2 w-2 rounded-full bg-muted-foreground animate-pulse [animation-delay:120ms]" />
+                          <span className="h-2 w-2 rounded-full bg-muted-foreground animate-pulse [animation-delay:240ms]" />
                         </div>
                       </div>
                     </div>
@@ -178,13 +178,13 @@ export default function ZealthAIPage() {
               )}
             </div>
 
-            <div className="border-t border-slate-200 p-4">
+            <div className="border-t border-border p-4">
               <div className="flex items-end gap-3">
                 <Textarea
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}
                   placeholder="Ask a follow up"
-                  className="min-h-[52px] max-h-[140px] resize-none bg-slate-50 rounded-2xl"
+                  className="min-h-[52px] max-h-[140px] resize-none bg-background rounded-2xl border border-border text-accent placeholder:text-muted-foreground"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault()
@@ -196,31 +196,31 @@ export default function ZealthAIPage() {
                   type="button"
                   onClick={() => void sendMessage()}
                   disabled={!draft.trim() || isTyping}
-                  className="h-12 w-12 rounded-xl bg-[#6F2DBD] hover:bg-[#6F2DBD]/90 text-white p-0"
+                  className="h-12 w-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground p-0"
                   aria-label="Send"
                 >
-                  <SendHorizonal className="h-5 w-5" />
+                  <SendHorizonal className="h-5 w-5 text-accent" />
                 </Button>
               </div>
             </div>
           </div>
 
           {/* Right sidebar */}
-          <div className="border-t xl:border-t-0 xl:border-l border-slate-200 bg-slate-50/30">
-            <div className="p-5 border-b border-slate-200 bg-white">
+          <div className="border-t xl:border-t-0 xl:border-l border-border bg-muted/10">
+            <div className="p-5 border-b border-border bg-card">
               <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold text-slate-900">August 2025</p>
-                <div className="h-9 w-9 rounded-full border border-slate-200 bg-white flex items-center justify-center">
-                  <span className="text-xs text-slate-500">📅</span>
+                <p className="text-sm font-semibold text-accent">August 2025</p>
+                <div className="h-9 w-9 rounded-full border border-border bg-background flex items-center justify-center">
+                  <span className="text-xs text-muted-foreground">📅</span>
                 </div>
               </div>
               <div className="mt-4">
-                <Input type="date" className="bg-white rounded-xl" />
+                <Input type="date" className="rounded-xl" />
               </div>
             </div>
 
             <div className="p-5">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Recent prompts</p>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Recent prompts</p>
               <div className="mt-3 space-y-2">
                 {recentPrompts.length === 0 ? (
                   <p className="text-sm text-muted-foreground">No prompts yet.</p>
@@ -229,10 +229,10 @@ export default function ZealthAIPage() {
                     <button
                       key={p.id}
                       type="button"
-                      className="w-full text-left rounded-xl border border-slate-200 bg-white p-3 hover:bg-slate-50 transition-colors"
+                      className="w-full text-left rounded-xl border border-border bg-card p-3 hover:bg-muted/30 transition-colors"
                       onClick={() => setDraft(p.content)}
                     >
-                      <p className="text-sm text-slate-700 line-clamp-2">{p.content}</p>
+                      <p className="text-sm text-accent/80 line-clamp-2">{p.content}</p>
                       <p className="mt-1 text-[11px] text-muted-foreground">{formatTime(p.createdAt)}</p>
                     </button>
                   ))

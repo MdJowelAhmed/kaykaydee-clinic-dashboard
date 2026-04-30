@@ -152,8 +152,8 @@ export default function ChangePassword() {
             />
 
             {/* Password Requirements */}
-            <div className="rounded-lg border p-4 space-y-2">
-              <p className="text-sm font-medium">Password Requirements</p>
+            <div className="rounded-lg border border-border bg-card p-4 space-y-2">
+              <p className="text-sm font-medium text-accent">Password Requirements</p>
               <div className="grid gap-2 sm:grid-cols-2">
                 {passwordRequirements.map((req) => (
                   <div
