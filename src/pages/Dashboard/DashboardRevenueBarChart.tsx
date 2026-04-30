@@ -18,8 +18,10 @@ import {
 import { motion } from 'framer-motion'
 import type { OverviewMonthRow } from './dashboardData'
 import { overviewYears } from './dashboardData'
+import { useHtmlClassDark } from '@/hooks/useHtmlClassDark'
 
-const PURPLE = '#7c3aed'
+const PURPLE_LIGHT = '#7946CD'
+const PURPLE_DARK = 'hsl(262 83% 58%)'
 const Y_TICKS = [5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000]
 
 interface DashboardRevenueBarChartProps {
@@ -41,7 +43,7 @@ function formatTooltipExact(value: unknown): string {
 const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: { value: number }[] }) => {
   if (active && payload?.length) {
     return (
-      <div className="rounded-md bg-[#364355] px-3 py-1.5 text-sm font-medium text-white shadow-lg">
+      <div className="rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-accent shadow-lg">
         <p>{formatTooltipExact(payload[0].value)}</p>
       </div>
     )
@@ -56,18 +58,24 @@ export function DashboardRevenueBarChart({
   selectedYear,
   onYearChange,
 }: DashboardRevenueBarChartProps) {
+  const isDark = useHtmlClassDark()
+  const gridStroke = isDark ? 'hsl(215 28% 22%)' : '#e5e7eb'
+  const tickFill = isDark ? 'hsl(215 20% 65%)' : '#64748b'
+  const barFill = isDark ? PURPLE_DARK : PURPLE_LIGHT
+  const cursorFill = isDark ? 'hsla(262, 83%, 58%, 0.12)' : 'rgba(121, 70, 205, 0.08)'
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: 0.15 }}
     >
-      <Card className="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+      <Card className="rounded-2xl border border-border bg-card shadow-sm">
         <CardHeader className="pb-2">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-lg font-bold text-slate-900">Revenue Statistics</h2>
+            <h2 className="text-lg font-bold text-accent">Revenue Statistics</h2>
             <Select value={selectedYear} onValueChange={onYearChange}>
-              <SelectTrigger className="h-9 w-[100px] shrink-0 border-slate-200 bg-white text-sm font-medium">
+              <SelectTrigger className="h-9 w-[100px] shrink-0 border-border bg-background text-sm font-medium text-accent">
                 <SelectValue placeholder="Year" />
               </SelectTrigger>
               <SelectContent>
@@ -84,24 +92,24 @@ export function DashboardRevenueBarChart({
           <div className="h-[260px] w-full sm:h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data} margin={{ top: 12, right: 8, left: 0, bottom: 4 }}>
-                <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#e5e7eb" />
+                <CartesianGrid strokeDasharray="4 4" vertical={false} stroke={gridStroke} />
                 <XAxis
                   dataKey="month"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: '#64748b', fontSize: 12 }}
+                  tick={{ fill: tickFill, fontSize: 12 }}
                   dy={8}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: '#64748b', fontSize: 12 }}
+                  tick={{ fill: tickFill, fontSize: 12 }}
                   tickFormatter={kFormatter}
                   domain={[5000, 50000]}
                   ticks={Y_TICKS}
                 />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(124, 58, 237, 0.06)' }} />
-                <Bar dataKey="revenue" fill={PURPLE} radius={[6, 6, 0, 0]} maxBarSize={36} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: cursorFill }} />
+                <Bar dataKey="revenue" fill={barFill} radius={[6, 6, 0, 0]} maxBarSize={36} />
               </BarChart>
             </ResponsiveContainer>
           </div>

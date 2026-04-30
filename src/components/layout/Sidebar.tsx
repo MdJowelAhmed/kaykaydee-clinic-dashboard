@@ -32,6 +32,7 @@ import { logout } from '@/redux/slices/authSlice'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
+import { DASHBOARD_HEADER_H, DASHBOARD_HEADER_SIDEBAR_GAP } from '@/components/layout/dashboardLayoutTokens'
 interface NavItem {
   title: string
   href: string
@@ -237,6 +238,9 @@ export function Sidebar() {
     return item.allowedRoles.includes(role)
   })
 
+  const sidebarTop = `calc(${DASHBOARD_HEADER_H} + ${DASHBOARD_HEADER_SIDEBAR_GAP})`
+  const sidebarHeight = `calc(100vh - ${DASHBOARD_HEADER_H} - ${DASHBOARD_HEADER_SIDEBAR_GAP})`
+
   const handleLogout = async () => {
     setIsLoggingOut(true)
     try {
@@ -253,21 +257,23 @@ export function Sidebar() {
       {/* Mobile overlay */}
       <div
         className={cn(
-          'fixed inset-x-0 bottom-0 top-20 z-40 bg-black/50 backdrop-blur-sm lg:hidden transition-opacity',
+          'fixed inset-x-0 bottom-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden transition-opacity rounded-md',
           sidebarCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
         )}
+        style={{ top: sidebarTop }}
         onClick={() => dispatch(toggleSidebar())}
       />
 
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed top-20 left-0 z-40 h-[calc(100vh-5rem)] bg-card shadow-xl transition-all duration-300',
+          'fixed left-0 z-40 bg-card shadow-xl transition-all duration-300',
           'flex flex-col',
           sidebarCollapsed ? 'w-[80px]' : 'w-[280px]',
           'lg:translate-x-0',
           sidebarCollapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'
         )}
+        style={{ top: sidebarTop, height: sidebarHeight }}
       >
         {/* Logo */}
         {/* <div className="flex items-center justify-between h-36 px-4 border-b">
@@ -299,7 +305,7 @@ export function Sidebar() {
           {/* Main Navigation */}
           <div className="space-y-1">
             {!sidebarCollapsed && (
-              <p className="px-3 py-2 text-xs font-semibold text-accent-foreground uppercase tracking-wider">
+              <p className="px-3 py-2 text-xs font-semibold text-accent uppercase tracking-wider">
                 Main Menu
               </p>
             )}
@@ -317,7 +323,7 @@ export function Sidebar() {
           {/* Settings Navigation */}
           <div className="space-y-1">
             {!sidebarCollapsed && (
-              <p className="px-3 py-2 text-xs font-semibold text-accent-foreground uppercase tracking-wider">
+              <p className="px-3 py-2 text-xs font-semibold text-accent uppercase tracking-wider">
                 Settings
               </p>
             )}
@@ -328,7 +334,7 @@ export function Sidebar() {
                     to="/settings/profile"
                     className={cn(
                       'flex items-center justify-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200',
-                      'hover:bg-primary hover:text-accent-foreground',
+                      'hover:bg-primary hover:text-accent',
                       isSettingsActive
                         ? 'bg-primary text-white shadow-md'
                         : 'text-muted-foreground'
@@ -372,7 +378,7 @@ export function Sidebar() {
           {/* <Button variant="outline" className="w-full" onClick={handleLogout}> <LogOut className="h-4 w-4 mr-2" /> Logout</Button> */}
           <Button
             variant="outline"
-            className="w-full"
+            className="w-full text-accent hover:text-accent "
             onClick={() => setLogoutDialogOpen(true)}
           >
             <LogOut className="h-4 w-4 mr-2" /> Logout
@@ -412,8 +418,8 @@ function SidebarNavItem({ item, collapsed }: SidebarNavItemProps) {
           'hover:bg-[#FDF8FF] hover:text-[#7946CD]',
           collapsed && 'justify-center',
           isActive
-            ? 'bg-[#FDF8FF] text-[#7946CD] shadow'
-            : 'text-[#656565]'
+            ? 'bg-[#FDF8FF] text-[#656565] shadow'
+            : 'text-accent'
         )
       }
     >

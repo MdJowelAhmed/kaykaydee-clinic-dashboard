@@ -18,6 +18,7 @@ import {
 import { motion } from 'framer-motion'
 import type { OverviewMonthRow } from './dashboardData'
 import { overviewYears } from './dashboardData'
+import { useHtmlClassDark } from '@/hooks/useHtmlClassDark'
 
 const TEAL = '#0d9488'
 const Y_TICKS = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
@@ -34,7 +35,7 @@ const CustomTooltip = ({ active, payload }: { active?: boolean; payload?: { valu
   if (active && payload?.length) {
     const n = payload[0].value
     return (
-      <div className="rounded-md bg-[#364355] px-3 py-1.5 text-sm font-medium text-white shadow-lg">
+      <div className="rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-accent shadow-lg">
         <p>{kFormatter(n)}</p>
       </div>
     )
@@ -47,18 +48,23 @@ export function DashboardActivityLineChart({
   selectedYear,
   onYearChange,
 }: DashboardActivityLineChartProps) {
+  const isDark = useHtmlClassDark()
+  const gridStroke = isDark ? 'hsl(215 28% 22%)' : '#e5e7eb'
+  const tickFill = isDark ? 'hsl(215 20% 65%)' : '#64748b'
+  const dotStroke = '#ffffff'
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: 0.22 }}
     >
-      <Card className="rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+      <Card className="rounded-2xl border border-border bg-card shadow-sm">
         <CardHeader className="pb-2">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-lg font-bold text-slate-900">Activity Statistics</h2>
+            <h2 className="text-lg font-bold text-accent">Activity Statistics</h2>
             <Select value={selectedYear} onValueChange={onYearChange}>
-              <SelectTrigger className="h-9 w-[100px] shrink-0 border-slate-200 bg-white text-sm font-medium">
+              <SelectTrigger className="h-9 w-[100px] shrink-0 border-border bg-background text-sm font-medium text-accent">
                 <SelectValue placeholder="Year" />
               </SelectTrigger>
               <SelectContent>
@@ -75,18 +81,18 @@ export function DashboardActivityLineChart({
           <div className="h-[260px] w-full sm:h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data} margin={{ top: 12, right: 8, left: 0, bottom: 4 }}>
-                <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#e5e7eb" />
+                <CartesianGrid strokeDasharray="4 4" vertical={false} stroke={gridStroke} />
                 <XAxis
                   dataKey="month"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: '#64748b', fontSize: 12 }}
+                  tick={{ fill: tickFill, fontSize: 12 }}
                   dy={8}
                 />
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: '#64748b', fontSize: 12 }}
+                  tick={{ fill: tickFill, fontSize: 12 }}
                   tickFormatter={kFormatter}
                   domain={[1000, 10000]}
                   ticks={Y_TICKS}
@@ -100,10 +106,10 @@ export function DashboardActivityLineChart({
                   dot={{
                     fill: TEAL,
                     strokeWidth: 2,
-                    stroke: '#fff',
+                    stroke: dotStroke,
                     r: 4,
                   }}
-                  activeDot={{ r: 6, fill: TEAL, stroke: '#fff', strokeWidth: 2 }}
+                  activeDot={{ r: 6, fill: TEAL, stroke: dotStroke, strokeWidth: 2 }}
                 />
               </LineChart>
             </ResponsiveContainer>

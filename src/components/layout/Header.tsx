@@ -1,4 +1,4 @@
-import { NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { Menu, LogOut, Moon, Sun, User, Settings } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -17,7 +17,7 @@ import { getInitials } from '@/utils/formatters'
 import { NotificationPreviewDialog } from '@/components/layout/NotificationPreviewDialog'
 import { useState } from 'react'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
-import { headerNav, routeTitles } from '@/components/layout/navigation'
+import { headerNav } from '@/components/layout/navigation'
 import { cn } from '@/utils/cn'
 import { hasRouteAccess } from '@/types/roles'
 
@@ -26,11 +26,8 @@ export function Header() {
   const dispatch = useAppDispatch()
   const { theme } = useAppSelector((state) => state.ui)
   const { user } = useAppSelector((state) => state.auth)
-  const location = useLocation()
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
-
-  const pageTitle = routeTitles[location.pathname] || 'Dashboard'
 
   const handleLogout = async () => {
     setIsLoggingOut(true)
@@ -43,7 +40,7 @@ export function Header() {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-20 shadow-md bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="fixed top-0 left-0 right-0 z-50 h-20 shadow-md bg-card backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-full items-center justify-between px-4 lg:px-6">
         {/* Left side */}
         <div className="flex items-center gap-4">
@@ -80,7 +77,7 @@ export function Header() {
                   className={({ isActive }) =>
                     cn(
                       'px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors',
-                      'text-muted-foreground hover:text-accent hover:bg-muted/30',
+                      'text-accent hover:text-accent hover:bg-muted/30',
                       isActive && 'text-accent bg-muted/40'
                     )
                   }

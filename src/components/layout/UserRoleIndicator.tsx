@@ -7,9 +7,9 @@ export function UserRoleIndicator() {
   if (!user) return null
 
   return (
-    <div className="flex flex-col gap-1 rounded-lg border bg-muted/50 px-3 py-2">
+    <div className="flex flex-col gap-1 rounded-lg border bg-card px-3 py-2">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs text-muted-foreground">Logged in as</span>
+        <span className="text-xs text-accent">Logged in as</span>
         <RoleBadge role={user.role} />
       </div>
     </div>

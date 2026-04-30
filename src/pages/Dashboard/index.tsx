@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react'
-import { Building2, CircleDollarSign, User, Users } from 'lucide-react'
+import { Building2, CircleDollarSign, User, UserCheck } from 'lucide-react'
 import { OverviewKpiCard } from './OverviewKpiCard'
-import { DashboardMessagePanel } from './DashboardMessagePanel'
 import { DashboardRevenueBarChart } from './DashboardRevenueBarChart'
 import { DashboardActivityLineChart } from './DashboardActivityLineChart'
 import { overviewByYear, overviewYears } from './dashboardData'
@@ -52,7 +51,7 @@ export default function Dashboard() {
         value: '80%',
         change: -2,
         changeLabel: 'from last month',
-        icon: Users,
+        icon: UserCheck,
         featured: false as const,
       },
     ],
@@ -61,6 +60,13 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
+      <header className="space-y-1">
+        <h1 className="text-2xl font-bold tracking-tight text-accent sm:text-3xl">Platform Analytics</h1>
+        <p className="text-sm text-muted-foreground sm:text-base">
+          Monitor platform performance and usage metrics
+        </p>
+      </header>
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {kpis.map((stat, index) => (
           <OverviewKpiCard key={stat.title} {...stat} index={index} />
@@ -68,21 +74,26 @@ export default function Dashboard() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2 lg:items-stretch">
-        <div className="min-h-[560px] lg:min-h-[620px]">
-          <DashboardMessagePanel />
-        </div>
-        <div className="flex min-h-0 flex-col gap-6">
-          <DashboardRevenueBarChart
-            data={overviewRows}
-            selectedYear={chartYear}
-            onYearChange={setChartYear}
-          />
-          <DashboardActivityLineChart
-            data={overviewRows}
-            selectedYear={chartYear}
-            onYearChange={setChartYear}
-          />
-        </div>
+        <DashboardActivityLineChart
+          data={overviewRows}
+          selectedYear={chartYear}
+          onYearChange={setChartYear}
+        />
+        <DashboardRevenueBarChart
+          data={overviewRows}
+          selectedYear={chartYear}
+          onYearChange={setChartYear}
+        />
+        <DashboardRevenueBarChart
+          data={overviewRows}
+          selectedYear={chartYear}
+          onYearChange={setChartYear}
+        />
+        <DashboardActivityLineChart
+          data={overviewRows}
+          selectedYear={chartYear}
+          onYearChange={setChartYear}
+        />
       </div>
     </div>
   )
