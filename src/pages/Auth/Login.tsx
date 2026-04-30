@@ -18,6 +18,7 @@ import type { AuthUserRole } from '@/redux/slices/authSlice'
 import { cn } from '@/utils/cn'
 import { motion } from 'framer-motion'
 import { getDefaultRouteForRole, canAccessDashboard } from '@/types/roles'
+import { AuthTabs } from './components/AuthTabs'
 
 const loginSchema = z.object({
   email: z.string().email('Please enter a valid email'),
@@ -128,14 +129,15 @@ export default function Login() {
 
   return (
     <div className="space-y-6">
+      <AuthTabs active="login" />
       <div className="mb-8 flex flex-col items-center justify-center gap-3">
         <img src="/assets/logo.png" alt="" className="h-20 w-20" />
         <img src="/assets/logo3.png" alt="Kay Kay Dee" className="h-8 w-20 object-contain" />
       </div>
 
       <div className="space-y-2 text-center">
-        <h1 className="text-2xl font-bold tracking-tight">Hello There!</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl font-bold tracking-tight text-accent">Hello There!</h1>
+        <p className="text-accent">
         Please fill out this field to continue the registration
         </p>
       </div>
@@ -228,7 +230,7 @@ export default function Login() {
           </div>
           <Link
             to="/auth/forgot-password"
-            className="shrink-0 text-sm text-primary hover:underline"
+            className="shrink-0 text-sm text-accent hover:underline"
           >
             Forgot password?
           </Link>
@@ -246,21 +248,21 @@ export default function Login() {
 
       <div className="relative">
         <Separator />
-        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2 text-muted-foreground">
+        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2 text-accent">
           Demo credentials 
         </span>
       </div>
 
-      <div className="space-y-3 rounded-lg border bg-muted/50 p-4 text-sm">
+      <div className="space-y-3 rounded-lg border bg-card p-4 text-sm">
         {demoAccountsForDisplay.map((acc, index) => (
           <div key={acc.id}>
             <div className="space-y-1">
-              <p className="font-semibold text-foreground">{acc.displayRole}</p>
-              <p>
-                <span className="text-muted-foreground">Email:</span> {acc.email}
+              <p className="font-semibold text-accent">{acc.displayRole}</p>
+              <p className="text-accent">
+                <span className="text-accent">Email:</span> {acc.email}
               </p>
-              <p>
-                <span className="text-muted-foreground">Pass:</span> {acc.password}
+              <p className="text-accent">
+                <span className="text-accent">Pass:</span> {acc.password}
               </p>
             </div>
             {index < demoAccountsForDisplay.length - 1 && (

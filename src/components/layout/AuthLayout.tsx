@@ -30,7 +30,7 @@ export default function AuthLayout() {
       </div>
 
       {/* Right side - Auth Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-white ">
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-card ">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
