@@ -7,4 +7,9 @@ export interface ClientListEntry {
   email: string
   joinDate: string
   address: string
+  occupation?: string
+  /** ISO date string `yyyy-MM-dd` */
+  dateOfBirth?: string
+  gender?: string
+  emergencyContact?: string
 }

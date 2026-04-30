@@ -37,6 +37,8 @@ import ZealthAIPage from './pages/ZealthAI/ZealthAIPage'
 import WaitingListPage from './pages/WaitingList/WaitingListPage'
 import ClientListPage from './pages/ClientList/ClientListPage'
 import ClientDetailsPage from './pages/ClientList/ClientDetailsPage'
+import ClientFormPage from './pages/ClientList/ClientFormPage'
+import { ClientListLayout } from './pages/ClientList/ClientListLayout'
 import ReportsPage from './pages/Reports/ReportsPage'
 import ExercisesPage from './pages/Exercises/ExercisesPage'
 import BranchManagePage from './pages/BranchManage/BranchManagePage'
@@ -198,18 +200,15 @@ function App() {
             path="client-list"
             element={
               <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
-                <ClientListPage />
+                <ClientListLayout />
               </RoleBasedRoute>
             }
-          />
-          <Route
-            path="client-list/:id"
-            element={
-              <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
-                <ClientDetailsPage />
-              </RoleBasedRoute>
-            }
-          />
+          >
+            <Route index element={<ClientListPage />} />
+            <Route path="new" element={<ClientFormPage />} />
+            <Route path=":id/edit" element={<ClientFormPage />} />
+            <Route path=":id" element={<ClientDetailsPage />} />
+          </Route>
 
           <Route
             path="reports"
