@@ -22,7 +22,7 @@ const TAB_DEFS = [
 ] as const
 
 const triggerClass =
-  'inline-flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors data-[state=active]:bg-primary/15 data-[state=active]:text-primary data-[state=active]:shadow-none'
+    'inline-flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-accent transition-colors data-[state=active]:bg-primary/15 data-[state=active]:text-primary data-[state=active]:shadow-none'
 
 const listClass =
   'flex h-auto min-h-12 w-full flex-wrap items-center justify-start gap-1 rounded-xl border border-border bg-muted/25 p-1.5'
@@ -41,7 +41,7 @@ export function ClientProfileTabs({
   className,
 }: ClientProfileTabsProps) {
   const placeholder = (
-    <div className="rounded-2xl border border-border bg-card px-6 py-14 text-center text-sm text-muted-foreground">
+    <div className="rounded-2xl border border-border bg-card px-6 py-14 text-center text-sm text-accent">
       No data in this section yet.
     </div>
   )

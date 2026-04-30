@@ -24,15 +24,16 @@ export function ClientProfilePageHeader({
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-accent">{title}</h1>
-        <button
+      <button
           type="button"
           onClick={onBack}
-          className="mt-1 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-accent"
+          className="mb-1 inline-flex items-center gap-1.5 text-sm text-accent transition-colors hover:text-accent"
         >
           <ArrowLeft className="h-4 w-4 shrink-0" />
           Back to patients management
         </button>
+        <h1 className="text-2xl font-bold tracking-tight text-accent">{title}</h1>
+       
       </div>
       {actions}
     </div>
@@ -91,7 +92,7 @@ export function ClientProfileSummaryCard({
         </Avatar>
         <div className="min-w-0">
           <p className="text-xl font-bold text-accent sm:text-2xl">{displayName}</p>
-          <p className="mt-1 text-sm text-muted-foreground">{patientIdLine}</p>
+          <p className="mt-1 text-sm text-accent">{patientIdLine}</p>
         </div>
       </CardContent>
     </Card>

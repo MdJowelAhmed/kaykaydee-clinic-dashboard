@@ -194,12 +194,12 @@ export default function ClientFormPage() {
         value={tab}
         onValueChange={setTab}
         profileContent={
-          <form id="client-profile-form" onSubmit={submitForm} className="space-y-0">
+          <form id="client-profile-form" onSubmit={submitForm} className="space-y-0 text-accent ">
             <ProfileFormCard isSubmitting={isSubmitting}>
               {!isCreate && <input type="hidden" {...register('joinDate')} />}
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label htmlFor="patientName" className="text-xs text-muted-foreground">
+                    <Label htmlFor="patientName" className="text-xs text-accent">
                     Name
                   </Label>
                   <Input
@@ -212,14 +212,14 @@ export default function ClientFormPage() {
                   )}
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="occupation" className="text-xs text-muted-foreground">
+                  <Label htmlFor="occupation" className="text-xs text-accent">
                     Occupation
                   </Label>
                   <Input id="occupation" className={inputClass} {...register('occupation')} />
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="email" className="text-xs text-muted-foreground">
+                  <Label htmlFor="email" className="text-xs text-accent">
                     Email
                   </Label>
                   <Input id="email" type="email" className={inputClass} {...register('email')} />
@@ -228,7 +228,7 @@ export default function ClientFormPage() {
                   )}
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="dateOfBirth" className="text-xs text-muted-foreground">
+                  <Label htmlFor="dateOfBirth" className="text-xs text-accent">
                     Date of Birth
                   </Label>
                   <Input
@@ -243,7 +243,7 @@ export default function ClientFormPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="contactNo" className="text-xs text-muted-foreground">
+                  <Label htmlFor="contactNo" className="text-xs text-accent">
                     Phone
                   </Label>
                   <Input id="contactNo" className={inputClass} {...register('contactNo')} />
@@ -252,7 +252,7 @@ export default function ClientFormPage() {
                   )}
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Gender</Label>
+                  <Label className="text-xs text-accent">Gender</Label>
                   <Select
                     value={watch('gender')}
                     onValueChange={(v) => setValue('gender', v, { shouldValidate: true })}
@@ -260,7 +260,7 @@ export default function ClientFormPage() {
                     <SelectTrigger
                       className={cn(
                         inputClass,
-                        'border border-input bg-[#E8EAED] shadow-none dark:border-input dark:bg-muted/40'
+                          'border border-input bg-card shadow-none'
                       )}
                     >
                       <SelectValue placeholder="Select" />
@@ -276,7 +276,7 @@ export default function ClientFormPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="emergencyContact" className="text-xs text-muted-foreground">
+                  <Label htmlFor="emergencyContact" className="text-xs text-accent">
                     Emergency contact
                   </Label>
                   <Input
@@ -288,7 +288,7 @@ export default function ClientFormPage() {
                 <div className="hidden sm:block" aria-hidden />
 
                 <div className="space-y-1.5 sm:col-span-2">
-                  <Label htmlFor="address" className="text-xs text-muted-foreground">
+                  <Label htmlFor="address" className="text-xs text-accent">
                     Address
                   </Label>
                   <Input id="address" className={inputClass} {...register('address')} />
@@ -299,7 +299,7 @@ export default function ClientFormPage() {
 
                 {isCreate && (
                   <div className="space-y-1.5 sm:col-span-2">
-                    <Label htmlFor="joinDate" className="text-xs text-muted-foreground">
+                      <Label htmlFor="joinDate" className="text-xs text-accent">
                       Join date
                     </Label>
                     <Input id="joinDate" type="date" className={inputClass} {...register('joinDate')} />

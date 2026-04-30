@@ -22,7 +22,7 @@
     --destructive: #ef4444;
     --destructive-foreground: 0 0% 100%;
     --border: 220 13% 91%;
-    --input: 220 13% 91%;
+    --input: #E8EAED;
     --ring: 262 83% 58%;
     --radius: 0.75rem;
     --sidebar: 262 83% 58%;
@@ -52,7 +52,7 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 215 28% 17%;
-    --input: 215 28% 17%;
+    --input: #181c1f;
     --ring: 262 83% 58%;
     --sidebar: 224 71% 6%;
     --sidebar-foreground: 213 31% 91%;
