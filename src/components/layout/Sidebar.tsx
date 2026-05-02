@@ -1,261 +1,158 @@
 import React, { useState } from 'react'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
 import {
-  // LayoutDashboard,
   Settings,
-  User,
-  Lock,
-  FileText,
-  Shield,
+  Crown,
+  Activity,
   Info,
-  UserCog,
-  Sparkles,
-  LogOut,
+  ShieldAlert,
+  FileCheck,
   HelpCircle,
-  // ClipboardList,
-  // Contact,
-  // FileBarChart,
-  Dumbbell,
-  GitBranch,
-  Stethoscope,
-  // Calendar,
   Receipt,
-  Package,
+  GitBranch,
+  UserCog,
+  UserPlus,
+  Brain,
+  LogOut,
+  User,
+  Users,
 } from 'lucide-react'
-import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { toggleSidebar } from '@/redux/slices/uiSlice'
 import { cn } from '@/utils/cn'
 import { UserRole, normalizeRoleKey } from '@/types/roles'
-import { UserRoleIndicator } from '@/components/layout/UserRoleIndicator'
 import { Button } from '../ui/button'
 import { logout } from '@/redux/slices/authSlice'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
-import { DASHBOARD_HEADER_H, DASHBOARD_HEADER_SIDEBAR_GAP } from '@/components/layout/dashboardLayoutTokens'
+import {
+  DASHBOARD_HEADER_H,
+  DASHBOARD_HEADER_SIDEBAR_GAP,
+  DASHBOARD_SIDEBAR_V_INSET,
+} from '@/components/layout/dashboardLayoutTokens'
+import { getRoleDisplayName } from '@/utils/roleHelpers'
+
 interface NavItem {
   title: string
   href: string
   icon: React.ElementType
-  children?: NavItem[]
-  allowedRoles?: UserRole[] // If not specified, accessible to all
+  allowedRoles?: UserRole[]
 }
 
-const navItems: NavItem[] = [
-  // {
-  //   title: 'Dashboard',
-  //   href: '/dashboard',
-  //   icon: LayoutDashboard,
-  //   allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  // },
-  // {
-  //   title: 'Calendar',
-  //   href: '/calender',
-  //   icon: Calendar,
-  //   allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  // },
-  // {
-  //   title: 'Waiting list',
-  //   href: '/waiting-list',
-  //   icon: ClipboardList,
-  //   allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  // },
-  // {
-  //   title: 'Client list',
-  //   href: '/client-list',
-  //   icon: Contact,
-  //   allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  // },
-  // {
-  //   title: 'Contact list',
-  //   href: '/contact-list',
-  //   icon: Contact,
-  //   allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  // },
- 
-  // {
-  //   title: 'Reports',
-  //   href: '/reports',
-  //   icon: FileBarChart,
-  //   allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  // },
+const invoiceSection: NavItem[] = [
   {
-    title: 'Clinics Invoice',
+    title: 'Invoices',
     href: '/clinics-invoice',
     icon: Receipt,
     allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
   },
-  {
-    title: 'Exercises',
-    href: '/exercises',
-    icon: Dumbbell,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-
-  // {
-  //   title: 'User Management',
-  //   href: '/users',
-  //   icon: Users,
-  //   allowedRoles: [UserRole.HEAD_ADMIN],
-  // },
-  // {
-  //   title: 'Clinic Management',
-  //   href: '/clinic-management',
-  //   icon: Building2,
-  //   allowedRoles: [UserRole.HEAD_ADMIN],
-  // },
-
-  
-  // {
-  //   title: 'Booking Management',
-  //   href: '/booking-management',
-  //   icon: ListOrdered,
-  //   allowedRoles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.BUSINESS],
-  // },
-
-
-  // {
-  //   title: 'Transactions History',
-  //   href: '/transactions-history',
-  //   icon: CreditCard,
-  //   allowedRoles: [UserRole.SUPER_ADMIN, UserRole.BUSINESS], // Super Admin only
-  // },
-
-  // {
-  //   title: 'Reviews & Ratings',
-  //   href: '/reviews-ratings',
-  //   icon: Star,
-  //   allowedRoles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.BUSINESS],
-  // },
-
-  {
-    title: 'Subscription Package',
-    href: '/subscription-packages',
-    icon: Package,
-    allowedRoles: [UserRole.HEAD_ADMIN],
-  },
-  // {
-  //   title: 'Subscription Invoice',
-  //   href: '/subscription-invoice',
-  //   icon: Receipt,
-  //   allowedRoles: [UserRole.HEAD_ADMIN],
-  // },
-  // {
-  //   title: 'Subscription Manage',
-  //   href: '/subscription-manage',
-  //   icon: Layers,
-  //   allowedRoles: [UserRole.HEAD_ADMIN],
-  // },
-  {
-    title: 'Branch manage',
-    href: '/branch-manage',
-    icon: GitBranch,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  {
-    title: 'Doctors manage',
-    href: '/doctors-manage',
-    icon: Stethoscope,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  {
-    title: 'Admin Manage',
-    href: '/admin-manage',
-    icon: UserCog,
-    allowedRoles: [UserRole.HEAD_ADMIN],
-  },
-  {
-    title: 'Zealth AI',
-    href: '/zealth-ai',
-    icon: Sparkles,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  // {
-  //   title: 'Subscription',
-  //   href: '/subscription',
-  //   icon: Crown,
-  //   allowedRoles: [UserRole.SUPER_ADMIN, UserRole.ADMIN],
-  // },
-  // {
-  //   title: 'Support',
-  //   href: '/support',
-  //   icon: LifeBuoy,
-  //   allowedRoles: [UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.BUSINESS],
-  // },
-
 ]
 
-const settingsItems: NavItem[] = [
+const generalSettingsSection: NavItem[] = [
   {
-    title: 'Profile',
+    title: 'Settings',
     href: '/settings/profile',
-    icon: User,
+    icon: Settings,
     allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
   },
   {
-    title: 'About Us',
+    title: 'My Subscription',
+    href: '/subscription-packages',
+    icon: Crown,
+    allowedRoles: [UserRole.HEAD_ADMIN],
+  },
+  {
+    title: 'Exercises Setting',
+    href: '/exercises',
+    icon: Activity,
+    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  },
+  {
+    title: 'About us',
     href: '/settings/about-us',
     icon: Info,
     allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
   },
   {
-    title: 'FAQ',
+    title: 'Privacy Policy',
+    href: '/settings/privacy',
+    icon: ShieldAlert,
+    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  },
+  {
+    title: 'Terms & Condition',
+    href: '/settings/terms',
+    icon: FileCheck,
+    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  },
+  {
+    title: 'Manage FAQ',
     href: '/settings/faq',
     icon: HelpCircle,
     allowedRoles: [UserRole.HEAD_ADMIN],
   },
-  {
-    title: 'Password',
-    href: '/settings/password',
-    icon: Lock,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  {
-    title: 'Terms',
-    href: '/settings/terms',
-    icon: FileText,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  {
-    title: 'Privacy',
-    href: '/settings/privacy',
-    icon: Shield,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  
 ]
+
+const adminSection: NavItem[] = [
+  {
+    title: 'Branch',
+    href: '/branch-manage',
+    icon: GitBranch,
+    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  },
+  {
+    title: 'Admin',
+    href: '/admin-manage',
+    icon: UserCog,
+    allowedRoles: [UserRole.HEAD_ADMIN],
+  },
+  {
+    title: 'Members',
+    href: '/doctors-manage',
+    icon: UserPlus,
+    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  },
+]
+
+const aiItem: NavItem = {
+  title: 'AI Manager',
+  href: '/zealth-ai',
+  icon: Brain,
+  allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+}
+
+function filterByRole(items: NavItem[], user: { role: string } | null): NavItem[] {
+  if (!items.length) return []
+  return items.filter((item) => {
+    if (!item.allowedRoles) return true
+    if (!user) return false
+    const role = normalizeRoleKey(user.role) as UserRole
+    return item.allowedRoles.includes(role)
+  })
+}
 
 export function Sidebar() {
   const dispatch = useAppDispatch()
   const { sidebarCollapsed } = useAppSelector((state) => state.ui)
   const { user } = useAppSelector((state) => state.auth)
-  const location = useLocation()
   const navigate = useNavigate()
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
-  const isSettingsActive = location.pathname.startsWith('/settings')
 
-  // Filter navigation items based on user role
-  const filteredNavItems = navItems.filter((item) => {
-    if (!item.allowedRoles) return true // No restriction
-    if (!user) return false
-    const role = normalizeRoleKey(user.role) as UserRole
-    const hasAccess = item.allowedRoles.includes(role)
-    // console.log(`🔐 ${item.title}: hasAccess=${hasAccess}, userRole=${user.role}, allowedRoles=${item.allowedRoles.join(', ')}`)
-    return hasAccess
-  })
+  const filteredInvoice = filterByRole(invoiceSection, user)
+  const filteredGeneral = filterByRole(generalSettingsSection, user)
+  const filteredAdmin = filterByRole(adminSection, user)
+  const filteredAi = filterByRole([aiItem], user)
+  const showAi = filteredAi.length > 0
 
-  const filteredSettingsItems = settingsItems.filter((item) => {
-    if (!item.allowedRoles) return true // No restriction
-    if (!user) return false
-    const role = normalizeRoleKey(user.role) as UserRole
-    return item.allowedRoles.includes(role)
-  })
+  const belowHeaderGap = `calc(${DASHBOARD_HEADER_H} + ${DASHBOARD_HEADER_SIDEBAR_GAP})`
+  const sidebarTop = `calc(${belowHeaderGap} + ${DASHBOARD_SIDEBAR_V_INSET})`
 
-  const sidebarTop = `calc(${DASHBOARD_HEADER_H} + ${DASHBOARD_HEADER_SIDEBAR_GAP})`
-  const sidebarHeight = `calc(100vh - ${DASHBOARD_HEADER_H} - ${DASHBOARD_HEADER_SIDEBAR_GAP})`
+  const displayName = user
+    ? [user.firstName, user.lastName].filter(Boolean).join(' ').trim() || user.email
+    : ''
 
   const handleLogout = async () => {
     setIsLoggingOut(true)
@@ -270,137 +167,183 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile overlay */}
       <div
         className={cn(
-          'fixed inset-x-0 bottom-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden transition-opacity rounded-md',
+          'fixed inset-x-0 bottom-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden transition-opacity',
           sidebarCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'
         )}
-        style={{ top: sidebarTop }}
+        style={{ top: belowHeaderGap }}
         onClick={() => dispatch(toggleSidebar())}
       />
 
-      {/* Sidebar */}
       <aside
         className={cn(
-          'fixed left-0 z-40 bg-card shadow-xl transition-all duration-300',
-          'flex flex-col',
+          'fixed left-0 z-40 flex flex-col overflow-hidden border border-border/60 bg-card shadow-lg transition-all duration-300',
+          'ml-4 rounded-[2rem] lg:ml-5',
           sidebarCollapsed ? 'w-[80px]' : 'w-[280px]',
           'lg:translate-x-0',
           sidebarCollapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'
         )}
-        style={{ top: sidebarTop, height: sidebarHeight }}
+        style={{ top: sidebarTop, bottom: DASHBOARD_SIDEBAR_V_INSET }}
       >
-        {/* Logo */}
-        {/* <div className="flex items-center justify-between h-36 px-4 border-b">
-          <div className="flex items-center gap-3">
-            <div className="h-32 w-full mx-auto rounded-lg flex items-center justify-center ">
-              <div className="text-primary text-white font-bold text-lg">
-                <img src="/logo.png" alt="Booking Dashboard" className="h-20 w-32" />
-                <img src="/assets/logo3.png" alt="Booking Dashboard" className="h-8 w-20 object-contain" />
-              </div>
-            </div>
-        
-          </div>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={() => dispatch(toggleSidebar())}
-            className="hidden lg:flex"
-          >
-            {sidebarCollapsed ? (
-              <ChevronRight className="h-4 w-4 text-accent" />
-            ) : (
-              <ChevronLeft className="h-4 w-4 text-accent" />
-            )}
-          </Button>
-        </div> */}
+        <nav className="flex min-h-0 flex-1 flex-col overflow-y-auto scrollbar-thin px-3 pb-2 pt-4">
+          {filteredInvoice.map((item) => (
+            <SidebarNavItem key={item.href} item={item} collapsed={sidebarCollapsed} />
+          ))}
 
-        {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto scrollbar-thin p-3 space-y-1">
-          {/* Main Navigation */}
-          <div className="space-y-1">
-            {!sidebarCollapsed && (
-              <p className="px-3 py-2 text-xs font-semibold text-accent uppercase tracking-wider">
-                Main Menu
-              </p>
-            )}
-            {filteredNavItems.map((item) => (
+          {filteredInvoice.length > 0 &&
+            (filteredGeneral.length > 0 ||
+              filteredAdmin.length > 0 ||
+              showAi) && <SidebarDivider />}
+
+          {filteredGeneral.map((item) => (
+            <SidebarNavItem key={item.href} item={item} collapsed={sidebarCollapsed} />
+          ))}
+
+          {(filteredGeneral.length > 0 && filteredAdmin.length > 0) && <SidebarDivider />}
+
+          {!sidebarCollapsed && filteredAdmin.length > 0 && (
+            <div className="flex items-center gap-2 px-3 pb-2 pt-1">
+              <Users className="h-4 w-4 shrink-0 text-muted-foreground/70" />
+              <span className="text-xs font-medium tracking-tight text-muted-foreground/90">
+                Manage Admin/Members
+              </span>
+            </div>
+          )}
+          {sidebarCollapsed && filteredAdmin.length > 0 && (
+            <div className="flex justify-center py-1">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted/50">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="right" className='text-accent'>Manage Admin/Members</TooltipContent>
+              </Tooltip>
+            </div>
+          )}
+
+          {filteredAdmin.map((item) => (
+            <SidebarNavItem key={item.href} item={item} collapsed={sidebarCollapsed} />
+          ))}
+
+          {showAi &&
+            (filteredInvoice.length > 0 ||
+              filteredGeneral.length > 0 ||
+              filteredAdmin.length > 0) && <SidebarDivider />}
+
+          {showAi &&
+            filteredAi.map((item) => (
               <SidebarNavItem
                 key={item.href}
                 item={item}
                 collapsed={sidebarCollapsed}
+                variant="ai"
               />
             ))}
-          </div>
 
-          <Separator className="my-4" />
-
-          {/* Settings Navigation */}
-          <div className="space-y-1">
-            {!sidebarCollapsed && (
-              <p className="px-3 py-2 text-xs font-semibold text-accent uppercase tracking-wider">
-                Settings
-              </p>
-            )}
-            {sidebarCollapsed ? (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <NavLink
-                    to="/settings/profile"
-                    className={cn(
-                      'flex items-center justify-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200',
-                      'hover:bg-primary hover:text-accent',
-                      isSettingsActive
-                        ? 'bg-primary text-white shadow-md'
-                        : 'text-muted-foreground'
-                    )}
-                  > 
-                    <Settings
-                      className={cn(
-                        'h-5 w-5 flex-shrink-0',
-                        isSettingsActive
-                          ? 'text-primary'
-                          : 'text-muted-foreground'
-                      )}
-                    />
-                  </NavLink>
-                </TooltipTrigger>
-                <TooltipContent side="right">Settings</TooltipContent>
-              </Tooltip>
-            ) : (
-              filteredSettingsItems.map((item) => (
-                <SidebarNavItem
-                  key={item.href}
-                  item={item}
-                  collapsed={sidebarCollapsed}
-                />
-              ))
-            )}
-          </div>
+          {!sidebarCollapsed && (
+            <div className="mt-3 px-1">
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-teal-400 via-cyan-500 to-fuchsia-600 p-4 text-white shadow-md">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.25),transparent_45%)]" />
+                <div className="relative flex items-center gap-2">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+                    <Crown className="h-5 w-5 text-white" />
+                  </div>
+                  <span className="text-sm font-semibold tracking-tight">50% Completed</span>
+                </div>
+                <div className="relative mt-3 h-2 w-full overflow-hidden rounded-full bg-white/25">
+                  <div
+                    className="h-full w-1/2 rounded-full bg-white shadow-sm transition-all duration-500"
+                    style={{ width: '50%' }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </nav>
 
-        {/* Footer */}
-        <div className="p-4 border-t space-y-3">
+        <div className="mt-auto space-y-3 border-t border-border px-3 py-1">
           {!sidebarCollapsed && user && (
-            <UserRoleIndicator />
+            <div className="flex items-center gap-3 rounded-2xl px-2 py-2">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 shadow-inner ring-2 ring-background">
+                {user.avatar ? (
+                  <img
+                    src={user.avatar}
+                    alt=""
+                    className="h-full w-full rounded-full object-cover"
+                  />
+                ) : (
+                  <User className="h-6 w-6 text-white" strokeWidth={1.75} />
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold text-accent">{displayName}</p>
+                <p className="text-xs text-muted-foreground">
+                  {getRoleDisplayName(user.role)}
+                </p>
+              </div>
+            </div>
           )}
-          {/* {!sidebarCollapsed && (
-            <p className="text-xs text-muted-foreground text-center">
-              © 2026 Motly v1.0
-            </p>
-          )} */}
 
-          {/* <Button variant="outline" className="w-full" onClick={handleLogout}> <LogOut className="h-4 w-4 mr-2" /> Logout</Button> */}
-          <Button
-            variant="outline"
-            className="w-full text-accent hover:text-accent "
-            onClick={() => setLogoutDialogOpen(true)}
-          >
-            <LogOut className="h-4 w-4 mr-2" /> Logout
-          </Button>
+          {sidebarCollapsed && user && (
+            <div className="flex justify-center">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex h-11 w-11 cursor-default items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 shadow-inner ring-2 ring-background">
+                    {user.avatar ? (
+                      <img
+                        src={user.avatar}
+                        alt=""
+                        className="h-full w-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <User className="h-5 w-5 text-white" />
+                    )}
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="right" className='text-accent'>
+                  <p className="font-medium">{displayName}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {getRoleDisplayName(user.role)}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+          )}
+
+          {sidebarCollapsed ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="mx-auto flex h-10 w-10 text-accent  hover:text-accent"
+                  onClick={() => setLogoutDialogOpen(true)}
+                  aria-label="Log Out"
+                >
+                  <LogOut className="h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right" className='text-accent'>Log Out</TooltipContent>
+            </Tooltip>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setLogoutDialogOpen(true)}
+              className={cn(
+                'flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium ',
+                'text-accent transition-colors',
+                'hover:bg-muted/60 hover:text-accent'
+              )}
+            >
+              <LogOut className="h-5 w-5 shrink-0" />
+              <span>Log Out</span>
+            </button>
+          )}
         </div>
       </aside>
+
       <ConfirmDialog
         open={logoutDialogOpen}
         onClose={() => setLogoutDialogOpen(false)}
@@ -417,12 +360,17 @@ export function Sidebar() {
   )
 }
 
+function SidebarDivider() {
+  return <div className="my-3 border-t border-border" role="presentation" />
+}
+
 interface SidebarNavItemProps {
   item: NavItem
   collapsed: boolean
+  variant?: 'default' | 'ai'
 }
 
-function SidebarNavItem({ item, collapsed }: SidebarNavItemProps) {
+function SidebarNavItem({ item, collapsed, variant = 'default' }: SidebarNavItemProps) {
   const Icon = item.icon
 
   const linkContent = (
@@ -430,12 +378,17 @@ function SidebarNavItem({ item, collapsed }: SidebarNavItemProps) {
       to={item.href}
       className={({ isActive }) =>
         cn(
-          'flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all duration-200',
-          'hover:bg-[#FDF8FF] hover:text-[#7946CD]',
-          collapsed && 'justify-center',
-          isActive
-            ? 'bg-[#FDF8FF] text-[#656565] shadow'
-            : 'text-accent'
+          'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors duration-200',
+          collapsed && 'justify-center px-2',
+          variant === 'default' && [
+            'text-accent hover:bg-muted/50 hover:text-accent',
+            isActive && 'bg-background font-medium text-accent shadow-sm',
+          ],
+          variant === 'ai' && [
+            'text-purple-600 hover:bg-purple-500/10 hover:text-purple-700 dark:text-purple-400 dark:hover:bg-purple-500/15 dark:hover:text-purple-300',
+            isActive &&
+              'bg-purple-500/15 font-medium text-purple-700 shadow-sm dark:bg-purple-500/20 dark:text-purple-300',
+          ]
         )
       }
     >
@@ -443,11 +396,16 @@ function SidebarNavItem({ item, collapsed }: SidebarNavItemProps) {
         <>
           <Icon
             className={cn(
-              'h-5 w-5 flex-shrink-0',
-              isActive && !collapsed ? 'text-[#0C5822]' : isActive && collapsed ? 'text-[#0C5822]' : 'text-[#656565]'
+              'h-[1.125rem] w-[1.125rem] shrink-0 stroke-[1.75]',
+              variant === 'default' &&
+                (isActive ? 'text-accent' : 'text-muted-foreground'),
+              variant === 'ai' &&
+                (isActive
+                  ? 'text-purple-700 dark:text-purple-300'
+                  : 'text-purple-600 dark:text-purple-400')
             )}
           />
-          {!collapsed && <span className="font-medium">{item.title}</span>}
+          {!collapsed && <span>{item.title}</span>}
         </>
       )}
     </NavLink>
@@ -457,14 +415,10 @@ function SidebarNavItem({ item, collapsed }: SidebarNavItemProps) {
     return (
       <Tooltip>
         <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
-        <TooltipContent side="right">{item.title}</TooltipContent>
+        <TooltipContent side="right" className='text-accent'>{item.title}</TooltipContent>
       </Tooltip>
     )
   }
 
   return linkContent
 }
-
-
-
-

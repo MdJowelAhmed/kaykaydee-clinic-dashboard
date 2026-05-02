@@ -1,19 +1,9 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { Menu, LogOut, Moon, Sun, User, Settings } from 'lucide-react'
+import { Menu, Moon, Sun } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { toggleSidebar, toggleTheme } from '@/redux/slices/uiSlice'
 import { logout } from '@/redux/slices/authSlice'
-import { getInitials } from '@/utils/formatters'
 import { NotificationPreviewDialog } from '@/components/layout/NotificationPreviewDialog'
 import { useState } from 'react'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
@@ -40,7 +30,8 @@ export function Header() {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-20 shadow-md bg-card backdrop-blur supports-[backdrop-filter]:bg-background/60">
+   <div className='bg-background  p-2 fixed top-0 left-0 right-0 h-28'>
+     <header className="fixed top-0 left-0 right-0 z-50 h-20 shadow-md bg-card backdrop-blur supports-[backdrop-filter]:bg-background/60 mt-4 rounded-2xl mx-5">
       <div className="flex h-full items-center justify-between px-4 lg:px-6">
         {/* Left side */}
         <div className="flex items-center gap-4">
@@ -107,7 +98,7 @@ export function Header() {
           <NotificationPreviewDialog />
 
           {/* User menu */}
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                 <Avatar className="h-12 w-12">
@@ -147,7 +138,7 @@ export function Header() {
                 Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </div>
       </div>
       <ConfirmDialog
@@ -163,5 +154,6 @@ export function Header() {
         isLoading={isLoggingOut}
       />
     </header>
+   </div>
   )
 }

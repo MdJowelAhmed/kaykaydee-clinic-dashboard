@@ -12,7 +12,7 @@ export default function DashboardLayout() {
   const mainMinH = `calc(100vh - ${DASHBOARD_HEADER_H} - ${DASHBOARD_HEADER_SIDEBAR_GAP})`
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background ">
       <Header />
       <Sidebar />
       <div
@@ -22,7 +22,7 @@ export default function DashboardLayout() {
         )}
         style={{ paddingTop: shellTop }}
       >
-        <main className="p-6 lg:p-8 bg-muted/10" style={{ minHeight: mainMinH }}>
+        <main className="p-6 lg:p-8 " style={{ minHeight: mainMinH }}>
           <Outlet />
         </main>
       </div>

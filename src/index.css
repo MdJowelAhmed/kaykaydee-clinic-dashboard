@@ -30,7 +30,7 @@
     --sidebar-accent: 262 70% 50%;
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
+    --warning: #e0292e;
     --warning-foreground: 0 0% 100%;
   }
 
@@ -59,7 +59,7 @@
     --sidebar-accent: 262 83% 58%;
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
+    --warning: #e0292e;
     --warning-foreground: 0 0% 100%;
   }
 }
