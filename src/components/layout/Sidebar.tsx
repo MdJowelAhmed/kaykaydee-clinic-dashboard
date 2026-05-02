@@ -34,6 +34,14 @@ import {
 } from '@/components/layout/dashboardLayoutTokens'
 import { getRoleDisplayName } from '@/utils/roleHelpers'
 
+/** Sidebar AI strip + progress card (matches design reference) */
+const COL_AI_FROM = '#6737BE'
+const COL_AI_TO = '#E055FA'
+const COL_CARD_FROM = '#44A9C4'
+const COL_CARD_MID = '#48DAC9'
+const COL_CARD_TO = '#E055FA'
+const COL_PROGRESS_FILL = '#48DAC9'
+
 interface NavItem {
   title: string
   href: string
@@ -167,6 +175,14 @@ export function Sidebar() {
 
   return (
     <>
+      <svg aria-hidden className="pointer-events-none absolute h-0 w-0 overflow-hidden" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sidebar-ai-nav-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor={COL_AI_FROM} />
+            <stop offset="100%" stopColor={COL_AI_TO} />
+          </linearGradient>
+        </defs>
+      </svg>
       <div
         className={cn(
           'fixed inset-x-0 bottom-0 z-40 bg-black/50 backdrop-blur-sm lg:hidden transition-opacity',
@@ -202,14 +218,7 @@ export function Sidebar() {
 
           {(filteredGeneral.length > 0 && filteredAdmin.length > 0) && <SidebarDivider />}
 
-          {!sidebarCollapsed && filteredAdmin.length > 0 && (
-            <div className="flex items-center gap-2 px-3 pb-2 pt-1">
-              <Users className="h-4 w-4 shrink-0 text-muted-foreground/70" />
-              <span className="text-xs font-medium tracking-tight text-muted-foreground/90">
-                Manage Admin/Members
-              </span>
-            </div>
-          )}
+  
           {sidebarCollapsed && filteredAdmin.length > 0 && (
             <div className="flex justify-center py-1">
               <Tooltip>
@@ -244,18 +253,23 @@ export function Sidebar() {
 
           {!sidebarCollapsed && (
             <div className="mt-3 px-1">
-              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-teal-400 via-cyan-500 to-fuchsia-600 p-4 text-white shadow-md">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.25),transparent_45%)]" />
+              <div
+                className="relative overflow-hidden rounded-2xl p-4 text-white shadow-md"
+                style={{
+                  background: `linear-gradient(to right, ${COL_CARD_FROM}, ${COL_CARD_MID}, ${COL_CARD_TO})`,
+                }}
+              >
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_0%,rgba(255,255,255,0.2),transparent_50%)]" />
                 <div className="relative flex items-center gap-2">
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
-                    <Crown className="h-5 w-5 text-white" />
+                    <Crown className="h-5 w-5 text-white" strokeWidth={1.75} />
                   </div>
-                  <span className="text-sm font-semibold tracking-tight">50% Completed</span>
+                  <span className="text-sm font-semibold tracking-tight text-white">50% Completed</span>
                 </div>
-                <div className="relative mt-3 h-2 w-full overflow-hidden rounded-full bg-white/25">
+                <div className="relative mt-3 h-2.5 w-full overflow-hidden rounded-full bg-white">
                   <div
-                    className="h-full w-1/2 rounded-full bg-white shadow-sm transition-all duration-500"
-                    style={{ width: '50%' }}
+                    className="h-full rounded-full shadow-sm transition-all duration-500"
+                    style={{ width: '50%', backgroundColor: COL_PROGRESS_FILL }}
                   />
                 </div>
               </div>
@@ -385,9 +399,8 @@ function SidebarNavItem({ item, collapsed, variant = 'default' }: SidebarNavItem
             isActive && 'bg-background font-medium text-accent shadow-sm',
           ],
           variant === 'ai' && [
-            'text-purple-600 hover:bg-purple-500/10 hover:text-purple-700 dark:text-purple-400 dark:hover:bg-purple-500/15 dark:hover:text-purple-300',
-            isActive &&
-              'bg-purple-500/15 font-medium text-purple-700 shadow-sm dark:bg-purple-500/20 dark:text-purple-300',
+            'hover:bg-[#6737BE]/10',
+            isActive && 'bg-[#6737BE]/15 font-medium shadow-sm dark:bg-[#6737BE]/20',
           ]
         )
       }
@@ -398,14 +411,20 @@ function SidebarNavItem({ item, collapsed, variant = 'default' }: SidebarNavItem
             className={cn(
               'h-[1.125rem] w-[1.125rem] shrink-0 stroke-[1.75]',
               variant === 'default' &&
-                (isActive ? 'text-accent' : 'text-muted-foreground'),
-              variant === 'ai' &&
-                (isActive
-                  ? 'text-purple-700 dark:text-purple-300'
-                  : 'text-purple-600 dark:text-purple-400')
+                (isActive ? 'text-accent' : 'text-muted-foreground')
             )}
+            stroke={variant === 'ai' ? 'url(#sidebar-ai-nav-gradient)' : undefined}
           />
-          {!collapsed && <span>{item.title}</span>}
+          {!collapsed &&
+            (variant === 'ai' ? (
+              <span
+                className="bg-gradient-to-r from-[#6737BE] to-[#E055FA] bg-clip-text font-medium text-transparent"
+              >
+                {item.title}
+              </span>
+            ) : (
+              <span>{item.title}</span>
+            ))}
         </>
       )}
     </NavLink>

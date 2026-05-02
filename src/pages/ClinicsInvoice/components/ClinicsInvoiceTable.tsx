@@ -41,7 +41,7 @@ export function ClinicsInvoiceTable({
     <div className="w-full overflow-x-auto scrollbar-thin rounded-b-2xl">
       <table className="w-full min-w-[1200px]">
         <thead>
-          <tr className="bg-primary text-accent-foreground">
+          <tr className="bg-primary text-accent-foreground m-2">
             <th className="px-4 py-3 text-left text-sm font-semibold  first:rounded-tl-xl sm:px-6 sm:py-4">
               S. No
             </th>
