@@ -30,7 +30,7 @@ export function Header() {
   }
 
   return (
-   <div className='bg-background  p-2 fixed top-0 left-0 right-0 h-28'>
+   <div className="bg-background p-2 fixed top-0 left-0 right-0 z-50 h-28">
      <header className="fixed top-0 left-0 right-0 z-50 h-20 shadow-md bg-card backdrop-blur supports-[backdrop-filter]:bg-background/60 mt-4 rounded-2xl mx-5">
       <div className="flex h-full items-center justify-between px-4 lg:px-6">
         {/* Left side */}
