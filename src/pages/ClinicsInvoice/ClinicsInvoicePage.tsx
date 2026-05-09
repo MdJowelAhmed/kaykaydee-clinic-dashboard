@@ -175,8 +175,8 @@ export default function ClinicsInvoicePage() {
         </CardContent>
       </Card>
 
-      <Card className="overflow-hidden rounded-2xl border border-border shadow-sm">
-        <CardContent className="bg-card p-0 text-card-foreground">
+      <Card className="overflow-hidden rounded-2xl  shadow-sm">
+        <CardContent className="p-4">
           <ClinicsInvoiceTable
             rows={paginatedData}
             onDownload={handleDownload}

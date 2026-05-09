@@ -37,47 +37,53 @@ export function ClinicsInvoiceTable({
   onEditStatus,
   onOpenDetails,
 }: ClinicsInvoiceTableProps) {
+  const headerBg = 'bg-[#E9EBF0] dark:bg-background'
+
+  const headerCell =
+    'border-x-0 border-t-0  px-4 text-sm font-semibold text-accent sm:px-6 sm:py-4 align-middle '
+  
+  const bodyCell = 'border-b border-border px-4 py-3 text-sm text-accent sm:px-6 sm:py-4'
   return (
     <div className="w-full overflow-x-auto scrollbar-thin rounded-b-2xl">
       <table className="w-full min-w-[1200px]">
         <thead>
-          <tr className="bg-primary text-accent-foreground 2">
-            <th className="px-4 py-3 text-left text-sm font-semibold  first:rounded-tl-xl sm:px-6 sm:py-4">
+          <tr className="">
+            <th className={cn(headerCell, headerBg, 'text-left rounded-l-full')}>
               S. No
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Service
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Patient Name
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Patient ID
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Doctor
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Date
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Price
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Due
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Paid
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Status
             </th>
-            <th className="px-4 py-3 text-right text-sm font-semibold  last:rounded-tr-xl sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-right rounded-r-full')}>
               Action
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border bg-card">
+        <tbody className="bg-card text-accent-foreground">
           {rows.length === 0 ? (
             <tr>
               <td colSpan={11} className="px-6 py-8 text-center text-sm text-muted-foreground">
@@ -93,40 +99,40 @@ export function ClinicsInvoiceTable({
                 transition={{ delay: 0.02 * index }}
                 className="transition-colors hover:bg-muted/15"
               >
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm font-medium text-accent">#{row.serialNo}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.service}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.patientName}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.patientId}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.doctor}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="whitespace-nowrap text-sm text-accent">
                     {formatInvoiceDate(row.dateIso)}
                   </span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm font-medium text-accent">{formatCurrency(row.price)}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className={cn('text-sm font-medium', moneyClass('due', row.due))}>
                     {row.due > 0 ? formatCurrency(row.due) : '---'}
                   </span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className={cn('text-sm font-medium', moneyClass('paid', row.paid))}>
                     {row.paid > 0 ? formatCurrency(row.paid) : '---'}
                   </span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span
                     className={cn(
                       'inline-flex min-w-[92px] items-center justify-center rounded-full px-3 py-1 text-center text-xs font-medium',
@@ -136,8 +142,8 @@ export function ClinicsInvoiceTable({
                     {invoiceStatusLabel(row.status)}
                   </span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
-                  <div className="flex justify-end gap-1">
+                <td className={bodyCell}>
+                  <div className="flex items-center justify-end gap-2">
                     <Button
                       type="button"
                       variant="ghost"
@@ -162,7 +168,7 @@ export function ClinicsInvoiceTable({
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="h-9 w-9 rounded-full text-accent-foreground hover:bg-muted"
+                      className="h-9 w-9 rounded-full text-accent hover:bg-muted"
                       aria-label="View details"
                       onClick={() => onOpenDetails(row)}
                     >
