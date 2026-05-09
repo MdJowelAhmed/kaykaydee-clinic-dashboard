@@ -98,7 +98,7 @@ export default function ClinicsInvoicePage() {
   }, [])
 
   const filterInputClass =
-    'h-11 rounded-xl border-border bg-background text-accent shadow-sm placeholder:text-muted-foreground'
+    'h-11 rounded-lg border-border bg-white dark:bg-background text-accent shadow-sm placeholder:text-muted-foreground'
 
   return (
     <motion.div
@@ -107,8 +107,8 @@ export default function ClinicsInvoicePage() {
       transition={{ duration: 0.3 }}
       className="flex flex-col gap-6"
     >
-      <Card className="overflow-hidden rounded-2xl border border-border shadow-sm">
-        <CardContent className="p-5 sm:p-6">
+      <div className="">
+        <div className="">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="shrink-0 space-y-1">
               <h1 className="text-xl font-bold text-accent sm:text-2xl">Clinics Invoice</h1>
@@ -119,11 +119,11 @@ export default function ClinicsInvoicePage() {
                 value={search}
                 onChange={handleSearch}
                 placeholder="Search here"
-                className="w-full min-w-0 sm:max-w-md lg:max-w-xl"
-                inputClassName={filterInputClass}
+                className="w-full min-w-0 sm:max-w-md lg:max-w-xl "
+                inputClassName="rounded-lg h-11 bg-white dark:bg-background border-border text-accent shadow-sm placeholder:text-muted-foreground"
               />
               <Select value={service} onValueChange={(v) => setParams({ service: v, page: 1 })}>
-                <SelectTrigger className={`h-11 w-full shrink-0 sm:w-[140px] ${filterInputClass}`}>
+                <SelectTrigger className={`h-11 w-full shrink-0 sm:w-[140px] bg-white dark:bg-background ${filterInputClass}`}>
                   <SelectValue placeholder="Service" />
                 </SelectTrigger>
                 <SelectContent>
@@ -172,8 +172,8 @@ export default function ClinicsInvoicePage() {
               </Select>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <Card className="overflow-hidden rounded-2xl  shadow-sm">
         <CardContent className="p-4">
