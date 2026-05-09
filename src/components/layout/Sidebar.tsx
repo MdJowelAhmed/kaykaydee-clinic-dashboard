@@ -375,7 +375,7 @@ export function Sidebar() {
 }
 
 function SidebarDivider() {
-  return <div className="my-3 border-t border-border" role="presentation" />
+  return <div className="my-1 border-t border-border" role="presentation" />
 }
 
 interface SidebarNavItemProps {
@@ -409,11 +409,12 @@ function SidebarNavItem({ item, collapsed, variant = 'default' }: SidebarNavItem
         <>
           <Icon
             className={cn(
-              'h-[1.125rem] w-[1.125rem] shrink-0 stroke-[1.75]',
+              'h-[1.125rem] w-[1.125rem] shrink-0',
               variant === 'default' &&
-                (isActive ? 'text-accent' : 'text-muted-foreground')
+                (isActive ? 'text-accent' : 'text-accent/75')
             )}
-            stroke={variant === 'ai' ? 'url(#sidebar-ai-nav-gradient)' : undefined}
+            strokeWidth={1.75}
+            {...(variant === 'ai' ? { stroke: 'url(#sidebar-ai-nav-gradient)' } : {})}
           />
           {!collapsed &&
             (variant === 'ai' ? (
