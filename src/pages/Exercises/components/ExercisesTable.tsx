@@ -3,6 +3,7 @@ import { Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import type { ExerciseEntry } from '../types'
+import { cn } from '@/utils/cn'
 
 interface ExercisesTableProps {
   rows: ExerciseEntry[]
@@ -11,26 +12,29 @@ interface ExercisesTableProps {
 }
 
 export function ExercisesTable({ rows, onOpenDetails, onToggleEnabled }: ExercisesTableProps) {
+  const headerBg = 'bg-[#E9EBF0] dark:bg-background'
+  const headerCell = 'border-x-0 border-t-0 px-4 text-sm font-semibold text-accent sm:px-6 sm:py-4 align-middle'
+  const bodyCell = 'border-b border-border px-4 py-3 text-sm text-accent sm:px-6 sm:py-4'
   return (
     <div className="w-full overflow-auto rounded-b-xl">
       <table className="w-full min-w-[800px]">
         <thead>
-          <tr className="bg-primary text-accent-foreground">
-            <th className="px-6 py-4 text-left text-sm font-semibold first:rounded-tl-xl">
+          <tr className="">
+            <th className={cn(headerCell, headerBg, 'text-left rounded-l-full')}>
               Exercise Name
             </th>
-            <th className="px-6 py-4 text-left text-sm font-semibold">Category Name</th>
-            <th className="px-6 py-4 text-left text-sm font-semibold">Description</th>
-            <th className="px-6 py-4 text-left text-sm font-semibold">Status</th>
-            <th className="px-6 py-4 text-right text-sm font-semibold last:rounded-tr-xl">
+            <th className={cn(headerCell, headerBg, 'text-left')}>Category Name</th>
+            <th className={cn(headerCell, headerBg, 'text-left')}>Description</th>
+            <th className={cn(headerCell, headerBg, 'text-left')}>Status</th>
+            <th className={cn(headerCell, headerBg, 'text-right rounded-r-full')}>
               Action
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-200 bg-card text-accent-foreground">
+        <tbody className="bg-card text-accent-foreground">
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={5} className="px-6 py-8 text-center text-accent">
+              <td colSpan={5} className={bodyCell}>
                 No exercises found
               </td>
             </tr>
@@ -43,16 +47,16 @@ export function ExercisesTable({ rows, onOpenDetails, onToggleEnabled }: Exercis
                 transition={{ delay: 0.02 * index }}
                 className=" "
               >
-                <td className="px-6 py-4">
+                <td className={bodyCell}>
                   <span className="text-sm font-medium text-accent">{row.exerciseName}</span>
                 </td>
-                <td className="px-6 py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.categoryName}</span>
                 </td>
-                <td className="px-6 py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.description}</span>
                 </td>
-                <td className="px-6 py-4">
+                <td className={bodyCell}>
                   <div className="flex items-center gap-3">
                     <Switch
                       checked={row.enabled}
@@ -65,7 +69,7 @@ export function ExercisesTable({ rows, onOpenDetails, onToggleEnabled }: Exercis
                     </span>
                   </div>
                 </td>
-                <td className="px-6 py-4">
+                <td className={bodyCell}>
                   <div className="flex justify-end">
                     <Button
                       type="button"

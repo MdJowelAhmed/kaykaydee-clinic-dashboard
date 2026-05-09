@@ -38,47 +38,50 @@ function priceClass(row: WaitingListEntry) {
 }
 
 export function WaitingListTable({ rows, onOpenDetails, onChangeStatus }: WaitingListTableProps) {
+  const headerBg = 'bg-[#E9EBF0] dark:bg-background'
+  const headerCell = 'border-x-0 border-t-0 px-4 text-sm font-semibold text-accent sm:px-6 sm:py-4 align-middle'
+  const bodyCell = 'border-b border-border px-4 py-3 text-sm text-accent sm:px-6 sm:py-4'
   return (
     <div className="w-full overflow-x-auto scrollbar-thin rounded-b-2xl">
       <table className="w-full min-w-[1080px]">
         <thead>
-          <tr className="bg-primary text-accent-foreground ">
-            <th className="px-4 py-3 text-left text-sm font-semibold  first:rounded-tl-xl sm:px-6 sm:py-4">
+          <tr className="">
+            <th className={cn(headerCell, headerBg, 'text-left rounded-l-full')}>
               S. No
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Service
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Patient Name
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Patient ID
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Contact No
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Doctor
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Appoint Date
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Price
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Status
             </th>
-            <th className="px-4 py-3 text-right text-sm font-semibold  last:rounded-tr-xl sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-right rounded-r-full')}>
               Action
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border bg-card">
+          <tbody className="bg-card text-accent-foreground">
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={10} className="px-6 py-8 text-center text-sm text-muted-foreground">
+              <td colSpan={10} className={bodyCell}>
                 No appointments found
               </td>
             </tr>
@@ -91,42 +94,42 @@ export function WaitingListTable({ rows, onOpenDetails, onChangeStatus }: Waitin
                 transition={{ delay: 0.03 * index }}
                 className="transition-colors hover:bg-muted/15"
               >
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm font-medium text-accent">#{row.serialNo}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.service}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.patientName}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.patientId}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.contactNo}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.doctor}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="whitespace-nowrap text-sm text-accent">
                     {formatWaitingListAppointment(row.appointmentAt)}
                   </span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className={cn('text-sm font-medium', priceClass(row))}>
                     {formatCurrency(row.price)}
                   </span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <Select
                     value={row.status}
                     onValueChange={(v) => onChangeStatus(row.id, v as WaitingListEntry['status'])}
                   >
                     <SelectTrigger
                       className={cn(
-                        'h-7 w-[122px] justify-between rounded-full border-0 px-3 text-xs font-medium shadow-none focus:ring-0',
+                        'h-11 w-full shrink-0 sm:w-[140px] bg-white dark:bg-background text-accent shadow-sm placeholder:text-muted-foreground',
                         statusPillClass(row.status)
                       )}
                     >
@@ -139,7 +142,7 @@ export function WaitingListTable({ rows, onOpenDetails, onChangeStatus }: Waitin
                     </SelectContent>
                   </Select>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <div className="flex justify-end">
                     <Button
                       type="button"

@@ -77,6 +77,8 @@ export default function ExercisesPage() {
     setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, enabled } : e)))
     setDetailsEntry((d) => (d?.id === id ? { ...d, enabled } : d))
   }, [])
+  const filterInputClass =
+    'h-11 rounded-lg border-border bg-white dark:bg-background text-accent shadow-sm placeholder:text-muted-foreground'
 
   return (
     <motion.div
@@ -85,33 +87,28 @@ export default function ExercisesPage() {
       transition={{ duration: 0.3 }}
       className="flex flex-col gap-6"
     >
-      <div
-        className={cn(
-          'rounded-2xl border  bg-card px-4 py-3 sm:px-5',
-          'text-sm font-medium text-accent sm:text-base'
-        )}
-        role="status"
-      >
-        Connect to Physitrack to view and follow your prescribed exercises
-      </div>
+   
 
-      <Card className="overflow-hidden rounded-2xl   bg-card shadow-sm">
-        <CardContent className="p-5 sm:p-6">
+      <div className="overflow-hidden ">
+        <div className="">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <h1 className="text-xl font-bold text-accent shrink-0">Exercises</h1>
+            <div className="shrink-0 space-y-1">
+              <h1 className="text-xl font-bold text-accent sm:text-2xl">Exercises</h1>
+              <p className="text-sm text-accent">Connect to Physitrack to view and follow your prescribed exercises</p>
+            </div>
             <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
               <SearchInput
                 value={search}
                 onChange={handleSearch}
                 placeholder="Search here"
                 className="w-full min-w-0 sm:max-w-md lg:max-w-xl"
-                inputClassName="h-11 rounded-xl   shadow-sm"
+                inputClassName={filterInputClass}
               />
               <Select
                 value={enableFilter}
                 onValueChange={(v) => setParams({ enable: v, page: 1 })}
               >
-                <SelectTrigger className="h-11 w-full shrink-0 rounded-xl   shadow-sm sm:w-[140px] bg-background text-accent">
+                <SelectTrigger className={`h-11 w-full shrink-0 sm:w-[140px] ${filterInputClass}`}>
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -126,7 +123,7 @@ export default function ExercisesPage() {
                 value={category}
                 onValueChange={(v) => setParams({ category: v, page: 1 })}
               >
-                <SelectTrigger className="h-11 w-full shrink-0 rounded-xl   shadow-sm sm:w-[140px] bg-background text-accent">
+                <SelectTrigger className={`h-11 w-full shrink-0 sm:w-[140px] ${filterInputClass}`}>
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -139,11 +136,11 @@ export default function ExercisesPage() {
               </Select>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <Card className="overflow-hidden rounded-2xl border bg-card shadow-sm">
-        <CardContent className="p-0">
+        <CardContent className="p-4">
           <ExercisesTable
             rows={paginatedData}
             onOpenDetails={handleOpenDetails}
