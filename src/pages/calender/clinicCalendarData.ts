@@ -13,12 +13,14 @@ export interface ClinicCalendarEvent {
   category: ClinicEventCategory
   /** Short task / visit title */
   taskTitle: string
-  /** One-line explanation for staff */
-  summary: string
-  patientName: string
-  room: string
-  /** Doctor, nurse, or coordinator */
-  staffName: string
+  /** One-line explanation for staff (optional — some draft entries skip it). */
+  summary?: string
+  /** Optional — admin / staff blocks may not have a patient. */
+  patientName?: string
+  /** Optional — virtual / off-site visits may not record a room. */
+  room?: string
+  /** Doctor, nurse, or coordinator (optional — assignment may be pending). */
+  staffName?: string
 }
 
 export const CATEGORY_FILTER_OPTIONS: { value: ClinicEventCategory | 'all'; label: string }[] = [
@@ -60,6 +62,132 @@ export const CATEGORY_CELL_STYLES: Record<
     accent: 'text-emerald-800 dark:text-emerald-300',
   },
 }
+
+/** Same format as `CalendarView` time rows (`en-US`, top of each hour). */
+function clinicCalendarTimeLabel(hour24: number): string {
+  const date = new Date(2024, 0, 1, ((hour24 % 24) + 24) % 24, 0, 0, 0)
+  return date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  })
+}
+
+/**
+ * Extra dummy visits so the grid is easy to understand at a glance (especially 12 AM–5 AM,
+ * which are otherwise empty). Some entries intentionally leave fields blank to show how
+ * partial / draft bookings render. Safe to remove when wiring a real API.
+ */
+const clinicCalendarEventsVisualDemo: ClinicCalendarEvent[] = (() => {
+  const cats: ClinicEventCategory[] = [
+    'consultation',
+    'follow_up',
+    'diagnostics',
+    'procedure',
+    'staff',
+    'admin',
+  ]
+  const tasks = [
+    'Sample vitals round',
+    'Demo telehealth slot',
+    'Placeholder follow-up',
+    'Sample blood draw',
+    'Demo booking — physio',
+    'Sample nurse triage',
+    'Demo prescription review',
+    'Walk-in preview (sample)',
+  ]
+  const patients = [
+    'Demo: A. Karim',
+    'Demo: S. Nahar',
+    'Demo: R. Islam',
+    'Demo: M. Chowdhury',
+    'Demo: L. Akter',
+    'Demo: K. Hassan',
+  ]
+  const staff = ['Dr. Preview', 'Nurse Demo', 'PT Demo', 'Night RN demo', 'Front desk demo']
+  const rooms = ['Ward A (demo)', 'Urgent bay (demo)', 'Imaging B (demo)', 'Virtual', 'Treatment 1']
+  const summaries = [
+    'Demo data so you can see how busy slots look. Click the slot to open full details on the right.',
+    'Sample daytime visit for the preview grid — click to see every value on the right.',
+    'Quick preview booking. Click for full details.',
+  ]
+
+  /**
+   * Build a partial event. We deterministically blank some fields based on `i` so the
+   * grid + side panel show realistic mixes of complete and draft bookings.
+   */
+  const buildPartial = (
+    base: Pick<ClinicCalendarEvent, 'id' | 'dayIndex' | 'time' | 'category' | 'taskTitle'>,
+    i: number
+  ): ClinicCalendarEvent => {
+    const variant = i % 6
+    const ev: ClinicCalendarEvent = { ...base }
+    // variant 0 → all four fields filled
+    // variant 1 → no patient
+    // variant 2 → no room
+    // variant 3 → no staff
+    // variant 4 → no summary
+    // variant 5 → only patient + summary (room & staff blank)
+    if (variant !== 1 && variant !== 5) ev.patientName = patients[i % patients.length]
+    if (variant === 5) ev.patientName = patients[i % patients.length]
+    if (variant !== 2 && variant !== 5) ev.room = rooms[i % rooms.length]
+    if (variant !== 3 && variant !== 5) ev.staffName = staff[i % staff.length]
+    if (variant !== 4) ev.summary = summaries[i % summaries.length]
+    return ev
+  }
+
+  const rows: ClinicCalendarEvent[] = []
+  let n = 0
+
+  // Overnight (12 AM – 5 AM): fill ~half of the cells, leave the rest truly empty
+  // so the grid shows realistic gaps instead of a solid block of demo cards.
+  for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
+    for (let h = 0; h < 6; h++) {
+      // Pseudo-random skip pattern: keeps roughly 1 in 2 slots empty.
+      if ((dayIndex * 7 + h * 3) % 5 === 0 || (dayIndex + h) % 3 === 2) continue
+      const i = n++
+      rows.push(
+        buildPartial(
+          {
+            id: `DMO-N${dayIndex}-${h}`,
+            dayIndex,
+            time: clinicCalendarTimeLabel(h),
+            category: cats[i % cats.length],
+            taskTitle: `${tasks[i % tasks.length]} · overnight`,
+          },
+          i
+        )
+      )
+    }
+  }
+
+  // Daytime (6 AM – 11 PM): sparse, so most slots stay empty.
+  for (let dayIndex = 0; dayIndex < 7; dayIndex++) {
+    for (let h = 6; h <= 23; h++) {
+      if ((dayIndex + h * 2) % 5 !== 0) continue
+      // Extra carve-outs so some daytime slots are obviously blank.
+      if (h === 12 || h === 17) continue
+      if (dayIndex === 2 && h >= 9 && h <= 11) continue
+      if (dayIndex === 5 && h >= 14 && h <= 19) continue
+      const i = n++
+      rows.push(
+        buildPartial(
+          {
+            id: `DMO-D${dayIndex}-${h}`,
+            dayIndex,
+            time: clinicCalendarTimeLabel(h),
+            category: cats[(i + 1) % cats.length],
+            taskTitle: tasks[i % tasks.length],
+          },
+          i
+        )
+      )
+    }
+  }
+
+  return rows
+})()
 
 /** Core mock clinic schedule (10+ day indices; grid clips to active view range) */
 const clinicCalendarEventsCore: ClinicCalendarEvent[] = [
@@ -415,7 +543,7 @@ const clinicCalendarEventsHighLoad: ClinicCalendarEvent[] = (() => {
         category: categories[i % categories.length],
         taskTitle: `High-load ${prefix} #${i + 1}`,
         summary:
-          'Demo stacked visit in a busy slot — scroll the cell to see every item, or hover a card for full details.',
+          'Demo stacked visit in a busy slot — scroll the cell to see every item, then click to open full details on the right.',
         patientName: `Client ${prefix}-${i + 1}`,
         room: `Rm ${320 + i}`,
         staffName: `Dr. Batch ${i + 1}`,
@@ -436,4 +564,5 @@ const clinicCalendarEventsHighLoad: ClinicCalendarEvent[] = (() => {
 export const CLINIC_CALENDAR_EVENTS: ClinicCalendarEvent[] = [
   ...clinicCalendarEventsCore,
   ...clinicCalendarEventsHighLoad,
+  ...clinicCalendarEventsVisualDemo,
 ]

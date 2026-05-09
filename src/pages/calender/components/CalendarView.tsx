@@ -3,9 +3,13 @@ import { Search } from 'lucide-react'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { setPeriod, setSelectedDate, setSelectedTime, setViewRange } from '@/redux/slices/calendarSlice'
 import type { CalendarDay, CalendarPeriod, CalendarViewRange } from '@/types'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { CATEGORY_CELL_STYLES, type ClinicCalendarEvent } from '../clinicCalendarData'
 import { cn } from '@/utils/cn'
+
+export interface SelectedSlot {
+  dayIndex: number
+  time: string
+}
 
 const generateTimeSlots = (): string[] => {
   const slots: string[] = []
@@ -29,10 +33,10 @@ const timeSlots: string[] = generateTimeSlots()
 const TIME_COL_WIDTH_PX = 100
 
 function dayColumnWidthPx(dayCount: number): number {
-  if (dayCount <= 7) return 240
-  if (dayCount <= 10) return 200
-  if (dayCount <= 15) return 175
-  return 150
+  if (dayCount <= 7) return 200
+  if (dayCount <= 10) return 175
+  if (dayCount <= 15) return 160
+  return 140
 }
 
 const gridTemplateColumns = (dayCount: number, dayColPx: number) =>
@@ -43,9 +47,12 @@ const truncateText = (text: string, maxLength: number): string => {
   return text.slice(0, maxLength) + '…'
 }
 
-/** Same compact layout as a cell card — shown first in hover popover */
+/** Same compact layout as a cell card */
 function EventCompactRow({ ev, className }: { ev: ClinicCalendarEvent; className?: string }) {
   const styles = CATEGORY_CELL_STYLES[ev.category]
+  const patientLabel = ev.patientName ? truncateText(ev.patientName, 12) : '— No patient'
+  const roomLabel = ev.room ?? '— No room'
+  const summaryLabel = ev.summary ?? 'No summary added yet'
   return (
     <div
       className={cn(
@@ -58,79 +65,63 @@ function EventCompactRow({ ev, className }: { ev: ClinicCalendarEvent; className
         <span className="line-clamp-2 font-semibold leading-tight text-accent">{ev.taskTitle}</span>
         <span className={cn('shrink-0 font-bold', styles.accent)}>{ev.id}</span>
       </div>
-      <p className="mt-0.5 line-clamp-2 leading-snug text-muted-foreground">{ev.summary}</p>
+      <p
+        className={cn(
+          'mt-0.5 line-clamp-2 leading-snug',
+          ev.summary ? 'text-muted-foreground' : 'italic text-muted-foreground/70'
+        )}
+      >
+        {summaryLabel}
+      </p>
       <div className="mt-0.5 flex items-center justify-between gap-1 text-[9px] text-accent">
-        <span className="truncate font-medium">{truncateText(ev.patientName, 12)}</span>
-        <span className="shrink-0 text-muted-foreground">{ev.room}</span>
+        <span
+          className={cn(
+            'truncate font-medium',
+            !ev.patientName && 'italic text-muted-foreground/70'
+          )}
+        >
+          {patientLabel}
+        </span>
+        <span
+          className={cn(
+            'shrink-0 text-muted-foreground',
+            !ev.room && 'italic text-muted-foreground/70'
+          )}
+        >
+          {roomLabel}
+        </span>
       </div>
     </div>
   )
 }
 
-/** Scrollable extra fields (no duplicate title row — compact row above covers that) */
-function EventTooltipScrollBody({ ev }: { ev: ClinicCalendarEvent }) {
-  const st = CATEGORY_CELL_STYLES[ev.category]
+/** Compact card inside a cell — clicking it opens the slot's full details in the side panel */
+function CellEventCard({
+  ev,
+  isActive,
+  onSelect,
+}: {
+  ev: ClinicCalendarEvent
+  isActive: boolean
+  onSelect: () => void
+}) {
   return (
-    <div className="space-y-2 text-xs">
-      <p className="leading-relaxed text-accent">{ev.summary}</p>
-      <dl className="space-y-1 text-[11px] text-muted-foreground">
-        <div className="flex gap-2">
-          <dt className="shrink-0 font-medium text-muted-foreground">Patient</dt>
-          <dd className="text-accent">{ev.patientName}</dd>
-        </div>
-        <div className="flex gap-2">
-          <dt className="shrink-0 font-medium text-muted-foreground">Room</dt>
-          <dd className="text-accent">{ev.room}</dd>
-        </div>
-        <div className="flex gap-2">
-          <dt className="shrink-0 font-medium text-muted-foreground">Staff</dt>
-          <dd className={cn('font-medium', st.accent)}>{ev.staffName}</dd>
-        </div>
-        <div className="flex gap-2">
-          <dt className="shrink-0 font-medium text-muted-foreground">Time</dt>
-          <dd className="text-accent">{ev.time}</dd>
-        </div>
-      </dl>
-    </div>
-  )
-}
-
-/** Compact card inside a cell; hover shows same row preview first, full text below with scroll */
-function CellEventCard({ ev }: { ev: ClinicCalendarEvent }) {
-  return (
-    <Tooltip delayDuration={200}>
-      <TooltipTrigger asChild>
-        <div
-          data-stop-calendar-drag
-          data-stop-row-select
-          className={cn(
-            'min-w-0 cursor-pointer outline-none transition hover:brightness-[0.98]',
-            'focus-visible:ring-2 focus-visible:ring-violet-500'
-          )}
-          tabIndex={0}
-        >
-          <EventCompactRow ev={ev} />
-        </div>
-      </TooltipTrigger>
-      <TooltipContent
-        side="left"
-        align="start"
-        className={cn(
-          'z-50 flex w-[min(22rem,calc(100vw-2rem))] max-h-[min(32rem,70vh)] flex-col overflow-hidden p-0',
-          'border border-border bg-card text-accent shadow-lg'
-        )}
-      >
-        <div className="shrink-0 border-b border-border bg-card p-2">
-          <EventCompactRow ev={ev} className="shadow-none" />
-        </div>
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 py-2 [scrollbar-width:thin]">
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Full details
-          </p>
-          <EventTooltipScrollBody ev={ev} />
-        </div>
-      </TooltipContent>
-    </Tooltip>
+    <button
+      type="button"
+      data-stop-calendar-drag
+      data-stop-row-select
+      onClick={(e) => {
+        e.stopPropagation()
+        onSelect()
+      }}
+      className={cn(
+        'block w-full min-w-0 cursor-pointer text-left outline-none transition',
+        'hover:brightness-[0.98] focus-visible:ring-2 focus-visible:ring-violet-500',
+        isActive && 'rounded-md ring-2 ring-primary/70'
+      )}
+    >
+      <EventCompactRow ev={ev} />
+    </button>
   )
 }
 
@@ -138,6 +129,8 @@ interface CalendarViewProps {
   events: ClinicCalendarEvent[]
   searchValue: string
   onSearchChange: (value: string) => void
+  selectedSlot: SelectedSlot | null
+  onSlotSelect: (slot: SelectedSlot | null) => void
 }
 
 const viewOptions: { label: string; range: CalendarViewRange; period?: CalendarPeriod }[] = [
@@ -148,7 +141,13 @@ const viewOptions: { label: string; range: CalendarViewRange; period?: CalendarP
   { label: 'Prev 30 days', range: 30, period: 'previous' },
 ]
 
-const CalendarView: React.FC<CalendarViewProps> = ({ events, searchValue, onSearchChange }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({
+  events,
+  searchValue,
+  onSearchChange,
+  selectedSlot,
+  onSlotSelect,
+}) => {
   const dispatch = useAppDispatch()
   const { days, viewRange, period, selectedDate, selectedTime } = useAppSelector((state) => state.calendar)
   const dayColWidthPx = dayColumnWidthPx(days.length)
@@ -201,15 +200,17 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, searchValue, onSear
 
     if (searchValue.trim()) {
       const q = searchValue.toLowerCase()
-      filtered = filtered.filter(
-        (ev) =>
-          ev.patientName.toLowerCase().includes(q) ||
-          ev.taskTitle.toLowerCase().includes(q) ||
-          ev.summary.toLowerCase().includes(q) ||
-          ev.room.toLowerCase().includes(q) ||
-          ev.staffName.toLowerCase().includes(q) ||
-          ev.id.toLowerCase().includes(q)
-      )
+      filtered = filtered.filter((ev) => {
+        const haystacks = [
+          ev.patientName,
+          ev.taskTitle,
+          ev.summary,
+          ev.room,
+          ev.staffName,
+          ev.id,
+        ]
+        return haystacks.some((field) => field?.toLowerCase().includes(q))
+      })
     }
 
     return filtered
@@ -267,7 +268,8 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, searchValue, onSear
         <p className="border-b border-border bg-muted/20 px-3 py-2 text-center text-[11px] text-muted-foreground">
           <span className="font-medium text-accent">Sideways:</span> hold and drag the grey{' '}
           <span className="font-medium text-accent">time</span> cell on the left ·{' '}
-          <span className="font-medium text-accent">Stacked visits:</span> scroll inside the cell
+          <span className="font-medium text-accent">Click a slot</span> to see every visit on the
+          right
         </p>
         <div ref={horizontalScrollRef} className="overflow-x-auto overflow-y-visible">
           <div
@@ -356,6 +358,17 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, searchValue, onSear
                 {days.map((day: CalendarDay, dayIndex: number) => {
                   const cellEvents = getEventsForCell(dayIndex, time)
                   const count = cellEvents.length
+                  const isSlotSelected =
+                    selectedSlot?.dayIndex === dayIndex && selectedSlot?.time === time
+
+                  const handleSlotPick = () => {
+                    if (count === 0) return
+                    if (isSlotSelected) {
+                      onSlotSelect(null)
+                    } else {
+                      onSlotSelect({ dayIndex, time })
+                    }
+                  }
 
                   return (
                     <div
@@ -363,13 +376,20 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, searchValue, onSear
                       onClick={(e) => {
                         const t = e.target as HTMLElement
                         if (t.closest('[data-stop-row-select]')) return
-                        onCellSelect(day)
+                        if (count > 0) {
+                          handleSlotPick()
+                        } else {
+                          onCellSelect(day)
+                        }
                       }}
                       className={cn(
                         'relative flex min-h-0 min-w-0 flex-col border-r border-border p-1 transition-colors',
-                        day.date === selectedDate && 'bg-primary/5',
-                        // Keep "today/next day" coloring in header only (avoid mixed colors in each row).
-                        day.date !== selectedDate && 'bg-transparent'
+                        count > 0 && 'cursor-pointer',
+                        isSlotSelected
+                          ? 'bg-primary/10 ring-1 ring-inset ring-primary/40'
+                          : day.date === selectedDate
+                            ? 'bg-primary/5'
+                            : 'bg-transparent'
                       )}
                       style={{
                         width: dayColWidthPx,
@@ -384,11 +404,16 @@ const CalendarView: React.FC<CalendarViewProps> = ({ events, searchValue, onSear
                         >
                           {count > 1 && (
                             <p className="sticky top-0 z-[1] -mx-0.5 mb-0.5 rounded bg-primary/90 px-1.5 py-0.5 text-center text-[9px] font-semibold text-accent shadow-sm">
-                              {count} in slot — scroll
+                              {count} in slot — click to view
                             </p>
                           )}
                           {cellEvents.map((ev) => (
-                            <CellEventCard key={ev.id} ev={ev} />
+                            <CellEventCard
+                              key={ev.id}
+                              ev={ev}
+                              isActive={isSlotSelected}
+                              onSelect={handleSlotPick}
+                            />
                           ))}
                         </div>
                       )}

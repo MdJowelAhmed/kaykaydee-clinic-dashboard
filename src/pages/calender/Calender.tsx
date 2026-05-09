@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import CalendarView from './components/CalendarView'
+import CalendarView, { type SelectedSlot } from './components/CalendarView'
+import EventDetailsPanel from './components/EventDetailsPanel'
 import {
   CLINIC_CALENDAR_EVENTS,
   CATEGORY_FILTER_OPTIONS,
@@ -21,6 +22,7 @@ import { cn } from '@/utils/cn'
 const Calender: React.FC = () => {
   const [category, setCategory] = useState<ClinicEventCategory | 'all'>('all')
   const [searchValue, setSearchValue] = useState('')
+  const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null)
   const dispatch = useAppDispatch()
   const { days, selectedDate } = useAppSelector((state) => state.calendar)
 
@@ -42,6 +44,25 @@ const Calender: React.FC = () => {
     if (category === 'all') return eventsInWindow
     return eventsInWindow.filter((e) => e.category === category)
   }, [eventsInWindow, category])
+
+  const slotEvents = useMemo(() => {
+    if (!selectedSlot) return []
+    return calendarEvents.filter(
+      (e) => e.dayIndex === selectedSlot.dayIndex && e.time === selectedSlot.time
+    )
+  }, [calendarEvents, selectedSlot])
+
+  // If active filters/search remove every event in the picked slot, close the panel.
+  useEffect(() => {
+    if (selectedSlot && slotEvents.length === 0) {
+      setSelectedSlot(null)
+    }
+  }, [selectedSlot, slotEvents.length])
+
+  const selectedSlotDay = selectedSlot ? days[selectedSlot.dayIndex] : null
+  const slotDayLabel = selectedSlotDay
+    ? `${selectedSlotDay.label} ${selectedSlotDay.dayNumber.toString().padStart(2, '0')}`
+    : undefined
 
   return (
     <motion.div
@@ -90,75 +111,88 @@ const Calender: React.FC = () => {
         })}
       </div> */}
 
-      <Card className="rounded-2xl border border-border bg-card shadow-sm">
-        <CardContent className="space-y-4 p-5 sm:p-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <h2 className="text-lg font-semibold text-accent">Weekly grid</h2>
-            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => dispatch(setSelectedDate(todayISO))}
-                  className={cn(
-                    'h-9 rounded-full border px-3 text-xs font-semibold transition-colors',
-                    selectedDate === todayISO
-                      ? 'border-primary/30 bg-primary/10 text-primary'
-                      : 'border-border bg-background text-accent hover:bg-muted/30'
-                  )}
-                >
-                  Today
-                </button>
-                <button
-                  type="button"
-                  onClick={() => dispatch(setSelectedDate(nextDayISO))}
-                  className={cn(
-                    'h-9 rounded-full border px-3 text-xs font-semibold transition-colors',
-                    selectedDate === nextDayISO
-                      ? 'border-primary/30 bg-primary/10 text-primary'
-                      : 'border-border bg-background text-accent hover:bg-muted/30'
-                  )}
-                >
-                  Next day
-                </button>
-              </div>
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px] xl:gap-6">
+        <Card className="min-w-0 rounded-2xl border border-border bg-card shadow-sm">
+          <CardContent className="space-y-4 p-5 sm:p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <h2 className="text-lg font-semibold text-accent">Weekly grid</h2>
+              <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => dispatch(setSelectedDate(todayISO))}
+                    className={cn(
+                      'h-9 rounded-full border px-3 text-xs font-semibold transition-colors',
+                      selectedDate === todayISO
+                        ? 'border-primary/30 bg-primary/10 text-primary'
+                        : 'border-border bg-background text-accent hover:bg-muted/30'
+                    )}
+                  >
+                    Today
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => dispatch(setSelectedDate(nextDayISO))}
+                    className={cn(
+                      'h-9 rounded-full border px-3 text-xs font-semibold transition-colors',
+                      selectedDate === nextDayISO
+                        ? 'border-primary/30 bg-primary/10 text-primary'
+                        : 'border-border bg-background text-accent hover:bg-muted/30'
+                    )}
+                  >
+                    Next day
+                  </button>
+                </div>
 
-              <div className="flex items-center gap-2">
-                <label className="text-xs font-medium text-muted-foreground">Date</label>
-                <input
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => dispatch(setSelectedDate(e.target.value))}
-                  className="h-10 rounded-xl border border-border bg-background px-3 text-sm text-accent outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                />
-              </div>
+                <div className="flex items-center gap-2">
+                  <label className="text-xs font-medium text-muted-foreground">Date</label>
+                  <input
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => dispatch(setSelectedDate(e.target.value))}
+                    className="h-10 rounded-xl border border-border bg-background px-3 text-sm text-accent outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                  />
+                </div>
 
-              <div className="w-full sm:w-[220px]">
-                <Select
-                  value={category}
-                  onValueChange={(v) => setCategory(v as ClinicEventCategory | 'all')}
-                >
-                  <SelectTrigger className="h-10 rounded-xl border-border bg-background text-accent">
-                    <SelectValue placeholder="Filter by type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CATEGORY_FILTER_OPTIONS.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="w-full sm:w-[220px]">
+                  <Select
+                    value={category}
+                    onValueChange={(v) => setCategory(v as ClinicEventCategory | 'all')}
+                  >
+                    <SelectTrigger className="h-10 rounded-xl border-border bg-background text-accent">
+                      <SelectValue placeholder="Filter by type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CATEGORY_FILTER_OPTIONS.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
-          </div>
 
-          <CalendarView
-            events={calendarEvents}
-            searchValue={searchValue}
-            onSearchChange={setSearchValue}
+            <CalendarView
+              events={calendarEvents}
+              searchValue={searchValue}
+              onSearchChange={setSearchValue}
+              selectedSlot={selectedSlot}
+              onSlotSelect={setSelectedSlot}
+            />
+          </CardContent>
+        </Card>
+
+        <div className="h-[640px] xl:sticky xl:top-4 xl:h-[calc(100vh-6rem)]">
+          <EventDetailsPanel
+            events={slotEvents}
+            slotLabel={selectedSlot?.time}
+            dayLabel={slotDayLabel}
+            onClose={() => setSelectedSlot(null)}
           />
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </motion.div>
   )
 }
