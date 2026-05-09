@@ -11,7 +11,6 @@ import {
 import { SearchInput } from '@/components/common/SearchInput'
 import { Pagination } from '@/components/common/Pagination'
 import { useUrlParams } from '@/hooks/useUrlState'
-import { cn } from '@/utils/cn'
 import { ExercisesTable } from './components/ExercisesTable'
 import { ExerciseDetailsModal } from './components/ExerciseDetailsModal'
 import {
