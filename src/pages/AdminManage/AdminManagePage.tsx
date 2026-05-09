@@ -118,11 +118,12 @@ export default function AdminManagePage() {
       transition={{ duration: 0.3 }}
       className="flex flex-col gap-6"
     >
-      <Card className="bg-card border border-border shadow-sm overflow-hidden rounded-2xl">
-        <CardContent className="p-5 sm:p-6">
+      <div className="">
+        <div className="">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+            <div className="">
               <h1 className="text-xl font-bold text-accent shrink-0 sm:text-2xl">Admin Manage</h1>
+              <p className="text-sm text-accent mt-1">Manage admins on the platform</p>
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:flex-wrap">
@@ -131,11 +132,11 @@ export default function AdminManagePage() {
                 onChange={(v) => setParams({ search: v, page: 1 })}
                 placeholder="Search here"
                 className="w-full sm:w-[320px]"
-                inputClassName="rounded-full h-11 bg-background border-border text-accent shadow-sm placeholder:text-muted-foreground"
+                inputClassName="rounded-full h-11 bg-white dark:bg-background border-border text-accent shadow-sm placeholder:text-muted-foreground"
               />
 
               <Select value={status} onValueChange={(v) => setParams({ status: v, page: 1 })}>
-                <SelectTrigger className="w-full sm:w-44 h-11 rounded-full bg-background border-border text-accent shadow-sm">
+                <SelectTrigger className="w-full sm:w-44 h-11 rounded-full bg-white dark:bg-background border-border text-accent shadow-sm">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -157,11 +158,11 @@ export default function AdminManagePage() {
               </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <Card className="bg-card border border-border shadow-sm overflow-hidden rounded-2xl">
-        <CardContent className="p-0 text-card-foreground">
+        <CardContent className="p-0 text-card-foreground p-4">
           <AdminTable rows={paginated} onInfo={setDetailRow} onEdit={openEdit} />
 
           <div className="px-4 sm:px-6 border-t border-border">

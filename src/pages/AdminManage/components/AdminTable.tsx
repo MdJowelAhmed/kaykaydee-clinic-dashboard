@@ -32,26 +32,50 @@ interface AdminTableProps {
   onEdit: (row: AdminRow) => void
 }
 
+const headerBg = 'bg-[#E9EBF0] dark:bg-background'
+
+const headerCell =
+  'border-x-0 border-t-0 border-b border-border px-4 text-sm font-semibold text-accent sm:px-6 sm:py-4 align-middle '
+
+const bodyCell = 'border-b border-border px-4 py-3 text-sm text-accent sm:px-6 sm:py-4'
+
 export function AdminTable({ rows, onInfo, onEdit }: AdminTableProps) {
   return (
     <div className="w-full overflow-x-auto scrollbar-thin rounded-b-2xl">
-      <table className="w-full min-w-[980px]">
+      <table className="w-full min-w-[980px] border-separate border-spacing-0">
         <thead>
-          <tr className="bg-primary text-accent-foreground">
-            <th className="px-4 py-3 text-left text-sm font-semibold  rounded-tl-2xl sm:px-6 sm:py-4">Admin Id</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">clinic Name</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">Join Date</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">Role</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">Status</th>
-            <th className="px-4 py-3 text-right text-sm font-semibold  rounded-tr-2xl sm:px-6 sm:py-4">
+          <tr>
+            <th
+              className={cn(
+                headerCell,
+                headerBg,
+                'text-left rounded-l-full '
+              )}
+            >
+              Admin Id
+            </th>
+            <th className={cn(headerCell, headerBg, 'text-left')}>Clinic Name</th>
+            <th className={cn(headerCell, headerBg, 'text-left')}>Join Date</th>
+            <th className={cn(headerCell, headerBg, 'text-left')}>Role</th>
+            <th className={cn(headerCell, headerBg, 'text-left')}>Status</th>
+            <th
+              className={cn(
+                headerCell,
+                headerBg,
+                'text-right rounded-r-full'
+              )}
+            >
               Action
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border bg-card text-accent-foreground">
+        <tbody className="bg-card text-accent-foreground">
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={6} className="px-6 py-10 text-center text-accent text-sm">
+              <td
+                colSpan={6}
+                className="border-b border-black px-6 py-10 text-center text-sm text-accent"
+              >
                 No admins found
               </td>
             </tr>
@@ -64,18 +88,16 @@ export function AdminTable({ rows, onInfo, onEdit }: AdminTableProps) {
                 transition={{ delay: Math.min(0.04 * index, 0.4) }}
                 className="hover:bg-muted/15 transition-colors"
               >
-                <td className="px-4 py-3 text-sm text-accent sm:px-6 sm:py-4">{row.id}</td>
-                <td className="px-4 py-3 text-sm text-accent sm:px-6 sm:py-4">{row.clinicName}</td>
-                <td className="px-4 py-3 text-sm text-accent sm:px-6 sm:py-4">
-                  {formatDate(row.joinDate, 'd MMM yyyy')}
-                </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>{row.id}</td>
+                <td className={bodyCell}>{row.clinicName}</td>
+                <td className={bodyCell}>{formatDate(row.joinDate, 'd MMM yyyy')}</td>
+                <td className={bodyCell}>
                   <RolePill role={row.role} />
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <StatusPill status={row.status} />
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <AdminRowActions onInfo={() => onInfo(row)} onEdit={() => onEdit(row)} />
                 </td>
               </motion.tr>
