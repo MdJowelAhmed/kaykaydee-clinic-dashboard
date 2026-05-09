@@ -166,7 +166,7 @@ export default function VerifyEmail() {
           ))}
         </div>
 
-        <Button type="submit" className="w-full" size="lg" isLoading={isLoading}>
+        <Button type="submit" className="w-full bg-gradient-to-r from-[#7946CD] to-[#BC45E4] text-white hover:from-[#BC45E4] hover:to-[#7946CD]" size="lg" isLoading={isLoading}>
           {!isLoading && (
             <>
               Verify

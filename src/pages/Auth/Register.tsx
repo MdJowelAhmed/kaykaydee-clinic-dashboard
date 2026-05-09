@@ -176,7 +176,7 @@ export default function Register() {
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="mt-2 h-11 w-full rounded-xl bg-primary text-white hover:bg-primary/90"
+          className="mt-2 h-11 w-full rounded-xl bg-gradient-to-r from-[#7946CD] to-[#BC45E4] text-white hover:from-[#BC45E4] hover:to-[#7946CD]"
         >
           {isSubmitting ? 'Creating...' : 'Create account'}
         </Button>
