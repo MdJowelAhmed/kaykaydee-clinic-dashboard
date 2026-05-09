@@ -106,7 +106,7 @@ export default function ResetPassword() {
                     id="password"
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Enter new password"
-                    className={cn('pl-10 pr-10', errors.password && 'border-destructive')}
+                    className={cn('pl-10 pr-10 bg-[#F7F7F7]', errors.password && 'border-destructive')}
                     {...register('password')}
                   />
                   <button
@@ -154,7 +154,7 @@ export default function ResetPassword() {
                     id="confirmPassword"
                     type={showConfirmPassword ? 'text' : 'password'}
                     placeholder="Confirm new password"
-                    className={cn('pl-10 pr-10', errors.confirmPassword && 'border-destructive')}
+                    className={cn('pl-10 pr-10 bg-[#F7F7F7]', errors.confirmPassword && 'border-destructive')}
                     {...register('confirmPassword')}
                   />
                   <button

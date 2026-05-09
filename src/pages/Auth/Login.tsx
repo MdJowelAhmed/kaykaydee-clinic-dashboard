@@ -129,11 +129,18 @@ export default function Login() {
 
   return (
     <div className="space-y-6">
-      <AuthTabs active="login" />
-      <div className="mb-8 flex flex-col items-center justify-center gap-3">
-        <img src="/assets/logo.png" alt="" className="h-20 w-20" />
+
+<div className="mb-8 flex flex-col items-center justify-center gap-3">
+        <img src="/assets/logo.png" alt="" className="h-12 w-20" />
         <img src="/assets/logo3.png" alt="Kay Kay Dee" className="h-8 w-20 object-contain" />
       </div>
+
+
+      <AuthTabs active="login" />
+      {/* <div className="mb-8 flex flex-col items-center justify-center gap-3">
+        <img src="/assets/logo.png" alt="" className="h-20 w-20" />
+        <img src="/assets/logo3.png" alt="Kay Kay Dee" className="h-8 w-20 object-contain" />
+      </div> */}
 
       <div className="space-y-2 text-center">
         <h1 className="text-2xl font-bold tracking-tight text-accent">Hello There!</h1>
@@ -174,7 +181,7 @@ export default function Login() {
               type="email"
               autoComplete="email"
               placeholder="you@organization.com"
-              className={cn('pl-10', errors.email && 'border-destructive')}
+              className={cn('pl-10 bg-[#F7F7F7]', errors.email && 'border-destructive')}
               {...register('email')}
             />
           </div>
@@ -193,7 +200,7 @@ export default function Login() {
               autoComplete="current-password"
               placeholder="Enter your password"
               className={cn(
-                'pl-10 pr-10',
+                'pl-10 pr-10 bg-[#F7F7F7]',
                 errors.password && 'border-destructive'
               )}
               {...register('password')}

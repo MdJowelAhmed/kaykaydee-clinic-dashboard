@@ -95,7 +95,7 @@ export default function ForgotPassword() {
                     id="email"
                     type="email"
                     placeholder="Enter your email"
-                    className={cn('pl-10', errors.email && 'border-destructive')}
+                    className={cn('pl-10 bg-[#F7F7F7]', errors.email && 'border-destructive')}
                     {...register('email')}
                   />
                 </div>

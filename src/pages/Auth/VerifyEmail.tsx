@@ -159,7 +159,7 @@ export default function VerifyEmail() {
               onKeyDown={(e) => handleKeyDown(index, e)}
               onPaste={handlePaste}
               className={cn(
-                'w-12 h-14 text-center text-xl font-semibold',
+                'w-12 h-14 text-center text-xl font-semibold bg-[#F7F7F7]',
                 error && 'border-destructive'
               )}
             />

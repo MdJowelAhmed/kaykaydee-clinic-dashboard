@@ -14,7 +14,7 @@ export function AuthTabs({ active }: { active: 'login' | 'register' }) {
           if (v === 'register') navigate('/auth/register')
         }}
       >
-        <TabsList className="h-10 rounded-full bg-card border p-1 shadow-md">
+        <TabsList className="h-12 rounded-full bg-[#EAECF0] border p-3 shadow-md">
           <TabsTrigger
             value="login"
             className={cn(

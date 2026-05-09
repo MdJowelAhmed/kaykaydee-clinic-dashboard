@@ -1,4 +1,4 @@
-  import { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -57,11 +57,15 @@ export default function Register() {
 
   return (
     <div className="space-y-4">
+
+      <div className="mb-8 flex flex-col items-center justify-center gap-3">
+        <img src="/assets/logo.png" alt="" className="h-12 w-20" />
+        <img src="/assets/logo3.png" alt="Kay Kay Dee" className="h-8 w-20 object-contain" />
+      </div>
       <AuthTabs active="register" />
 
       <div className="flex items-center justify-center pb-2">
         <div className="text-center">
-          <img src="/assets/logo3.png" alt="Zealth OS" className="mx-auto h-7 w-24 object-contain" />
           <h1 className="mt-3 text-2xl font-bold text-accent">Sign Up</h1>
           <p className="mt-1 text-xs text-muted-foreground">
             To get the all personalised feature sign up Login now.
@@ -74,7 +78,7 @@ export default function Register() {
           <label className="text-xs text-muted-foreground">Email</label>
           <Input
             type="email"
-            className={cn('rounded-xl', errors.email && 'border-destructive')}
+            className={cn('rounded-xl bg-[#F7F7F7]', errors.email && 'border-destructive')}
             {...register('email')}
           />
           {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
@@ -88,7 +92,7 @@ export default function Register() {
             </div>
             <Input
               type="tel"
-              className={cn('flex-1 rounded-xl', errors.phone && 'border-destructive')}
+              className={cn('flex-1 rounded-xl bg-[#F7F7F7]', errors.phone && 'border-destructive')}
               {...register('phone')}
             />
           </div>
@@ -98,7 +102,7 @@ export default function Register() {
         <div className="space-y-1.5">
           <label className="text-xs text-muted-foreground">Clinic Name</label>
           <Input
-            className={cn('rounded-xl', errors.clinicName && 'border-destructive')}
+            className={cn('rounded-xl bg-[#F7F7F7]', errors.clinicName && 'border-destructive')}
             {...register('clinicName')}
           />
           {errors.clinicName && (
@@ -109,7 +113,7 @@ export default function Register() {
         <div className="space-y-1.5">
           <label className="text-xs text-muted-foreground">Clinic Reg. No</label>
           <Input
-            className={cn('rounded-xl', errors.clinicRegNo && 'border-destructive')}
+            className={cn('rounded-xl bg-[#F7F7F7]', errors.clinicRegNo && 'border-destructive')}
             {...register('clinicRegNo')}
           />
           {errors.clinicRegNo && (
@@ -122,7 +126,7 @@ export default function Register() {
           <div className="relative">
             <Input
               type={showPassword ? 'text' : 'password'}
-              className={cn('rounded-xl pr-10', errors.password && 'border-destructive')}
+              className={cn('rounded-xl pr-10 bg-[#F7F7F7]', errors.password && 'border-destructive')}
               {...register('password')}
             />
             <button
@@ -142,7 +146,7 @@ export default function Register() {
           <div className="relative">
             <Input
               type={showConfirm ? 'text' : 'password'}
-              className={cn('rounded-xl pr-10', errors.confirmPassword && 'border-destructive')}
+              className={cn('rounded-xl pr-10 bg-[#F7F7F7]', errors.confirmPassword && 'border-destructive')}
               {...register('confirmPassword')}
             />
             <button
