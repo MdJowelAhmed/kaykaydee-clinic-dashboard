@@ -68,8 +68,8 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: ["Plus Jakarta Sans", "system-ui", "sans-serif"],
-        display: ["Cal Sans", "Plus Jakarta Sans", "system-ui", "sans-serif"],
+        sans: ["Basis Grotesque Arabic Pro", "system-ui", "sans-serif"],
+        display: ["Basis Grotesque Arabic Pro", "system-ui", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {
