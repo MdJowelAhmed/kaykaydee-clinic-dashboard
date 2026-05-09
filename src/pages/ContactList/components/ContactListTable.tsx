@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { Eye, Pencil, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { ContactEntry } from '../types'
+import { cn } from '@/utils/cn'
 
 interface ContactListTableProps {
   rows: ContactEntry[]
@@ -11,32 +12,35 @@ interface ContactListTableProps {
 }
 
 export function ContactListTable({ rows, onView, onEdit, onDelete }: ContactListTableProps) {
+  const headerBg = 'bg-[#E9EBF0] dark:bg-background'
+  const headerCell = 'border-x-0 border-t-0 px-4 text-sm font-semibold text-accent sm:px-6 sm:py-4 align-middle'
+  const bodyCell = 'border-b border-border px-4 py-3 text-sm text-accent sm:px-6 sm:py-4'
   return (
     <div className="w-full overflow-x-auto scrollbar-thin rounded-b-2xl">
       <table className="w-full min-w-[920px]">
         <thead>
-          <tr className="bg-primary text-accent-foreground">
-            <th className="px-4 py-3 text-left text-sm font-semibold  first:rounded-tl-xl sm:px-6 sm:py-4">
+          <tr className="">
+            <th className={cn(headerCell, headerBg, 'text-left rounded-l-full')}>
               Name
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Type
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Company
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Email
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Contact No
             </th>
-            <th className="px-4 py-3 text-right text-sm font-semibold  last:rounded-tr-xl sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-right rounded-r-full')}>
               Action
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border bg-card">
+        <tbody className="bg-card text-accent-foreground">
           {rows.length === 0 ? (
             <tr>
               <td colSpan={6} className="px-6 py-8 text-center text-sm text-accent">
@@ -52,16 +56,16 @@ export function ContactListTable({ rows, onView, onEdit, onDelete }: ContactList
                 transition={{ delay: 0.02 * index }}
                 className="transition-colors hover:bg-muted/15"
               >
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm font-medium text-accent">{row.name}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.type}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.company}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <a
                     href={`mailto:${row.email}`}
                     className="text-sm text-accent underline-offset-2 hover:underline"
@@ -69,11 +73,11 @@ export function ContactListTable({ rows, onView, onEdit, onDelete }: ContactList
                     {row.email}
                   </a>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.contactNo}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
-                  <div className="flex justify-end gap-1">
+                <td className={bodyCell}>
+                  <div className="flex items-center justify-end gap-2">
                     <Button
                       type="button"
                       variant="ghost"

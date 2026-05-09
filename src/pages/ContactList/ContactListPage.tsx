@@ -73,7 +73,7 @@ export default function ContactListPage() {
   )
 
   const filterInputClass =
-    'h-11 rounded-xl border-border bg-background text-accent shadow-sm placeholder:text-muted-foreground'
+    'h-11 rounded-lg border-border bg-white dark:bg-background text-accent shadow-sm placeholder:text-muted-foreground'
 
   return (
     <motion.div
@@ -82,8 +82,8 @@ export default function ContactListPage() {
       transition={{ duration: 0.3 }}
       className="flex flex-col gap-6"
     >
-      <Card className="overflow-hidden rounded-2xl border border-border shadow-sm">
-        <CardContent className="p-5 sm:p-6">
+      <div className="overflow-hidden ">
+        <div className="">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="shrink-0 space-y-1">
               <h1 className="text-xl font-bold text-accent sm:text-2xl">Contact list</h1>
@@ -131,11 +131,11 @@ export default function ContactListPage() {
               </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <Card className="overflow-hidden rounded-2xl border border-border shadow-sm">
-        <CardContent className="bg-card p-0 text-card-foreground">
+        <CardContent className="bg-card p-4 text-card-foreground">
           <ContactListTable rows={paginatedData} onView={handleView} onEdit={handleEdit} onDelete={handleDelete} />
 
           <div className="border-t border-border px-4 sm:px-6">

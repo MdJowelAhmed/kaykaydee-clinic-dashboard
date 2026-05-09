@@ -3,6 +3,7 @@ import { Eye, Pencil, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { truncateText } from '@/utils/formatters'
 import type { ClientListEntry } from '../types'
+import { cn } from '@/utils/cn'
 
 interface ClientListTableProps {
   rows: ClientListEntry[]
@@ -12,29 +13,32 @@ interface ClientListTableProps {
 }
 
 export function ClientListTable({ rows, onOpenProfile, onEdit, onDelete }: ClientListTableProps) {
+  const headerBg = 'bg-[#E9EBF0] dark:bg-background'
+  const headerCell = 'border-x-0 border-t-0 px-4 text-sm font-semibold text-accent sm:px-6 sm:py-4 align-middle'
+  const bodyCell = 'border-b border-border px-4 py-3 text-sm text-accent sm:px-6 sm:py-4'
   return (
     <div className="w-full overflow-x-auto scrollbar-thin rounded-b-2xl">
       <table className="w-full min-w-[640px]">
         <thead>
-          <tr className="bg-primary text-accent-foreground">
-            <th className="px-4 py-3 text-left text-sm font-semibold  first:rounded-tl-xl sm:px-6 sm:py-4">
+          <tr className="">
+            <th className={cn(headerCell, headerBg, 'text-left rounded-l-full')}>
               Patient Name
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Contact No
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Email
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold  sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Address
             </th>
-            <th className="px-4 py-3 text-right text-sm font-semibold  last:rounded-tr-xl sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-right rounded-r-full')}>
               Action
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border bg-card">
+        <tbody className="bg-card text-accent-foreground">
           {rows.length === 0 ? (
             <tr>
               <td
@@ -53,7 +57,7 @@ export function ClientListTable({ rows, onOpenProfile, onEdit, onDelete }: Clien
                 transition={{ delay: 0.02 * index }}
                 className="transition-colors hover:bg-muted/15"
               >
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <button
                     type="button"
                     onClick={() => onOpenProfile(row)}
@@ -62,19 +66,19 @@ export function ClientListTable({ rows, onOpenProfile, onEdit, onDelete }: Clien
                     {row.patientName}
                   </button>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="whitespace-nowrap text-sm text-accent">{row.contactNo}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="break-all text-sm text-accent">{row.email}</span>
                 </td>
-                <td className="max-w-[220px] px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent" title={row.address}>
                     {truncateText(row.address, 36)}
                   </span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
-                  <div className="flex justify-end gap-1">
+                  <td className={bodyCell}>
+                  <div className="flex items-center justify-end gap-2">
                     <Button
                       type="button"
                       variant="ghost"
