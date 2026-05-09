@@ -35,27 +35,30 @@ interface DoctorsTableProps {
 }
 
 export function DoctorsTable({ rows, onInfo, onEdit, onDelete }: DoctorsTableProps) {
+  const headerBg = 'bg-[#E9EBF0] dark:bg-background'
+  const headerCell = 'border-x-0 border-t-0 px-4 text-sm font-semibold text-accent sm:px-6 sm:py-4 align-middle'
+  const bodyCell = 'border-b border-border px-4 py-3 text-sm text-accent sm:px-6 sm:py-4'
   return (
     <div className="w-full overflow-x-auto scrollbar-thin rounded-b-2xl">
       <table className="w-full min-w-[980px]">
         <thead>
-          <tr className="bg-muted/35 dark:bg-muted/25">
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent first:rounded-tl-xl sm:px-6 sm:py-4">
+          <tr className="">
+            <th className={cn(headerCell, headerBg, 'text-left rounded-l-full')}>
               clinic Name
             </th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">Join Date</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">Branch</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">Designation</th>
-            <th className="px-4 py-3 text-left text-sm font-semibold text-accent sm:px-6 sm:py-4">Status</th>
-            <th className="px-4 py-3 text-right text-sm font-semibold text-accent last:rounded-tr-xl sm:px-6 sm:py-4">
+            <th className={cn(headerCell, headerBg, 'text-left')}>Join Date</th>
+            <th className={cn(headerCell, headerBg, 'text-left')}>Branch</th>
+            <th className={cn(headerCell, headerBg, 'text-left')}>Designation</th>
+            <th className={cn(headerCell, headerBg, 'text-left')}>Status</th>
+            <th className={cn(headerCell, headerBg, 'text-right rounded-r-full')}>
               Action
             </th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border bg-card">
+        <tbody className="bg-card text-accent-foreground">
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={6} className="px-6 py-10 text-center text-muted-foreground text-sm">
+              <td colSpan={6} className={bodyCell}>
                 No doctors found
               </td>
             </tr>
@@ -68,24 +71,24 @@ export function DoctorsTable({ rows, onInfo, onEdit, onDelete }: DoctorsTablePro
                 transition={{ delay: Math.min(0.02 * index, 0.25) }}
                 className="transition-colors hover:bg-muted/15"
               >
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                  <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.clinicName}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent whitespace-nowrap">
                     {formatDoctorJoinDate(row.joinDate)}
                   </span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.branch}</span>
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <DesignationPill value={row.designation} />
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <StatusPill status={row.status} />
                 </td>
-                <td className="px-4 py-3 sm:px-6 sm:py-4">
+                <td className={bodyCell}>
                   <div className="flex justify-end gap-1">
                     <Button
                       type="button"

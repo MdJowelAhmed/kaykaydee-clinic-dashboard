@@ -120,6 +120,8 @@ export default function BranchManagePage() {
       setDeleting(false)
     }
   }
+  const filterInputClass =
+    'h-11 rounded-xl border-border bg-white dark:bg-background text-accent shadow-sm placeholder:text-accent'
 
   return (
     <motion.div
@@ -128,20 +130,23 @@ export default function BranchManagePage() {
       transition={{ duration: 0.3 }}
       className="flex flex-col gap-6"
     >
-      <Card className="overflow-hidden rounded-2xl border border-border shadow-sm">
-        <CardContent className="p-5 sm:p-6">
+      <div className="overflow-hidden">
+        <div className="">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <h1 className="text-xl font-bold text-accent shrink-0 sm:text-2xl">Branch manage</h1>
+            <div className="shrink-0 space-y-1">
+              <h1 className="text-xl font-bold text-accent sm:text-2xl">Branch manage</h1>
+              <p className="text-sm text-accent">Manage your branches</p>
+            </div>
             <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
               <SearchInput
                 value={search}
                 onChange={handleSearch}
                 placeholder="Search here"
                 className="w-full min-w-0 sm:max-w-md lg:max-w-xl"
-                inputClassName="h-11 rounded-xl border-border bg-background text-accent shadow-sm placeholder:text-muted-foreground"
+                inputClassName={filterInputClass}
               />
               <Select value={status} onValueChange={handleStatusFilter}>
-                <SelectTrigger className="h-11 w-full shrink-0 rounded-xl border-border bg-background text-accent shadow-sm sm:w-[160px]">
+                <SelectTrigger className={`h-11 w-full shrink-0 sm:w-[160px] ${filterInputClass}`}>
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -162,11 +167,11 @@ export default function BranchManagePage() {
               </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Card className="overflow-hidden rounded-2xl border border-border shadow-sm">
-        <CardContent className="bg-card p-0 text-card-foreground">
+      <Card className="overflow-hidden">
+        <CardContent className="bg-card p-4 text-card-foreground">
           <BranchTable
             rows={paginatedData}
             onInfo={handleOpenDetails}
