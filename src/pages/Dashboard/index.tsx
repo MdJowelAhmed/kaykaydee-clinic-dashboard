@@ -61,7 +61,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <header className="space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight text-accent sm:text-3xl">Platform Analytics</h1>
+        <h1 className="text-2xl  tracking-tight text-muted-foreground sm:text-3xl">Platform Analytics</h1>
         <p className="text-sm text-muted-foreground sm:text-base">
           Monitor platform performance and usage metrics
         </p>

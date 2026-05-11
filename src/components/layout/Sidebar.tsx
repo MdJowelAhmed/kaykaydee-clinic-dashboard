@@ -196,7 +196,7 @@ export function Sidebar() {
         className={cn(
           'fixed left-0 z-40 flex flex-col overflow-hidden border border-border/60 bg-card shadow-lg transition-all duration-300',
           'ml-4 rounded-[2rem] lg:ml-5',
-          sidebarCollapsed ? 'w-[80px]' : 'w-[280px]',
+          sidebarCollapsed ? 'w-[80px]' : 'w-[230px]',
           'lg:translate-x-0',
           sidebarCollapsed ? '-translate-x-full lg:translate-x-0' : 'translate-x-0'
         )}
@@ -251,7 +251,7 @@ export function Sidebar() {
               />
             ))}
 
-          {!sidebarCollapsed && (
+          {/* {!sidebarCollapsed && (
             <div className="mt-3 px-1">
               <div
                 className="relative overflow-hidden rounded-2xl p-4 text-white shadow-md"
@@ -274,7 +274,7 @@ export function Sidebar() {
                 </div>
               </div>
             </div>
-          )}
+          )} */}
         </nav>
 
         <div className="mt-auto space-y-3 border-t border-border px-3 py-1">

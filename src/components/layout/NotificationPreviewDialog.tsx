@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Bell } from 'lucide-react'
+import { Camera } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { NotificationListItem } from '@/components/common/NotificationListItem'
@@ -28,12 +28,13 @@ export function NotificationPreviewDialog() {
         <Button
           variant="ghost"
           size="icon"
-          className="relative"
+          className="h-10 w-10 rounded-2xl border border-border text-muted-foreground  "
           aria-label="Open notifications"
           aria-expanded={open}
         >
-          <Bell className="h-8 w-8 text-accent" />
-          <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-destructive" />
+          {/* <Camera className="h-5 w-5" /> */}
+
+          <img src="/assets/notification.png" alt="Notification" className="h-6 w-6" />
         </Button>
       </PopoverTrigger>
       <PopoverContent

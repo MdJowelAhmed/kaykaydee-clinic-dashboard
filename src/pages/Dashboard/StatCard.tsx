@@ -23,8 +23,8 @@ export function StatCard({ title, value, change, icon: Icon, description, index 
             transition={{ duration: 0.3, delay: index * 0.1 }}
         >
             <Card className="overflow-hidden shadow-md hover:shadow-[#CEF8DA]">
-                <CardHeader className="flex flex-row items-center gap-3 pb-2">
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <CardHeader className="flex flex-row items-center gap-3 ">
+                    <div className="h-10 w-10 rounded-lg  flex items-center justify-center">
                         <Icon className="h-8 w-8 text-primary" />
                     </div>
                     <CardTitle className="text-xl font-bold text-accent">
@@ -34,7 +34,7 @@ export function StatCard({ title, value, change, icon: Icon, description, index 
                 </CardHeader>
                 <CardContent>
                     <div className="text-2xl xl:text-3xl font-bold text-accent">{value}</div>
-                    <div className="flex items-center gap-2 mt-1">
+                    <div className="flex items-center gap-2 ">
                         <span
                             className={cn(
                                 'flex items-center text-xs font-medium',

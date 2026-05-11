@@ -18,11 +18,11 @@ export default function DashboardLayout() {
       <div
         className={cn(
           'transition-all duration-300',
-          sidebarCollapsed ? 'lg:ml-[80px]' : 'lg:ml-[280px]'
+          sidebarCollapsed ? 'lg:ml-[80px]' : 'lg:ml-[230px]'
         )}
         style={{ paddingTop: shellTop }}
       >
-        <main className="px-6 lg:px-10 py-6 " style={{ minHeight: mainMinH }}>
+        <main className="px-6 lg:px-9 py-6 " style={{ minHeight: mainMinH }}>
           <Outlet />
         </main>
       </div>

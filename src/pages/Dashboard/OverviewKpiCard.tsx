@@ -36,11 +36,11 @@ export function OverviewKpiCard({
     >
       <div className="relative z-10 flex items-start justify-between gap-3">
         <p className="text-sm font-medium text-accent">{title}</p>
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15">
+        <div className="flex  shrink-0 items-center justify-center rounded-full bg-primary/15">
           <Icon className="h-5 w-5 text-primary" aria-hidden />
         </div>
       </div>
-      <p className="relative z-10 mt-4 text-3xl font-bold tracking-tight text-accent xl:text-[2rem]">
+      <p className="relative z-10 mt-2 text-3xl font-semibold tracking-tight text-[#111111] dark:text-accent xl:text-[2rem]">
         {value}
       </p>
       <div className="relative z-10 mt-2 flex flex-wrap items-center gap-x-1 text-xs">
