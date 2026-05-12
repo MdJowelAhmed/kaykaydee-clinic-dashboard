@@ -2,12 +2,7 @@ import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
   Settings,
-  Crown,
   Activity,
-  Info,
-  ShieldAlert,
-  FileCheck,
-  HelpCircle,
   Receipt,
   GitBranch,
   UserCog,
@@ -61,45 +56,15 @@ const invoiceSection: NavItem[] = [
 const generalSettingsSection: NavItem[] = [
   {
     title: 'Settings',
-    href: '/settings/profile',
+    href: '/settings',
     icon: Settings,
     allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  {
-    title: 'My Subscription',
-    href: '/subscription-packages',
-    icon: Crown,
-    allowedRoles: [UserRole.HEAD_ADMIN],
   },
   {
     title: 'Exercises Setting',
     href: '/exercises',
     icon: Activity,
     allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  {
-    title: 'About us',
-    href: '/settings/about-us',
-    icon: Info,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  {
-    title: 'Privacy Policy',
-    href: '/settings/privacy',
-    icon: ShieldAlert,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  {
-    title: 'Terms & Condition',
-    href: '/settings/terms',
-    icon: FileCheck,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  {
-    title: 'Manage FAQ',
-    href: '/settings/faq',
-    icon: HelpCircle,
-    allowedRoles: [UserRole.HEAD_ADMIN],
   },
 ]
 

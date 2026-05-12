@@ -48,6 +48,8 @@ export const ROUTE_PERMISSIONS: Record<string, UserRole[]> = {
   '/admin-manage': [UserRole.HEAD_ADMIN],
   '/agency-management': [UserRole.HEAD_ADMIN],
   '/transactions-history': [UserRole.HEAD_ADMIN],
+  '/settings': ALL_DASHBOARD_ROLES,
+  '/settings/subscription': [UserRole.HEAD_ADMIN],
   '/settings/faq': [UserRole.HEAD_ADMIN],
   '/settings/terms': ALL_DASHBOARD_ROLES,
   '/settings/privacy': ALL_DASHBOARD_ROLES,
@@ -88,12 +90,13 @@ export const hasRouteAccess = (userRole: string, routePath: string): boolean => 
     return ROUTE_PERMISSIONS[routePath].includes(role)
   }
 
-  const matchingRoute = Object.keys(ROUTE_PERMISSIONS).find((route) =>
-    routePath.startsWith(route)
+  const matchingRoutes = Object.keys(ROUTE_PERMISSIONS).filter(
+    (route) => routePath === route || routePath.startsWith(`${route}/`)
   )
 
-  if (matchingRoute) {
-    return ROUTE_PERMISSIONS[matchingRoute].includes(role)
+  if (matchingRoutes.length > 0) {
+    const longest = matchingRoutes.reduce((a, b) => (a.length >= b.length ? a : b))
+    return ROUTE_PERMISSIONS[longest].includes(role)
   }
 
   return false

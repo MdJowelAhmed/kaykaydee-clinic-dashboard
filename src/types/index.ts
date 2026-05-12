@@ -374,8 +374,6 @@ export interface BookingFormData {
 // ==================== Calendar Types ====================
 export type CalendarViewRange = 7 | 10 | 15 | 30
 
-export type CalendarPeriod = 'current' | 'previous'
-
 export interface CalendarDay {
   /** ISO date string */
   date: string

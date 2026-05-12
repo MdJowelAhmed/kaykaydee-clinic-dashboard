@@ -25,6 +25,7 @@ import ChangePassword from '@/pages/Settings/ChangePassword/ChangePassword'
 import TermsSettings from '@/pages/Settings/Terms/TermsSettings'
 import PrivacySettings from '@/pages/Settings/Privacy/PrivacySettings'
 import AboutUsSettings from '@/pages/Settings/AboutUs/AboutUsSettings'
+import SettingsLayout from '@/pages/Settings/SettingsLayout'
 import Calender from './pages/calender/Calender'
 import TransactionsHistory from './pages/transictions-history/TransactionsHistory'
 import Subscription from './pages/Subscription/Subscription'
@@ -333,16 +334,17 @@ function App() {
             }
           />
           
-          {/* Settings */}
-          <Route path="settings">
-            <Route
-              path="profile"
-              element={
-                <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
-                  <ProfileSettings />
-                </RoleBasedRoute>
-              }
-            />
+          {/* Settings — tabbed layout + nested pages */}
+          <Route
+            path="settings"
+            element={
+              <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
+                <SettingsLayout />
+              </RoleBasedRoute>
+            }
+          >
+            <Route index element={<Navigate to="profile" replace />} />
+            <Route path="profile" element={<ProfileSettings />} />
             <Route
               path="password"
               element={
@@ -352,36 +354,23 @@ function App() {
               }
             />
             <Route
-              path="terms"
+              path="subscription"
               element={
-                <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
-                  <TermsSettings />
+                <RoleBasedRoute allowedRoles={[UserRole.HEAD_ADMIN]}>
+                  <SubscriptionPackagePage />
                 </RoleBasedRoute>
               }
             />
+            <Route path="terms" element={<TermsSettings />} />
+            <Route path="privacy" element={<PrivacySettings />} />
+            <Route path="about-us" element={<AboutUsSettings />} />
             <Route
-              path="privacy"
-              element={
-                <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
-                  <PrivacySettings />
-                </RoleBasedRoute>
-              }
-            />
-            <Route
-              path="about-us"
-              element={
-                <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
-                  <AboutUsSettings />
-                </RoleBasedRoute>
-              }
-            />
-            <Route 
-              path="faq" 
+              path="faq"
               element={
                 <RoleBasedRoute allowedRoles={[UserRole.HEAD_ADMIN]}>
                   <FAQ />
                 </RoleBasedRoute>
-              } 
+              }
             />
           </Route>
         </Route>

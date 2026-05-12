@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   CalendarDays,
@@ -15,10 +16,29 @@ import {
 import { CATEGORY_CELL_STYLES, type ClinicCalendarEvent } from '../clinicCalendarData'
 import { cn } from '@/utils/cn'
 
+export type EventDetailsPanelVariant = 'slot' | 'day'
+
+function compareTimes12h(a: string, b: string): number {
+  const parse = (s: string) => {
+    const m = s.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i)
+    if (!m) return 0
+    let h = parseInt(m[1], 10)
+    const min = parseInt(m[2], 10)
+    const ap = m[3].toUpperCase()
+    if (ap === 'PM' && h !== 12) h += 12
+    if (ap === 'AM' && h === 12) h = 0
+    return h * 60 + min
+  }
+  return parse(a) - parse(b)
+}
+
 interface EventDetailsPanelProps {
+  variant?: EventDetailsPanelVariant
   events: ClinicCalendarEvent[]
   slotLabel?: string
   dayLabel?: string
+  /** e.g. "Wed 14" when variant is day */
+  daySummaryTitle?: string
   onClose: () => void
 }
 
@@ -58,7 +78,9 @@ function DetailRow({
             — {emptyLabel}
           </p>
         ) : (
-          <p className={cn('mt-0.5 break-words font-medium text-accent', valueClass)}>{value}</p>
+          <div className={cn('mt-0.5 break-words text-[12px] font-medium text-accent', valueClass)}>
+            {value}
+          </div>
         )}
       </div>
     </li>
@@ -68,6 +90,19 @@ function DetailRow({
 function SingleEventDetails({ ev }: { ev: ClinicCalendarEvent }) {
   const styles = CATEGORY_CELL_STYLES[ev.category]
   const hasSummary = !!ev.summary && ev.summary.trim() !== ''
+
+  const patientValue =
+    ev.patientId && ev.patientName ? (
+      <Link
+        to={`/client-list/${ev.patientId}`}
+        className="inline font-semibold text-primary underline-offset-2 hover:underline"
+      >
+        {ev.patientName}
+      </Link>
+    ) : (
+      ev.patientName
+    )
+
   return (
     <div className={cn('rounded-xl border p-4 shadow-sm', styles.card)}>
       <div className="mb-3 flex items-start justify-between gap-2">
@@ -102,7 +137,7 @@ function SingleEventDetails({ ev }: { ev: ClinicCalendarEvent }) {
         <DetailRow
           icon={User}
           label="Patient"
-          value={ev.patientName}
+          value={patientValue}
           emptyLabel="No patient assigned"
         />
         <DetailRow
@@ -131,48 +166,80 @@ function SingleEventDetails({ ev }: { ev: ClinicCalendarEvent }) {
 }
 
 const EventDetailsPanel: React.FC<EventDetailsPanelProps> = ({
+  variant = 'slot',
   events,
   slotLabel,
   dayLabel,
+  daySummaryTitle,
   onClose,
 }) => {
+  const isDay = variant === 'day'
   const hasEvents = events.length > 0
   const count = events.length
+
+  const sortedEvents = React.useMemo(
+    () => (isDay ? [...events].sort((a, b) => compareTimes12h(a.time, b.time)) : events),
+    [isDay, events]
+  )
+
+  const headerEyebrow = isDay ? 'Day details' : 'Slot details'
+
+  const hasSelection = isDay ? Boolean(daySummaryTitle) : hasEvents
+
+  const showCloseButton = isDay ? Boolean(daySummaryTitle) : hasEvents
+
+  const emptyStateKey = isDay ? 'day-empty' : 'slot-empty'
 
   return (
     <aside className="flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
       <header className="flex items-start justify-between gap-3 border-b border-border bg-muted/20 px-4 py-3">
         <div className="min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Slot details
+            {headerEyebrow}
           </p>
-          {hasEvents ? (
+          {isDay ? (
+            daySummaryTitle ? (
+              <h2 className="mt-1 truncate text-sm font-semibold text-accent">
+                <span className="inline-flex items-center gap-1.5">
+                  <CalendarDays className="h-3.5 w-3.5 shrink-0 text-primary" />
+                  {daySummaryTitle}
+                </span>
+                <span className="mx-1.5 text-muted-foreground">·</span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Clock className="h-3.5 w-3.5 shrink-0 text-primary" />
+                  Full day
+                </span>
+              </h2>
+            ) : (
+              <h2 className="mt-1 text-sm font-semibold text-accent">No day selected</h2>
+            )
+          ) : hasEvents ? (
             <h2 className="mt-1 truncate text-sm font-semibold text-accent">
               <span className="inline-flex items-center gap-1.5">
-                <CalendarDays className="h-3.5 w-3.5 text-primary" />
+                <CalendarDays className="h-3.5 w-3.5 shrink-0 text-primary" />
                 {dayLabel ?? '—'}
               </span>
               <span className="mx-1.5 text-muted-foreground">·</span>
               <span className="inline-flex items-center gap-1.5">
-                <Clock className="h-3.5 w-3.5 text-primary" />
+                <Clock className="h-3.5 w-3.5 shrink-0 text-primary" />
                 {slotLabel}
               </span>
             </h2>
           ) : (
             <h2 className="mt-1 text-sm font-semibold text-accent">No slot selected</h2>
           )}
-          {hasEvents && (
+          {hasSelection && hasEvents && (
             <p className="mt-1 text-[11px] text-muted-foreground">
-              {count} {count === 1 ? 'item' : 'items'} in this slot
+              {count} {count === 1 ? 'item' : 'items'} {isDay ? 'this day' : 'in this slot'}
             </p>
           )}
         </div>
-        {hasEvents && (
+        {showCloseButton && (
           <button
             type="button"
             onClick={onClose}
             aria-label="Close details"
-            className="flex h-7 w-7 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted/40 hover:text-accent"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted/40 hover:text-accent"
           >
             <X className="h-4 w-4" />
           </button>
@@ -181,7 +248,56 @@ const EventDetailsPanel: React.FC<EventDetailsPanelProps> = ({
 
       <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 [scrollbar-width:thin]">
         <AnimatePresence mode="wait">
-          {hasEvents ? (
+          {isDay && daySummaryTitle && hasEvents ? (
+            <motion.div
+              key={`day-${daySummaryTitle}-${count}`}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.18 }}
+              className="space-y-3"
+            >
+              {sortedEvents.map((ev) => (
+                <SingleEventDetails key={ev.id} ev={ev} />
+              ))}
+              {count > 1 && (
+                <p className="pt-1 text-center text-[11px] text-muted-foreground">
+                  End of day — {count} entries shown
+                </p>
+              )}
+            </motion.div>
+          ) : isDay && daySummaryTitle && !hasEvents ? (
+            <motion.div
+              key="day-no-activities"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center gap-2 py-10 text-center"
+            >
+              <ClipboardList className="h-8 w-8 text-muted-foreground" />
+              <p className="text-sm font-medium text-accent">No activities this day</p>
+              <p className="max-w-[14rem] text-[11px] text-muted-foreground">
+                Try another date or clear filters.
+              </p>
+            </motion.div>
+          ) : isDay && !daySummaryTitle ? (
+            <motion.div
+              key="day-pick"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex h-full flex-col items-center justify-center gap-3 py-10 text-center"
+            >
+              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-muted/40 text-primary">
+                <CalendarDays className="h-6 w-6" />
+              </span>
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-accent">Select a day</p>
+                <p className="mx-auto max-w-[16rem] text-[11px] leading-relaxed text-muted-foreground">
+                  Click a day card on the left. Details appear here — tap the patient name to open
+                  their profile.
+                </p>
+              </div>
+            </motion.div>
+          ) : !isDay && hasEvents ? (
             <motion.div
               key={`${dayLabel}-${slotLabel}-${count}`}
               initial={{ opacity: 0, y: 8 }}
@@ -190,7 +306,7 @@ const EventDetailsPanel: React.FC<EventDetailsPanelProps> = ({
               transition={{ duration: 0.18 }}
               className="space-y-3"
             >
-              {events.map((ev) => (
+              {sortedEvents.map((ev) => (
                 <SingleEventDetails key={ev.id} ev={ev} />
               ))}
               {count > 1 && (
@@ -201,7 +317,7 @@ const EventDetailsPanel: React.FC<EventDetailsPanelProps> = ({
             </motion.div>
           ) : (
             <motion.div
-              key="empty"
+              key={emptyStateKey}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -214,8 +330,8 @@ const EventDetailsPanel: React.FC<EventDetailsPanelProps> = ({
               <div className="space-y-1">
                 <p className="text-sm font-semibold text-accent">Pick a slot to view details</p>
                 <p className="mx-auto max-w-[16rem] text-[11px] leading-relaxed text-muted-foreground">
-                  Click any appointment card in the calendar grid. Every entry in that time slot
-                  will appear here — scroll the panel for stacked visits.
+                  Click a time cell in the calendar. Every entry in that slot appears here — tap the
+                  patient name to open their profile.
                 </p>
               </div>
               <ul className="mt-1 space-y-1 text-[11px] text-muted-foreground">

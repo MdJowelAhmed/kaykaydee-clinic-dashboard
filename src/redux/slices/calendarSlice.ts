@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import type { CalendarDay, CalendarPeriod, CalendarViewRange } from '@/types'
+import type { CalendarDay, CalendarViewRange } from '@/types'
 
 interface CalendarState {
   viewRange: CalendarViewRange
-  period: CalendarPeriod
-  startDate: string // ISO string for the first day in the range
+  /** First visible day (ISO). Forward navigation only; never before today for new ranges. */
+  startDate: string
   days: CalendarDay[]
   /** ISO date string the user selected (defaults to today). */
   selectedDate: string
@@ -41,7 +41,6 @@ const buildInitialState = (): CalendarState => {
 
   return {
     viewRange: 7,
-    period: 'current',
     startDate,
     days: generateDays(today, 7),
     selectedDate: startDate,
@@ -50,18 +49,15 @@ const buildInitialState = (): CalendarState => {
 }
 
 const recalculateDays = (state: CalendarState) => {
-  const today = new Date()
-  const baseDate = new Date(today)
-
-  if (state.period === 'previous') {
-    // Previous 30 days from today
-    baseDate.setDate(baseDate.getDate() - 30)
+  const base = new Date(state.startDate + 'T12:00:00')
+  if (Number.isNaN(base.getTime())) {
+    const t = new Date()
+    state.startDate = toISODate(t)
+    state.days = generateDays(t, state.viewRange)
+  } else {
+    state.days = generateDays(base, state.viewRange)
   }
 
-  state.startDate = toISODate(baseDate)
-  state.days = generateDays(baseDate, state.viewRange)
-
-  // Keep selected date inside the visible window; otherwise snap to the first day.
   const selectedInWindow = state.days.some((d) => d.date === state.selectedDate)
   if (!selectedInWindow) {
     state.selectedDate = state.startDate
@@ -76,29 +72,35 @@ const calendarSlice = createSlice({
   reducers: {
     setViewRange: (state, action: PayloadAction<CalendarViewRange>) => {
       state.viewRange = action.payload
-      // If user switches to anything other than 30 days, reset to current period
-      if (action.payload !== 30 && state.period === 'previous') {
-        state.period = 'current'
-      }
+      state.startDate = toISODate(new Date())
       recalculateDays(state)
     },
-    setPeriod: (state, action: PayloadAction<CalendarPeriod>) => {
-      state.period = action.payload
-      // Period only matters for 30 day view, force to 30
-      if (action.payload === 'previous') {
-        state.viewRange = 30
-      }
+    advanceScheduleWindow: (state) => {
+      const d = new Date(state.startDate + 'T12:00:00')
+      d.setDate(d.getDate() + state.viewRange)
+      state.startDate = toISODate(d)
+      recalculateDays(state)
+    },
+    retreatScheduleWindow: (state) => {
+      const todayISO = toISODate(new Date())
+      const d = new Date(state.startDate + 'T12:00:00')
+      d.setDate(d.getDate() - state.viewRange)
+      const nextStart = toISODate(d)
+      state.startDate = nextStart < todayISO ? todayISO : nextStart
       recalculateDays(state)
     },
     setSelectedDate: (state, action: PayloadAction<string>) => {
-      state.selectedDate = action.payload
-      if (!action.payload) return
-      // If the chosen date is outside the current window, shift the window to start there.
+      if (!action.payload) {
+        state.selectedDate = ''
+        return
+      }
+      const todayISO = toISODate(new Date())
+      const chosen = action.payload < todayISO ? todayISO : action.payload
+      state.selectedDate = chosen
       const selectedInWindow = state.days.some((d) => d.date === state.selectedDate)
       if (!selectedInWindow) {
-        const base = new Date(action.payload)
+        const base = new Date(state.selectedDate + 'T12:00:00')
         if (!Number.isNaN(base.getTime())) {
-          state.period = 'current'
           state.startDate = toISODate(base)
           state.days = generateDays(base, state.viewRange)
         }
@@ -108,16 +110,23 @@ const calendarSlice = createSlice({
       state.selectedTime = action.payload
     },
     goToToday: (state) => {
-      state.period = 'current'
-      recalculateDays(state)
+      const t = new Date()
+      state.startDate = toISODate(t)
+      state.days = generateDays(t, state.viewRange)
       state.selectedDate = state.startDate
       state.selectedTime = ''
     },
   },
 })
 
-export const { setViewRange, setPeriod, setSelectedDate, setSelectedTime, goToToday } =
-  calendarSlice.actions
+export const {
+  setViewRange,
+  advanceScheduleWindow,
+  retreatScheduleWindow,
+  setSelectedDate,
+  setSelectedTime,
+  goToToday,
+} = calendarSlice.actions
 
 export default calendarSlice.reducer
 

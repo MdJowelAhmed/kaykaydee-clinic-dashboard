@@ -1,13 +1,15 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
+import { Plus } from 'lucide-react'
 import CalendarView, { type SelectedSlot } from './components/CalendarView'
 import EventDetailsPanel from './components/EventDetailsPanel'
 import {
-  CLINIC_CALENDAR_EVENTS,
+  resolveClinicCalendarEvents,
   CATEGORY_FILTER_OPTIONS,
   type ClinicEventCategory,
 } from './clinicCalendarData'
 import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import {
   Select,
   SelectContent,
@@ -16,28 +18,65 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { setSelectedDate } from '@/redux/slices/calendarSlice'
+import { goToToday, setSelectedDate } from '@/redux/slices/calendarSlice'
 import { cn } from '@/utils/cn'
+import { AddAppointmentModal } from '@/pages/WaitingList/components/AddAppointmentModal'
+import {
+  INITIAL_WAITING_LIST,
+  getDoctorOptionsFromEntries,
+  getServiceOptionsFromEntries,
+} from '@/pages/WaitingList/waitingListData'
+import type { WaitingListEntry } from '@/pages/WaitingList/types'
 
 const Calender: React.FC = () => {
   const [category, setCategory] = useState<ClinicEventCategory | 'all'>('all')
   const [searchValue, setSearchValue] = useState('')
   const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null)
+  const [addAppointmentOpen, setAddAppointmentOpen] = useState(false)
+  const [waitingListEntries, setWaitingListEntries] =
+    useState<WaitingListEntry[]>(INITIAL_WAITING_LIST)
   const dispatch = useAppDispatch()
-  const { days, selectedDate } = useAppSelector((state) => state.calendar)
+  const { days, selectedDate, viewRange } = useAppSelector((state) => state.calendar)
 
   const todayISO = new Date().toISOString().split('T')[0]
-  const nextDayISO = (() => {
-    const d = new Date()
-    d.setDate(d.getDate() + 1)
-    return d.toISOString().split('T')[0]
-  })()
 
-  const maxDay = days.length
+  const [selectedDayIso, setSelectedDayIso] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (viewRange === 15 || viewRange === 30) {
+      setSelectedSlot(null)
+    } else {
+      setSelectedDayIso(null)
+    }
+  }, [viewRange])
+
+  const visibleDateSet = useMemo(() => new Set(days.map((d) => d.date)), [days])
+
+  useEffect(() => {
+    if (selectedDayIso && !visibleDateSet.has(selectedDayIso)) {
+      setSelectedDayIso(null)
+    }
+  }, [visibleDateSet, selectedDayIso])
+
+  const anchorDay = days[0]?.date ?? todayISO
+
+  const resolvedEvents = useMemo(
+    () => resolveClinicCalendarEvents(anchorDay),
+    [anchorDay]
+  )
 
   const eventsInWindow = useMemo(
-    () => CLINIC_CALENDAR_EVENTS.filter((e) => e.dayIndex < maxDay),
-    [maxDay]
+    () => resolvedEvents.filter((e) => visibleDateSet.has(e.dateISO)),
+    [resolvedEvents, visibleDateSet]
+  )
+
+  const serviceOptions = useMemo(
+    () => getServiceOptionsFromEntries(waitingListEntries),
+    [waitingListEntries]
+  )
+  const doctorOptions = useMemo(
+    () => getDoctorOptionsFromEntries(waitingListEntries),
+    [waitingListEntries]
   )
 
   const calendarEvents = useMemo(() => {
@@ -47,10 +86,37 @@ const Calender: React.FC = () => {
 
   const slotEvents = useMemo(() => {
     if (!selectedSlot) return []
+    const slotDay = days[selectedSlot.dayIndex]
+    if (!slotDay) return []
     return calendarEvents.filter(
-      (e) => e.dayIndex === selectedSlot.dayIndex && e.time === selectedSlot.time
+      (e) => e.dateISO === slotDay.date && e.time === selectedSlot.time
     )
-  }, [calendarEvents, selectedSlot])
+  }, [calendarEvents, selectedSlot, days])
+
+  const daySummaryTitle = useMemo(() => {
+    if (!selectedDayIso) return undefined
+    const d = days.find((x) => x.date === selectedDayIso)
+    if (!d) return undefined
+    return `${d.label} ${String(d.dayNumber).padStart(2, '0')}`
+  }, [selectedDayIso, days])
+
+  const dayPanelEvents = useMemo(() => {
+    if (!selectedDayIso) return []
+    return calendarEvents.filter((e) => e.dateISO === selectedDayIso)
+  }, [selectedDayIso, calendarEvents])
+
+  const panelVariant = selectedDayIso ? 'day' : 'slot'
+  const panelEvents = selectedDayIso ? dayPanelEvents : slotEvents
+
+  const handleSlotSelect = useCallback((slot: SelectedSlot | null) => {
+    setSelectedSlot(slot)
+    if (slot) setSelectedDayIso(null)
+  }, [])
+
+  const handleDaySelect = useCallback((iso: string | null) => {
+    setSelectedDayIso(iso)
+    if (iso) setSelectedSlot(null)
+  }, [])
 
   // If active filters/search remove every event in the picked slot, close the panel.
   useEffect(() => {
@@ -115,12 +181,21 @@ const Calender: React.FC = () => {
         <Card className="min-w-0 rounded-2xl border border-border bg-card shadow-sm">
           <CardContent className="space-y-4 p-5 sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <h2 className="text-lg font-semibold text-accent">Weekly grid</h2>
+              <h2 className="text-lg font-semibold text-accent">Schedule grid</h2>
               <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
+                <Button
+                  type="button"
+                  className="h-10 shrink-0 rounded-xl bg-primary px-4 text-primary-foreground hover:bg-primary/90"
+                  onClick={() => setAddAppointmentOpen(true)}
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add appointment
+                </Button>
+
                 <div className="flex flex-wrap items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => dispatch(setSelectedDate(todayISO))}
+                    onClick={() => dispatch(goToToday())}
                     className={cn(
                       'h-9 rounded-full border px-3 text-xs font-semibold transition-colors',
                       selectedDate === todayISO
@@ -130,18 +205,6 @@ const Calender: React.FC = () => {
                   >
                     Today
                   </button>
-                  <button
-                    type="button"
-                    onClick={() => dispatch(setSelectedDate(nextDayISO))}
-                    className={cn(
-                      'h-9 rounded-full border px-3 text-xs font-semibold transition-colors',
-                      selectedDate === nextDayISO
-                        ? 'border-primary/30 bg-primary/10 text-primary'
-                        : 'border-border bg-background text-accent hover:bg-muted/30'
-                    )}
-                  >
-                    Next day
-                  </button>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -149,6 +212,7 @@ const Calender: React.FC = () => {
                   <input
                     type="date"
                     value={selectedDate}
+                    min={todayISO}
                     onChange={(e) => dispatch(setSelectedDate(e.target.value))}
                     className="h-10 rounded-xl border border-border bg-background px-3 text-sm text-accent outline-none focus:border-primary focus:ring-1 focus:ring-primary"
                   />
@@ -179,20 +243,36 @@ const Calender: React.FC = () => {
               searchValue={searchValue}
               onSearchChange={setSearchValue}
               selectedSlot={selectedSlot}
-              onSlotSelect={setSelectedSlot}
+              onSlotSelect={handleSlotSelect}
+              selectedDayIso={selectedDayIso}
+              onDaySelect={handleDaySelect}
             />
           </CardContent>
         </Card>
 
         <div className="h-[640px] xl:sticky xl:top-4 xl:h-[calc(100vh-6rem)]">
           <EventDetailsPanel
-            events={slotEvents}
+            variant={panelVariant}
+            events={panelEvents}
             slotLabel={selectedSlot?.time}
             dayLabel={slotDayLabel}
-            onClose={() => setSelectedSlot(null)}
+            daySummaryTitle={daySummaryTitle}
+            onClose={() => {
+              setSelectedSlot(null)
+              setSelectedDayIso(null)
+            }}
           />
         </div>
       </div>
+
+      <AddAppointmentModal
+        open={addAppointmentOpen}
+        onClose={() => setAddAppointmentOpen(false)}
+        serviceOptions={serviceOptions}
+        doctorOptions={doctorOptions}
+        existingEntries={waitingListEntries}
+        onCreated={(entry) => setWaitingListEntries((prev) => [entry, ...prev])}
+      />
     </motion.div>
   )
 }

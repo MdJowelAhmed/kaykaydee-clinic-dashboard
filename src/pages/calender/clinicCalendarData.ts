@@ -21,6 +21,27 @@ export interface ClinicCalendarEvent {
   room?: string
   /** Doctor, nurse, or coordinator (optional — assignment may be pending). */
   staffName?: string
+  /** Absolute column date (ISO); set by `resolveClinicCalendarEvents`. */
+  dateISO: string
+  /** `client-list` entry id for full profile navigation. */
+  patientId?: string
+}
+
+/** Seed rows before anchor dates and client ids are applied */
+export type ClinicCalendarEventInput = Omit<ClinicCalendarEvent, 'dateISO' | 'patientId'>
+
+function calendarDayPlus(anchorIso: string, add: number): string {
+  const d = new Date(anchorIso + 'T12:00:00')
+  d.setDate(d.getDate() + add)
+  return d.toISOString().split('T')[0]
+}
+
+function patientIdFromPatientName(patientName?: string): string | undefined {
+  const n = patientName?.trim() ?? ''
+  if (!n || n.startsWith('—')) return undefined
+  let h = 0
+  for (let i = 0; i < n.length; i++) h = (Math.imul(31, h) + n.charCodeAt(i)) | 0
+  return `cl-${(Math.abs(h) % 150) + 1}`
 }
 
 export const CATEGORY_FILTER_OPTIONS: { value: ClinicEventCategory | 'all'; label: string }[] = [
@@ -78,7 +99,7 @@ function clinicCalendarTimeLabel(hour24: number): string {
  * which are otherwise empty). Some entries intentionally leave fields blank to show how
  * partial / draft bookings render. Safe to remove when wiring a real API.
  */
-const clinicCalendarEventsVisualDemo: ClinicCalendarEvent[] = (() => {
+const clinicCalendarEventsVisualDemo: ClinicCalendarEventInput[] = (() => {
   const cats: ClinicEventCategory[] = [
     'consultation',
     'follow_up',
@@ -118,11 +139,11 @@ const clinicCalendarEventsVisualDemo: ClinicCalendarEvent[] = (() => {
    * grid + side panel show realistic mixes of complete and draft bookings.
    */
   const buildPartial = (
-    base: Pick<ClinicCalendarEvent, 'id' | 'dayIndex' | 'time' | 'category' | 'taskTitle'>,
+    base: Pick<ClinicCalendarEventInput, 'id' | 'dayIndex' | 'time' | 'category' | 'taskTitle'>,
     i: number
-  ): ClinicCalendarEvent => {
+  ): ClinicCalendarEventInput => {
     const variant = i % 6
-    const ev: ClinicCalendarEvent = { ...base }
+    const ev: ClinicCalendarEventInput = { ...base }
     // variant 0 → all four fields filled
     // variant 1 → no patient
     // variant 2 → no room
@@ -137,7 +158,7 @@ const clinicCalendarEventsVisualDemo: ClinicCalendarEvent[] = (() => {
     return ev
   }
 
-  const rows: ClinicCalendarEvent[] = []
+  const rows: ClinicCalendarEventInput[] = []
   let n = 0
 
   // Overnight (12 AM – 5 AM): fill ~half of the cells, leave the rest truly empty
@@ -190,7 +211,7 @@ const clinicCalendarEventsVisualDemo: ClinicCalendarEvent[] = (() => {
 })()
 
 /** Core mock clinic schedule (10+ day indices; grid clips to active view range) */
-const clinicCalendarEventsCore: ClinicCalendarEvent[] = [
+const clinicCalendarEventsCore: ClinicCalendarEventInput[] = [
   {
     id: 'APT-1001',
     dayIndex: 0,
@@ -524,7 +545,7 @@ const clinicCalendarEventsCore: ClinicCalendarEvent[] = [
 ]
 
 /** Extra dense slots (6–9 items) to demo vertical scroll inside cells */
-const clinicCalendarEventsHighLoad: ClinicCalendarEvent[] = (() => {
+const clinicCalendarEventsHighLoad: ClinicCalendarEventInput[] = (() => {
   const categories: ClinicEventCategory[] = [
     'consultation',
     'follow_up',
@@ -533,7 +554,7 @@ const clinicCalendarEventsHighLoad: ClinicCalendarEvent[] = (() => {
     'staff',
     'admin',
   ]
-  const rows: ClinicCalendarEvent[] = []
+  const rows: ClinicCalendarEventInput[] = []
   const pushBlock = (dayIndex: number, time: string, count: number, prefix: string) => {
     for (let i = 0; i < count; i++) {
       rows.push({
@@ -561,8 +582,20 @@ const clinicCalendarEventsHighLoad: ClinicCalendarEvent[] = (() => {
   return rows
 })()
 
-export const CLINIC_CALENDAR_EVENTS: ClinicCalendarEvent[] = [
+const clinicCalendarEventsAllInput: ClinicCalendarEventInput[] = [
   ...clinicCalendarEventsCore,
   ...clinicCalendarEventsHighLoad,
   ...clinicCalendarEventsVisualDemo,
 ]
+
+export function resolveClinicCalendarEvents(firstVisibleDayIso: string): ClinicCalendarEvent[] {
+  const anchor =
+    firstVisibleDayIso && firstVisibleDayIso.length >= 10
+      ? firstVisibleDayIso.slice(0, 10)
+      : new Date().toISOString().split('T')[0]
+  return clinicCalendarEventsAllInput.map((ev) => ({
+    ...ev,
+    dateISO: calendarDayPlus(anchor, ev.dayIndex),
+    patientId: patientIdFromPatientName(ev.patientName),
+  }))
+}
