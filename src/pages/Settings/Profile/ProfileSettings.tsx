@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -75,7 +75,6 @@ export default function ProfileSettings() {
     handleSubmit,
     formState: { errors },
     control,
-    watch,
   } = useForm<ClinicProfileFormData>({
     resolver: zodResolver(clinicProfileSchema),
     defaultValues: {
@@ -88,14 +87,6 @@ export default function ProfileSettings() {
       registrationId: 'CLN-REG-45872347687',
     },
   })
-
-  const clinicName = watch('clinicName')
-  const facilityType = watch('facilityType')
-
-  const status = 'Active'
-  const clinicTitle = useMemo(() => clinicName?.trim() || 'Your clinic', [clinicName])
-  const facilityLabel = useMemo(() => facilityType || 'Clinic', [facilityType])
-  const clinicIdLabel = 'Clinic ID CLN-6351651'
 
   const onSubmit = async (data: ClinicProfileFormData) => {
     setIsSubmitting(true)
@@ -153,7 +144,7 @@ export default function ProfileSettings() {
         </CardContent>
       </Card> */}
 
-      <Card className="overflow-hidden rounded-2xl border border-indigo-500/40 bg-slate-900 shadow-sm">
+      {/* <Card className="overflow-hidden rounded-2xl border border-indigo-500/40 bg-slate-900 shadow-sm">
         <CardContent className="p-0">
           <div className="flex items-stretch gap-5 p-4 sm:p-5">
             <div className="h-[110px] w-[140px] shrink-0 overflow-hidden rounded-xl bg-slate-800 ring-1 ring-white/10">
@@ -175,7 +166,7 @@ export default function ProfileSettings() {
             </div>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       <Card className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
         <CardContent className="p-5 sm:p-6">

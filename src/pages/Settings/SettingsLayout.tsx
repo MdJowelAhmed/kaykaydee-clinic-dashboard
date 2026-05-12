@@ -8,6 +8,7 @@ import {
   FileCheck,
   ShieldAlert,
   HelpCircle,
+  KeyRound,
 } from 'lucide-react'
 import { useAppSelector } from '@/redux/hooks'
 import { UserRole, normalizeRoleKey } from '@/types/roles'
@@ -33,6 +34,14 @@ const SETTINGS_TABS: SettingsTabDef[] = [
     Icon: Building2,
     allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
   },
+  
+  {
+    to: '/settings/subscription',
+    label: 'My subscription',
+    Icon: Crown,
+    allowedRoles: [UserRole.HEAD_ADMIN],
+  },
+
   {
     to: '/settings/connect-stripe',
     label: 'Connect Stripe',
@@ -40,9 +49,15 @@ const SETTINGS_TABS: SettingsTabDef[] = [
     allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
   },
   {
-    to: '/settings/subscription',
-    label: 'My subscription',
-    Icon: Crown,
+    to: '/settings/password',
+    label: 'Change password',
+    Icon: KeyRound,
+    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  },
+  {
+    to: '/settings/faq',
+    label: 'Manage FAQ',
+    Icon: HelpCircle,
     allowedRoles: [UserRole.HEAD_ADMIN],
   },
   {
@@ -63,12 +78,7 @@ const SETTINGS_TABS: SettingsTabDef[] = [
     Icon: ShieldAlert,
     allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
   },
-  {
-    to: '/settings/faq',
-    label: 'Manage FAQ',
-    Icon: HelpCircle,
-    allowedRoles: [UserRole.HEAD_ADMIN],
-  },
+
 ]
 
 function filterTabsByRole(user: { role: string } | null): SettingsTabDef[] {
@@ -83,7 +93,7 @@ export default function SettingsLayout() {
   const location = useLocation()
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6">
+    <div className="mx-auto flex w-full  flex-col gap-6">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight text-accent">Settings</h1>
         <p className="mt-1 text-sm text-muted-foreground">

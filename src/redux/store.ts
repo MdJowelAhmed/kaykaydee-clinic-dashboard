@@ -7,6 +7,7 @@ import calendarReducer from './slices/calendarSlice'
 import transactionReducer from './slices/transactionSlice'
 import faqReducer from './slices/faqSlice'
 import clinicReducer from './slices/clinicSlice'
+import waitlistReducer from './slices/waitlistSlice'
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     categories: categoryReducer,
     ui: uiReducer,
     calendar: calendarReducer,
+    waitlist: waitlistReducer,
     transactions: transactionReducer,
     faqs: faqReducer,
   },

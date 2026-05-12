@@ -1,12 +1,14 @@
-import type { WaitingListEntry, WaitingListStatus } from './types'
+import type { WaitingListEntry, WaitingListRole, WaitingListStatus } from './types'
 
 const SERVICES = ['MSK', 'Cardiology', 'Dental', 'Physiotherapy', 'General']
 const DOCTORS = [
+  'Dr. Rahman',
+  'Dr. Alam',
+  'Dr. Chowdhury',
+  'Dr. Sen',
+  'Dr. Hoque',
   'Dr. APJ Kalam',
   'Dr. Sarah Smith',
-  'Dr. John Lee',
-  'Dr. Maria Garcia',
-  'Dr. James Wilson',
 ]
 const PATIENT_NAMES = [
   'Zoya Clinic',
@@ -18,12 +20,66 @@ const PATIENT_NAMES = [
 ]
 const STATUSES: WaitingListStatus[] = ['completed', 'pending', 'cancelled']
 
+/** Demo waitlist patients aligned with calendar `staffName` so cancel → notify works. */
+const DEMO_WAITLIST: WaitingListEntry[] = [
+  {
+    id: 'wl-demo-q1',
+    serialNo: '900001',
+    service: 'Cardiology',
+    patientName: 'Ayesha Khan',
+    patientId: 'cl-demo-1',
+    contactNo: '+8801711000001',
+    doctor: 'Dr. Rahman',
+    appointmentAt: new Date(2026, 9, 1, 10, 0).toISOString(),
+    roomNo: 'Rm TBD',
+    price: 600,
+    status: 'pending',
+    listRole: 'waitlist',
+    waitlistJoinedAt: new Date(2026, 4, 1, 9, 0).toISOString(),
+    slotOffer: null,
+  },
+  {
+    id: 'wl-demo-q2',
+    serialNo: '900002',
+    service: 'General',
+    patientName: 'Rafiq Hossain',
+    patientId: 'cl-demo-2',
+    contactNo: '+8801711000002',
+    doctor: 'Dr. Rahman',
+    appointmentAt: new Date(2026, 9, 5, 14, 0).toISOString(),
+    roomNo: 'Rm TBD',
+    price: 400,
+    status: 'pending',
+    listRole: 'waitlist',
+    waitlistJoinedAt: new Date(2026, 4, 2, 11, 30).toISOString(),
+    slotOffer: null,
+  },
+  {
+    id: 'wl-demo-q3',
+    serialNo: '900003',
+    service: 'Follow-up',
+    patientName: 'Nusrat Jahan',
+    patientId: 'cl-demo-3',
+    contactNo: '+8801711000003',
+    doctor: 'Dr. Alam',
+    appointmentAt: new Date(2026, 8, 20, 9, 0).toISOString(),
+    roomNo: 'Rm TBD',
+    price: 350,
+    status: 'pending',
+    listRole: 'waitlist',
+    waitlistJoinedAt: new Date(2026, 4, 3, 8, 0).toISOString(),
+    slotOffer: null,
+  },
+]
+
 function buildRow(index: number): WaitingListEntry {
   const day = 1 + (index % 28)
   const hour = 9 + (index % 12)
   const minute = (index % 2) * 30
   const month = index % 3
   const appointmentAt = new Date(2026, month, day, hour, minute).toISOString()
+
+  const listRole: WaitingListRole = 'booked'
 
   return {
     id: `wl-${index + 1}`,
@@ -37,19 +93,28 @@ function buildRow(index: number): WaitingListEntry {
     roomNo: `f${(index % 5) + 1}2 ${1200 + index}`,
     price: 200 + (index % 5) * 100,
     status: STATUSES[index % STATUSES.length],
+    listRole,
+    waitlistJoinedAt: null,
+    slotOffer: null,
   }
 }
 
-/** Deterministic mock list (150 rows) for pagination demos */
-export const INITIAL_WAITING_LIST: WaitingListEntry[] = Array.from({ length: 150 }, (_, i) =>
-  buildRow(i)
-)
+const generated: WaitingListEntry[] = Array.from({ length: 150 }, (_, i) => buildRow(i))
+
+/** Deterministic mock list for pagination + waitlist demos */
+export const INITIAL_WAITING_LIST: WaitingListEntry[] = [...DEMO_WAITLIST, ...generated]
 
 export const WAITING_LIST_STATUS_OPTIONS = [
   { value: 'all', label: 'Status' },
   { value: 'completed', label: 'Confirmed' },
   { value: 'pending', label: 'Pending' },
   { value: 'cancelled', label: 'Cancel' },
+]
+
+export const WAITING_LIST_ROLE_OPTIONS = [
+  { value: 'all', label: 'All types' },
+  { value: 'booked', label: 'Booked' },
+  { value: 'waitlist', label: 'Waitlist' },
 ]
 
 /** Month keys aligned with appointment dates in mock data (2026-01 …) */

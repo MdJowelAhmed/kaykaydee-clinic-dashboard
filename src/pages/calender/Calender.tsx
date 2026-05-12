@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Plus } from 'lucide-react'
+import { toast } from 'sonner'
 import CalendarView, { type SelectedSlot } from './components/CalendarView'
 import EventDetailsPanel from './components/EventDetailsPanel'
 import {
   resolveClinicCalendarEvents,
   CATEGORY_FILTER_OPTIONS,
+  type ClinicCalendarEvent,
   type ClinicEventCategory,
 } from './clinicCalendarData'
 import { Card, CardContent } from '@/components/ui/card'
@@ -19,24 +21,26 @@ import {
 } from '@/components/ui/select'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { goToToday, setSelectedDate } from '@/redux/slices/calendarSlice'
+import {
+  addWaitlistEntry,
+  patientCalendarCancelled,
+  selectCancelledCalendarKeys,
+  selectWaitlistEntries,
+} from '@/redux/slices/waitlistSlice'
 import { cn } from '@/utils/cn'
 import { AddAppointmentModal } from '@/pages/WaitingList/components/AddAppointmentModal'
-import {
-  INITIAL_WAITING_LIST,
-  getDoctorOptionsFromEntries,
-  getServiceOptionsFromEntries,
-} from '@/pages/WaitingList/waitingListData'
-import type { WaitingListEntry } from '@/pages/WaitingList/types'
+import { cancellationCompositeKey, firstWaitlistPatientForDoctor } from '@/pages/WaitingList/waitlistFlow'
+import { getDoctorOptionsFromEntries, getServiceOptionsFromEntries } from '@/pages/WaitingList/waitingListData'
 
 const Calender: React.FC = () => {
   const [category, setCategory] = useState<ClinicEventCategory | 'all'>('all')
   const [searchValue, setSearchValue] = useState('')
   const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null)
   const [addAppointmentOpen, setAddAppointmentOpen] = useState(false)
-  const [waitingListEntries, setWaitingListEntries] =
-    useState<WaitingListEntry[]>(INITIAL_WAITING_LIST)
   const dispatch = useAppDispatch()
   const { days, selectedDate, viewRange } = useAppSelector((state) => state.calendar)
+  const waitingListEntries = useAppSelector(selectWaitlistEntries)
+  const cancelledCalendarKeys = useAppSelector(selectCancelledCalendarKeys)
 
   const todayISO = new Date().toISOString().split('T')[0]
 
@@ -49,6 +53,8 @@ const Calender: React.FC = () => {
       setSelectedDayIso(null)
     }
   }, [viewRange])
+
+  const cancelledKeySet = useMemo(() => new Set(cancelledCalendarKeys), [cancelledCalendarKeys])
 
   const visibleDateSet = useMemo(() => new Set(days.map((d) => d.date)), [days])
 
@@ -66,8 +72,11 @@ const Calender: React.FC = () => {
   )
 
   const eventsInWindow = useMemo(
-    () => resolvedEvents.filter((e) => visibleDateSet.has(e.dateISO)),
-    [resolvedEvents, visibleDateSet]
+    () =>
+      resolvedEvents
+        .filter((e) => visibleDateSet.has(e.dateISO))
+        .filter((e) => !cancelledKeySet.has(cancellationCompositeKey(e.id, e.dateISO))),
+    [resolvedEvents, visibleDateSet, cancelledKeySet]
   )
 
   const serviceOptions = useMemo(
@@ -117,6 +126,31 @@ const Calender: React.FC = () => {
     setSelectedDayIso(iso)
     if (iso) setSelectedSlot(null)
   }, [])
+
+  const handlePatientCancelFromCalendar = useCallback(
+    (ev: ClinicCalendarEvent) => {
+      const doctor = ev.staffName?.trim() ?? ''
+      const hadQueue = doctor ? !!firstWaitlistPatientForDoctor(waitingListEntries, doctor) : false
+      dispatch(
+        patientCalendarCancelled({
+          eventId: ev.id,
+          dateISO: ev.dateISO,
+          time: ev.time,
+          staffName: ev.staffName,
+        })
+      )
+      if (doctor && hadQueue) {
+        toast.success(
+          'Waitlist: an earlier-slot message was sent to the first patient in queue (demo).'
+        )
+      } else if (doctor) {
+        toast.message('No waitlisted patients for this doctor.')
+      }
+      setSelectedSlot(null)
+      setSelectedDayIso(null)
+    },
+    [dispatch, waitingListEntries]
+  )
 
   // If active filters/search remove every event in the picked slot, close the panel.
   useEffect(() => {
@@ -257,6 +291,7 @@ const Calender: React.FC = () => {
             slotLabel={selectedSlot?.time}
             dayLabel={slotDayLabel}
             daySummaryTitle={daySummaryTitle}
+            onPatientCancel={handlePatientCancelFromCalendar}
             onClose={() => {
               setSelectedSlot(null)
               setSelectedDayIso(null)
@@ -271,7 +306,8 @@ const Calender: React.FC = () => {
         serviceOptions={serviceOptions}
         doctorOptions={doctorOptions}
         existingEntries={waitingListEntries}
-        onCreated={(entry) => setWaitingListEntries((prev) => [entry, ...prev])}
+        availabilityAnchorIso={anchorDay}
+        onCreated={(entry) => dispatch(addWaitlistEntry(entry))}
       />
     </motion.div>
   )

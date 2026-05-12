@@ -1,6 +1,7 @@
 import { useMemo, useState, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { Plus } from 'lucide-react'
+import { toast } from 'sonner'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   Select,
@@ -13,13 +14,20 @@ import { Button } from '@/components/ui/button'
 import { SearchInput } from '@/components/common/SearchInput'
 import { Pagination } from '@/components/common/Pagination'
 import { useUrlParams } from '@/hooks/useUrlState'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks'
+import {
+  addWaitlistEntry,
+  respondEarlierSlotOffer,
+  selectWaitlistEntries,
+  updateWaitlistEntryStatus,
+} from '@/redux/slices/waitlistSlice'
 import { WaitingListTable } from './components/WaitingListTable'
 import { WaitingListDetailsModal } from './components/WaitingListDetailsModal'
 import { AddAppointmentModal } from './components/AddAppointmentModal'
 import {
-  INITIAL_WAITING_LIST,
   WAITING_LIST_STATUS_OPTIONS,
   WAITING_LIST_DATE_OPTIONS,
+  WAITING_LIST_ROLE_OPTIONS,
   getDoctorOptionsFromEntries,
   getServiceOptionsFromEntries,
 } from './waitingListData'
@@ -27,26 +35,28 @@ import { appointmentMonthKey } from './utils'
 import type { WaitingListEntry } from './types'
 
 export default function WaitingListPage() {
+  const dispatch = useAppDispatch()
+  const entries = useAppSelector(selectWaitlistEntries)
   const { getParam, getNumberParam, setParams } = useUrlParams()
 
   const search = getParam('search', '')
   const status = getParam('status', 'all')
+  const queue = getParam('queue', 'all')
   const dateMonth = getParam('date', 'all')
   const page = getNumberParam('page', 1)
   const limit = getNumberParam('limit', 15)
 
-  const [entries, setEntries] = useState<WaitingListEntry[]>(INITIAL_WAITING_LIST)
   const [detailsEntry, setDetailsEntry] = useState<WaitingListEntry | null>(null)
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [addOpen, setAddOpen] = useState(false)
 
-  // Kept for Add modal selections.
   const serviceOptions = useMemo(() => getServiceOptionsFromEntries(entries), [entries])
   const doctorOptions = useMemo(() => getDoctorOptionsFromEntries(entries), [entries])
 
   const filteredList = useMemo(() => {
     const q = search.trim().toLowerCase()
     return entries.filter((row) => {
+      if (queue !== 'all' && row.listRole !== queue) return false
       if (status !== 'all' && row.status !== status) return false
       if (dateMonth !== 'all' && appointmentMonthKey(row.appointmentAt) !== dateMonth) {
         return false
@@ -65,7 +75,7 @@ export default function WaitingListPage() {
         .toLowerCase()
       return hay.includes(q)
     })
-  }, [entries, search, status, dateMonth])
+  }, [entries, search, status, dateMonth, queue])
 
   const totalPages = Math.max(1, Math.ceil(filteredList.length / limit))
 
@@ -93,12 +103,27 @@ export default function WaitingListPage() {
   }, [])
 
   const handleChangeStatus = useCallback((id: string, next: WaitingListEntry['status']) => {
-    setEntries((prev) => prev.map((e) => (e.id === id ? { ...e, status: next } : e)))
-  }, [])
+    dispatch(updateWaitlistEntryStatus({ id, status: next }))
+  }, [dispatch])
 
-  const handleAddCreated = useCallback((entry: WaitingListEntry) => {
-    setEntries((prev) => [entry, ...prev])
-  }, [])
+  const handleAddCreated = useCallback(
+    (entry: WaitingListEntry) => {
+      dispatch(addWaitlistEntry(entry))
+    },
+    [dispatch]
+  )
+
+  const handleRespondEarlierSlot = useCallback(
+    (entryId: string, accept: boolean) => {
+      dispatch(respondEarlierSlotOffer({ entryId, accept }))
+      toast.success(
+        accept
+          ? 'Appointment moved to the earlier slot (demo).'
+          : 'Original appointment kept; the slot was offered to the next person on the waitlist (demo).'
+      )
+    },
+    [dispatch]
+  )
 
   const filterInputClass =
     'h-11 rounded-xl border-border bg-white dark:bg-background text-accent shadow-sm placeholder:text-accent'
@@ -114,8 +139,13 @@ export default function WaitingListPage() {
         <div className="">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="shrink-0 space-y-1">
-              <h1 className="text-xl font-bold text-accent sm:text-2xl">waiting list</h1>
-              <p className="text-sm text-accent">Manage appointment system</p>
+              <h1 className="text-xl font-bold text-accent sm:text-2xl">Waiting list</h1>
+              <p className="max-w-2xl text-sm text-muted-foreground">
+                When a doctor has no patient-facing openings for roughly the next ninety days, new
+                patients are stored as waitlist. If someone cancels on the schedule, the first
+                waitlisted patient gets an earlier-slot message with Yes / No (simulated here from
+                appointment details).
+              </p>
             </div>
 
             <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
@@ -133,6 +163,19 @@ export default function WaitingListPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {WAITING_LIST_DATE_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              <Select value={queue} onValueChange={(v) => setParams({ queue: v, page: 1 })}>
+                <SelectTrigger className={`h-11 w-full shrink-0 sm:w-[140px] ${filterInputClass}`}>
+                  <SelectValue placeholder="Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  {WAITING_LIST_ROLE_OPTIONS.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>
@@ -196,6 +239,7 @@ export default function WaitingListPage() {
           setDetailsOpen(open)
           if (!open) setDetailsEntry(null)
         }}
+        onRespondEarlierSlot={handleRespondEarlierSlot}
       />
 
       <AddAppointmentModal

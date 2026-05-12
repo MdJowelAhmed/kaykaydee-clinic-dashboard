@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import type { WaitingListEntry } from '../types'
-import { formatWaitingListAppointment, statusLabel } from '../utils'
+import { formatWaitingListAppointment, listRoleLabel, statusLabel } from '../utils'
 
 function statusPillClass(status: WaitingListEntry['status']) {
   switch (status) {
@@ -43,7 +43,7 @@ export function WaitingListTable({ rows, onOpenDetails, onChangeStatus }: Waitin
   const bodyCell = 'border-b border-border px-4 py-3 text-sm text-accent sm:px-6 sm:py-4'
   return (
     <div className="w-full overflow-x-auto scrollbar-thin rounded-b-2xl">
-      <table className="w-full min-w-[1080px]">
+      <table className="w-full min-w-[1160px]">
         <thead>
           <tr className="">
             <th className={cn(headerCell, headerBg, 'text-left rounded-l-full')}>
@@ -65,6 +65,9 @@ export function WaitingListTable({ rows, onOpenDetails, onChangeStatus }: Waitin
               Doctor
             </th>
             <th className={cn(headerCell, headerBg, 'text-left')}>
+              Type
+            </th>
+            <th className={cn(headerCell, headerBg, 'text-left')}>
               Appoint Date
             </th>
             <th className={cn(headerCell, headerBg, 'text-left')}>
@@ -81,7 +84,7 @@ export function WaitingListTable({ rows, onOpenDetails, onChangeStatus }: Waitin
           <tbody className="bg-card text-accent-foreground">
           {rows.length === 0 ? (
             <tr>
-              <td colSpan={10} className={bodyCell}>
+              <td colSpan={11} className={bodyCell}>
                 No appointments found
               </td>
             </tr>
@@ -111,6 +114,23 @@ export function WaitingListTable({ rows, onOpenDetails, onChangeStatus }: Waitin
                 </td>
                 <td className={bodyCell}>
                   <span className="text-sm text-accent">{row.doctor}</span>
+                </td>
+                <td className={bodyCell}>
+                  <div className="flex flex-col gap-1">
+                    <span
+                      className={cn(
+                        'inline-flex w-fit rounded-full px-2 py-0.5 text-xs font-semibold',
+                        row.listRole === 'waitlist'
+                          ? 'bg-amber-100 text-amber-900 dark:bg-amber-500/15 dark:text-amber-200'
+                          : 'bg-slate-100 text-slate-700 dark:bg-muted dark:text-foreground'
+                      )}
+                    >
+                      {listRoleLabel(row.listRole)}
+                    </span>
+                    {row.slotOffer?.state === 'pending' ? (
+                      <span className="text-[11px] font-medium text-primary">Earlier slot offer</span>
+                    ) : null}
+                  </div>
                 </td>
                 <td className={bodyCell}>
                   <span className="whitespace-nowrap text-sm text-accent">

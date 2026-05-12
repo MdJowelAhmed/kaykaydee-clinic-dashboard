@@ -14,6 +14,8 @@ import {
   X,
 } from 'lucide-react'
 import { CATEGORY_CELL_STYLES, type ClinicCalendarEvent } from '../clinicCalendarData'
+import { isPatientCancellableCalendarEvent } from '@/pages/WaitingList/waitlistFlow'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/cn'
 
 export type EventDetailsPanelVariant = 'slot' | 'day'
@@ -40,6 +42,8 @@ interface EventDetailsPanelProps {
   /** e.g. "Wed 14" when variant is day */
   daySummaryTitle?: string
   onClose: () => void
+  /** When set, patient-facing visits show a cancel control that frees the slot for the waitlist flow (demo). */
+  onPatientCancel?: (ev: ClinicCalendarEvent) => void
 }
 
 const CATEGORY_LABEL: Record<ClinicCalendarEvent['category'], string> = {
@@ -87,7 +91,13 @@ function DetailRow({
   )
 }
 
-function SingleEventDetails({ ev }: { ev: ClinicCalendarEvent }) {
+function SingleEventDetails({
+  ev,
+  onPatientCancel,
+}: {
+  ev: ClinicCalendarEvent
+  onPatientCancel?: (ev: ClinicCalendarEvent) => void
+}) {
   const styles = CATEGORY_CELL_STYLES[ev.category]
   const hasSummary = !!ev.summary && ev.summary.trim() !== ''
 
@@ -161,6 +171,23 @@ function SingleEventDetails({ ev }: { ev: ClinicCalendarEvent }) {
           valueClass={styles.accent}
         />
       </ul>
+      {onPatientCancel && isPatientCancellableCalendarEvent(ev) ? (
+        <div className="mt-4 border-t border-border pt-3">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="w-full rounded-lg text-destructive hover:bg-destructive/10 hover:text-destructive"
+            onClick={() => onPatientCancel(ev)}
+          >
+            Cancel appointment
+          </Button>
+          <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+            Removes this slot from the schedule. If patients are waitlisted for this doctor, the first
+            in queue receives an earlier-slot message (demo).
+          </p>
+        </div>
+      ) : null}
     </div>
   )
 }
@@ -172,6 +199,7 @@ const EventDetailsPanel: React.FC<EventDetailsPanelProps> = ({
   dayLabel,
   daySummaryTitle,
   onClose,
+  onPatientCancel,
 }) => {
   const isDay = variant === 'day'
   const hasEvents = events.length > 0
@@ -258,7 +286,7 @@ const EventDetailsPanel: React.FC<EventDetailsPanelProps> = ({
               className="space-y-3"
             >
               {sortedEvents.map((ev) => (
-                <SingleEventDetails key={ev.id} ev={ev} />
+                <SingleEventDetails key={`${ev.id}-${ev.dateISO}`} ev={ev} onPatientCancel={onPatientCancel} />
               ))}
               {count > 1 && (
                 <p className="pt-1 text-center text-[11px] text-muted-foreground">
@@ -307,7 +335,7 @@ const EventDetailsPanel: React.FC<EventDetailsPanelProps> = ({
               className="space-y-3"
             >
               {sortedEvents.map((ev) => (
-                <SingleEventDetails key={ev.id} ev={ev} />
+                <SingleEventDetails key={`${ev.id}-${ev.dateISO}`} ev={ev} onPatientCancel={onPatientCancel} />
               ))}
               {count > 1 && (
                 <p className="pt-1 text-center text-[11px] text-muted-foreground">

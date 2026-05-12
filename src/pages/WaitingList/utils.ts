@@ -23,3 +23,7 @@ export function statusLabel(status: 'completed' | 'pending' | 'cancelled'): stri
       return status
   }
 }
+
+export function listRoleLabel(role: 'booked' | 'waitlist'): string {
+  return role === 'waitlist' ? 'Waitlist' : 'Booked'
+}

@@ -8,6 +8,10 @@ import { FormInput } from '@/components/common/Form/FormInput'
 import { FormSelect } from '@/components/common/Form/FormSelect'
 import { Button } from '@/components/ui/button'
 import type { WaitingListEntry, WaitingListStatus } from '../types'
+import {
+  collectResolvedEventsApproxWindow,
+  shouldPlacePatientOnWaitlist,
+} from '../waitlistAvailability'
 
 const schema = z.object({
   service: z.string().min(1, 'Service is required'),
@@ -36,6 +40,8 @@ interface AddAppointmentModalProps {
   doctorOptions: { value: string; label: string }[]
   existingEntries: WaitingListEntry[]
   onCreated: (entry: WaitingListEntry) => void
+  /** Calendar anchor used to scan ~90 days of demo schedule for doctor capacity (defaults to today). */
+  availabilityAnchorIso?: string
 }
 
 function nextSerialNo(existing: WaitingListEntry[]): string {
@@ -53,6 +59,7 @@ export function AddAppointmentModal({
   doctorOptions,
   existingEntries,
   onCreated,
+  availabilityAnchorIso,
 }: AddAppointmentModalProps) {
   const serviceFieldOptions = serviceOptions.filter((o) => o.value !== 'all')
   const doctorFieldOptions = doctorOptions.filter((o) => o.value !== 'all')
@@ -98,6 +105,9 @@ export function AddAppointmentModal({
 
   const onSubmit = handleSubmit((values) => {
     const iso = new Date(values.appointmentAt).toISOString()
+    const anchor = (availabilityAnchorIso ?? new Date().toISOString().split('T')[0]).slice(0, 10)
+    const windowEvents = collectResolvedEventsApproxWindow(anchor)
+    const onWaitlist = shouldPlacePatientOnWaitlist(windowEvents, values.doctor, anchor)
     const entry: WaitingListEntry = {
       id: `wl-new-${Date.now()}`,
       serialNo: nextSerialNo(existingEntries),
@@ -110,9 +120,18 @@ export function AddAppointmentModal({
       roomNo: values.roomNo,
       price: values.price,
       status: values.status,
+      listRole: onWaitlist ? 'waitlist' : 'booked',
+      waitlistJoinedAt: onWaitlist ? new Date().toISOString() : null,
+      slotOffer: null,
     }
     onCreated(entry)
-    toast.success('Appointment added')
+    if (onWaitlist) {
+      toast.success(
+        'Patient placed on waitlist: no patient-facing openings in the next ~90 days for this doctor (demo rule).'
+      )
+    } else {
+      toast.success('Appointment added')
+    }
     onClose()
   })
 
