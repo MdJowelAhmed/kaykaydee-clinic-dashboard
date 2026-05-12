@@ -25,6 +25,7 @@ import ChangePassword from '@/pages/Settings/ChangePassword/ChangePassword'
 import TermsSettings from '@/pages/Settings/Terms/TermsSettings'
 import PrivacySettings from '@/pages/Settings/Privacy/PrivacySettings'
 import AboutUsSettings from '@/pages/Settings/AboutUs/AboutUsSettings'
+import ConnectStripeSettings from '@/pages/Settings/ConnectStripe/ConnectStripeSettings'
 import SettingsLayout from '@/pages/Settings/SettingsLayout'
 import Calender from './pages/calender/Calender'
 import TransactionsHistory from './pages/transictions-history/TransactionsHistory'
@@ -345,6 +346,7 @@ function App() {
           >
             <Route index element={<Navigate to="profile" replace />} />
             <Route path="profile" element={<ProfileSettings />} />
+            <Route path="connect-stripe" element={<ConnectStripeSettings />} />
             <Route
               path="password"
               element={

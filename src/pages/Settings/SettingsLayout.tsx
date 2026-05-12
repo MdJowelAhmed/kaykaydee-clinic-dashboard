@@ -1,8 +1,9 @@
 import type { ElementType } from 'react'
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import {
-  User,
+  Building2,
   Crown,
+  CreditCard,
   Info,
   FileCheck,
   ShieldAlert,
@@ -16,7 +17,7 @@ const triggerClass =
   'inline-flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-accent transition-colors'
 
 const listClass =
-  'flex h-auto min-h-12 w-full flex-wrap items-center justify-start gap-1 rounded-xl border border-border bg-muted/25 p-1.5'
+  'flex h-auto min-h-12 w-full flex-wrap items-center justify-start gap-1 rounded-xl border border-border bg-card p-1.5'
 
 interface SettingsTabDef {
   to: string
@@ -26,7 +27,18 @@ interface SettingsTabDef {
 }
 
 const SETTINGS_TABS: SettingsTabDef[] = [
-  { to: '/settings/profile', label: 'Profile', Icon: User, allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER] },
+  {
+    to: '/settings/profile',
+    label: 'Clinic profile',
+    Icon: Building2,
+    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  },
+  {
+    to: '/settings/connect-stripe',
+    label: 'Connect Stripe',
+    Icon: CreditCard,
+    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  },
   {
     to: '/settings/subscription',
     label: 'My subscription',
@@ -84,7 +96,7 @@ export default function SettingsLayout() {
           <NavLink
             key={to}
             to={to}
-            className={({ isActive }) => cn(triggerClass, isActive && 'bg-primary/15 text-primary shadow-none')}
+            className={({ isActive }) => cn(triggerClass, isActive && ' bg-background p-2 rounded-md text-primary shadow-none')}
             aria-current={location.pathname === to ? 'page' : undefined}
           >
             <Icon className="h-4 w-4 shrink-0" aria-hidden />
