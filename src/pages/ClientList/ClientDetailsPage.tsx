@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { User } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { ClientProfileTabs } from './components/ClientProfileTabs'
+import { ClientDocumentsTab } from './components/ClientDocumentsTab'
 import {
   ClientProfilePageHeader,
   ClientProfileEditDeleteActions,
@@ -114,6 +115,7 @@ export default function ClientDetailsPage() {
         value={tab}
         onValueChange={setTab}
         profileContent={<ProfileDetailsCard client={client} />}
+        documentsContent={<ClientDocumentsTab client={client} />}
       />
     </motion.div>
   )

@@ -31,6 +31,7 @@ interface ClientProfileTabsProps {
   value: string
   onValueChange: (v: string) => void
   profileContent: ReactNode
+  documentsContent?: ReactNode
   className?: string
 }
 
@@ -38,6 +39,7 @@ export function ClientProfileTabs({
   value,
   onValueChange,
   profileContent,
+  documentsContent,
   className,
 }: ClientProfileTabsProps) {
   const placeholder = (
@@ -64,7 +66,7 @@ export function ClientProfileTabs({
         {placeholder}
       </TabsContent>
       <TabsContent value="documents" className="mt-0 outline-none">
-        {placeholder}
+        {documentsContent ?? placeholder}
       </TabsContent>
       <TabsContent value="reports" className="mt-0 outline-none">
         {placeholder}
