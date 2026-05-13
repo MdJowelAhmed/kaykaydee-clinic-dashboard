@@ -51,6 +51,7 @@ import ExercisesPage from './pages/Exercises/ExercisesPage'
 import BranchManagePage from './pages/BranchManage/BranchManagePage'
 import DoctorsManagePage from './pages/DoctorsManage/DoctorsManagePage'
 import DocumentsManagePage from './pages/DocumentsManage/DocumentsManagePage'
+import SendDocumentsPage from './pages/SendDocuments/SendDocumentsPage'
 import Support from './pages/Support/Support'
 import FAQ from './pages/FAQ/FAQ'
 import NotFound from './pages/NotFound/NotFound'
@@ -274,6 +275,15 @@ function App() {
             element={
               <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
                 <DocumentsManagePage />
+              </RoleBasedRoute>
+            }
+          />
+
+          <Route
+            path="send-documents"
+            element={
+              <RoleBasedRoute allowedRoles={[...DASHBOARD_ALLOWED_ROLES]}>
+                <SendDocumentsPage />
               </RoleBasedRoute>
             }
           />

@@ -6,6 +6,12 @@ import { Card, CardContent } from '@/components/ui/card'
 import { ClientProfileTabs } from './components/ClientProfileTabs'
 import { ClientDocumentsTab } from './components/ClientDocumentsTab'
 import {
+  ClientAppointmentsTab,
+  ClientExercisesTab,
+  ClientInvoiceTab,
+  ClientReportsTab,
+} from './components/ClientAdditionalTabs'
+import {
   ClientProfilePageHeader,
   ClientProfileEditDeleteActions,
   ClientProfileSummaryCard,
@@ -116,6 +122,10 @@ export default function ClientDetailsPage() {
         onValueChange={setTab}
         profileContent={<ProfileDetailsCard client={client} />}
         documentsContent={<ClientDocumentsTab client={client} />}
+        appointmentsContent={<ClientAppointmentsTab client={client} />}
+        reportsContent={<ClientReportsTab client={client} />}
+        exercisesContent={<ClientExercisesTab client={client} />}
+        invoiceContent={<ClientInvoiceTab client={client} />}
       />
     </motion.div>
   )

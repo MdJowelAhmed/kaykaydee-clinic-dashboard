@@ -8,6 +8,7 @@ import {
   UserCog,
   UserPlus,
   FileText,
+  Send,
   Brain,
   LogOut,
   User,
@@ -79,6 +80,12 @@ const adminSection: NavItem[] = [
     title: 'Documents',
     href: '/documents-manage',
     icon: FileText,
+    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  },
+  {
+    title: 'Send Documents',
+    href: '/send-documents',
+    icon: Send,
     allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
   },
 ]
