@@ -32,6 +32,10 @@ interface ClientProfileTabsProps {
   onValueChange: (v: string) => void
   profileContent: ReactNode
   documentsContent?: ReactNode
+  appointmentsContent?: ReactNode
+  reportsContent?: ReactNode
+  exercisesContent?: ReactNode
+  invoiceContent?: ReactNode
   className?: string
 }
 
@@ -40,6 +44,10 @@ export function ClientProfileTabs({
   onValueChange,
   profileContent,
   documentsContent,
+  appointmentsContent,
+  reportsContent,
+  exercisesContent,
+  invoiceContent,
   className,
 }: ClientProfileTabsProps) {
   const placeholder = (
@@ -63,19 +71,19 @@ export function ClientProfileTabs({
         {profileContent}
       </TabsContent>
       <TabsContent value="appointments" className="mt-0 outline-none">
-        {placeholder}
+        {appointmentsContent ?? placeholder}
       </TabsContent>
       <TabsContent value="documents" className="mt-0 outline-none">
         {documentsContent ?? placeholder}
       </TabsContent>
       <TabsContent value="reports" className="mt-0 outline-none">
-        {placeholder}
+        {reportsContent ?? placeholder}
       </TabsContent>
       <TabsContent value="exercises" className="mt-0 outline-none">
-        {placeholder}
+        {exercisesContent ?? placeholder}
       </TabsContent>
       <TabsContent value="invoice" className="mt-0 outline-none">
-        {placeholder}
+        {invoiceContent ?? placeholder}
       </TabsContent>
     </Tabs>
   )
