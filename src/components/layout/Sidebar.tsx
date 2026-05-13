@@ -7,6 +7,7 @@ import {
   GitBranch,
   UserCog,
   UserPlus,
+  FileText,
   Brain,
   LogOut,
   User,
@@ -53,20 +54,7 @@ const invoiceSection: NavItem[] = [
   },
 ]
 
-const generalSettingsSection: NavItem[] = [
-  {
-    title: 'Settings',
-    href: '/settings',
-    icon: Settings,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-  {
-    title: 'Exercises Setting',
-    href: '/exercises',
-    icon: Activity,
-    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
-  },
-]
+
 
 const adminSection: NavItem[] = [
   {
@@ -85,6 +73,26 @@ const adminSection: NavItem[] = [
     title: 'Members',
     href: '/doctors-manage',
     icon: UserPlus,
+    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  },
+  {
+    title: 'Documents',
+    href: '/documents-manage',
+    icon: FileText,
+    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  },
+]
+const generalSettingsSection: NavItem[] = [
+  {
+    title: 'Settings',
+    href: '/settings',
+    icon: Settings,
+    allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
+  },
+  {
+    title: 'Exercises Setting',
+    href: '/exercises',
+    icon: Activity,
     allowedRoles: [UserRole.HEAD_ADMIN, UserRole.MANAGER],
   },
 ]

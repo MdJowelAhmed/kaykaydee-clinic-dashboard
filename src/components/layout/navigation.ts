@@ -34,6 +34,7 @@ export const routeTitles: Record<string, string> = {
   '/exercises': 'Exercises',
   '/branch-manage': 'Branch manage',
   '/doctors-manage': 'Doctors manage',
+  '/documents-manage': 'Documents',
   '/admin-manage': 'Admin Manage',
   '/clinic-management': 'Clinic Management',
 }
@@ -53,5 +54,6 @@ export const headerNav: NavItem[] = [
   { title: 'Exercises', href: '/exercises' },
   { title: 'Branch manage', href: '/branch-manage' },
   { title: 'Doctors manage', href: '/doctors-manage' },
+  { title: 'Documents', href: '/documents-manage' },
 ]
 
