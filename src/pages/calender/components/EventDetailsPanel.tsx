@@ -2,18 +2,24 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
+  Activity,
   CalendarDays,
   ClipboardList,
   Clock,
   DoorOpen,
   FileText,
+  Stethoscope,
   StickyNote,
   Tag,
   User,
   UserRound,
   X,
 } from 'lucide-react'
-import { CATEGORY_CELL_STYLES, type ClinicCalendarEvent } from '../clinicCalendarData'
+import {
+  CATEGORY_CELL_STYLES,
+  CATEGORY_LABEL,
+  type ClinicCalendarEvent,
+} from '../clinicCalendarData'
 import { isPatientCancellableCalendarEvent } from '@/pages/WaitingList/waitlistFlow'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/cn'
@@ -44,15 +50,6 @@ interface EventDetailsPanelProps {
   onClose: () => void
   /** When set, patient-facing visits show a cancel control that frees the slot for the waitlist flow (demo). */
   onPatientCancel?: (ev: ClinicCalendarEvent) => void
-}
-
-const CATEGORY_LABEL: Record<ClinicCalendarEvent['category'], string> = {
-  consultation: 'Consultation',
-  follow_up: 'Follow-up',
-  diagnostics: 'Diagnostics',
-  procedure: 'Procedure',
-  staff: 'Staff / Handover',
-  admin: 'Administrative',
 }
 
 function DetailRow({
@@ -171,6 +168,33 @@ function SingleEventDetails({
           valueClass={styles.accent}
         />
       </ul>
+
+      {/* Clinical section */}
+      <div className="mt-3 border-t border-border pt-3">
+        <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+          Clinical
+        </p>
+        <ul className="space-y-2.5">
+          <DetailRow
+            icon={Stethoscope}
+            label="Diagnosis"
+            value={ev.diagnosis}
+            emptyLabel="No diagnosis recorded"
+          />
+          <DetailRow
+            icon={Activity}
+            label="Body part treated"
+            value={ev.bodyPart}
+            emptyLabel="Not specified"
+          />
+          <DetailRow
+            icon={StickyNote}
+            label="Clinical notes"
+            value={ev.clinicalNotes}
+            emptyLabel="No clinical notes"
+          />
+        </ul>
+      </div>
       {onPatientCancel && isPatientCancellableCalendarEvent(ev) ? (
         <div className="mt-4 border-t border-border pt-3">
           <Button
@@ -210,7 +234,7 @@ const EventDetailsPanel: React.FC<EventDetailsPanelProps> = ({
     [isDay, events]
   )
 
-  const headerEyebrow = isDay ? 'Day details' : 'Slot details'
+  const headerEyebrow = 'Item details'
 
   const hasSelection = isDay ? Boolean(daySummaryTitle) : hasEvents
 
@@ -356,9 +380,9 @@ const EventDetailsPanel: React.FC<EventDetailsPanelProps> = ({
                 <ClipboardList className="h-6 w-6" />
               </span>
               <div className="space-y-1">
-                <p className="text-sm font-semibold text-accent">Pick a slot to view details</p>
+                <p className="text-sm font-semibold text-accent">Select an appointment</p>
                 <p className="mx-auto max-w-[16rem] text-[11px] leading-relaxed text-muted-foreground">
-                  Click a time cell in the calendar. Every entry in that slot appears here — tap the
+                  Click an appointment in the calendar to see its full details here — tap the
                   patient name to open their profile.
                 </p>
               </div>
@@ -367,10 +391,10 @@ const EventDetailsPanel: React.FC<EventDetailsPanelProps> = ({
                   <FileText className="h-3 w-3" /> Patient, staff and room
                 </li>
                 <li className="flex items-center gap-1.5">
-                  <Clock className="h-3 w-3" /> Time and category
+                  <Stethoscope className="h-3 w-3" /> Diagnosis and body part
                 </li>
                 <li className="flex items-center gap-1.5">
-                  <StickyNote className="h-3 w-3" /> Visit summary notes
+                  <StickyNote className="h-3 w-3" /> Clinical notes
                 </li>
               </ul>
             </motion.div>

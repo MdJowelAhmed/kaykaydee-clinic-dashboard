@@ -11,14 +11,28 @@ export function appointmentMonthKey(dateIso: string): string {
   return format(parseISO(dateIso), 'yyyy-MM')
 }
 
-export function statusLabel(status: 'completed' | 'pending' | 'cancelled'): string {
+/** Short date (e.g. "5 Jun 2026") for DOB / date-added / preferred-date columns. */
+export function formatWaitlistDate(dateIso: string | null | undefined): string {
+  if (!dateIso) return '—'
+  const d = parseISO(dateIso)
+  if (Number.isNaN(d.getTime())) return '—'
+  return format(d, 'd MMM yyyy')
+}
+
+export function statusLabel(
+  status: 'waiting' | 'contacted' | 'booked' | 'cancelled' | 'declined'
+): string {
   switch (status) {
-    case 'completed':
-      return 'Confirmed'
-    case 'pending':
-      return 'Pending'
+    case 'waiting':
+      return 'Waiting'
+    case 'contacted':
+      return 'Contacted'
+    case 'booked':
+      return 'Booked'
     case 'cancelled':
-      return 'Cancel'
+      return 'Cancelled'
+    case 'declined':
+      return 'Declined'
     default:
       return status
   }

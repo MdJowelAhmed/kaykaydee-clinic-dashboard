@@ -17,16 +17,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
 import { ClientProfileTabs } from './components/ClientProfileTabs'
 import {
   ClientProfilePageHeader,
   ClientProfileSummaryCard,
   clientNameInitials,
 } from './components/ClientProfileLayoutParts'
+import { CLIENT_TAGS, ClientTagBadge } from './components/ClientTags'
 import { useClientListEntries, nextClientIdNo } from './ClientListEntriesContext'
-import { clientPatientIdRef } from './utils'
+import { formatClientDobSlash } from './utils'
 import type { ClientListEntry } from './types'
 import { cn } from '@/utils/cn'
+
+const ALERTS_MAX = 1000
 
 const schema = z.object({
   patientName: z.string().min(1, 'Name is required'),
@@ -38,6 +42,8 @@ const schema = z.object({
   gender: z.string().min(1, 'Gender is required'),
   address: z.string().min(1, 'Address is required'),
   joinDate: z.string().min(1, 'Join date is required'),
+  tags: z.array(z.string()).optional(),
+  alerts: z.string().max(ALERTS_MAX, `Max ${ALERTS_MAX} characters`).optional(),
 })
 
 type FormValues = z.infer<typeof schema>
@@ -105,10 +111,22 @@ export default function ClientFormPage() {
       gender: 'Male',
       address: '',
       joinDate: '',
+      tags: [],
+      alerts: '',
     },
   })
 
   const nameWatch = watch('patientName')
+  const dobWatch = watch('dateOfBirth')
+  const tagsWatch = watch('tags') ?? []
+  const alertsWatch = watch('alerts') ?? ''
+
+  const toggleTag = (tag: string) => {
+    const next = tagsWatch.includes(tag)
+      ? tagsWatch.filter((t) => t !== tag)
+      : [...tagsWatch, tag]
+    setValue('tags', next, { shouldValidate: true })
+  }
 
   useEffect(() => {
     if (isCreate) {
@@ -129,6 +147,8 @@ export default function ClientFormPage() {
     setValue('gender', client.gender ?? 'Male')
     setValue('address', client.address)
     setValue('joinDate', client.joinDate.slice(0, 10))
+    setValue('tags', client.tags ?? [])
+    setValue('alerts', client.alerts ?? '')
   }, [isCreate, client, setValue])
 
   if (!isCreate && id && !client) {
@@ -147,9 +167,7 @@ export default function ClientFormPage() {
   }
 
   const displayName = nameWatch?.trim() ? nameWatch : isCreate ? 'New client' : client!.patientName
-  const patientIdLine = isCreate
-    ? `Patient ID: (assigned on save)`
-    : `Patient ID: ${clientPatientIdRef(client!)}`
+  const dobLine = formatClientDobSlash(dobWatch)
 
   const submitForm = handleSubmit((values) => {
     const joinIso = isCreate
@@ -167,13 +185,15 @@ export default function ClientFormPage() {
       dateOfBirth: values.dateOfBirth || undefined,
       gender: values.gender,
       emergencyContact: values.emergencyContact || undefined,
+      tags: values.tags && values.tags.length ? values.tags : undefined,
+      alerts: values.alerts?.trim() ? values.alerts.trim() : undefined,
     }
     upsertClient(payload)
     toast.success(isCreate ? 'Client added' : 'Profile updated')
     navigate(`/client-list/${payload.id}`)
   })
 
-  const pageTitle = isCreate ? 'Add Clients Profile' : 'Edit Clients Profile'
+  const pageTitle = isCreate ? 'Add Client' : 'Profile'
 
   return (
     <motion.div
@@ -186,7 +206,7 @@ export default function ClientFormPage() {
 
       <ClientProfileSummaryCard
         displayName={displayName}
-        patientIdLine={patientIdLine}
+        dob={dobLine}
         initials={clientNameInitials(displayName === 'New client' ? 'N' : displayName)}
       />
 
@@ -308,6 +328,56 @@ export default function ClientFormPage() {
                     )}
                   </div>
                 )}
+
+                {/* Tags */}
+                <div className="space-y-1.5 sm:col-span-2">
+                  <Label className="text-xs text-accent">Tags</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {CLIENT_TAGS.map((tag) => {
+                      const active = tagsWatch.includes(tag)
+                      return (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => toggleTag(tag)}
+                          className={cn(
+                            'rounded-full text-xs font-semibold transition-colors',
+                            active
+                              ? 'ring-2 ring-primary/40'
+                              : 'border border-border bg-card px-3 py-1 text-muted-foreground hover:bg-muted/40'
+                          )}
+                        >
+                          {active ? <ClientTagBadge tag={tag} className="px-3 py-1" /> : tag}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* Alerts */}
+                <div className="space-y-1.5 sm:col-span-2">
+                  <Label htmlFor="alerts" className="text-xs text-accent">
+                    Alerts
+                  </Label>
+                  <Textarea
+                    id="alerts"
+                    rows={4}
+                    maxLength={ALERTS_MAX}
+                    placeholder="Important safety / clinical information (e.g. high falls risk, requires interpreter, carer must attend)…"
+                    className={inputClass}
+                    {...register('alerts')}
+                  />
+                  <div className="flex items-center justify-between">
+                    {errors.alerts ? (
+                      <p className="text-xs text-destructive">{errors.alerts.message}</p>
+                    ) : (
+                      <span />
+                    )}
+                    <span className="text-xs text-muted-foreground">
+                      {alertsWatch.length}/{ALERTS_MAX}
+                    </span>
+                  </div>
+                </div>
               </div>
             </ProfileFormCard>
           </form>

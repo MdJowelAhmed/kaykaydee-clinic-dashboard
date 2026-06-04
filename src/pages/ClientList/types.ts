@@ -12,4 +12,8 @@ export interface ClientListEntry {
   dateOfBirth?: string
   gender?: string
   emergencyContact?: string
+  /** Funding / category tags, e.g. NDIS, Private, WorkCover. A client may have several. */
+  tags?: string[]
+  /** Important safety / clinical alerts shown prominently across the system (max 1000 chars). */
+  alerts?: string
 }

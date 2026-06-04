@@ -22,7 +22,7 @@ import type { ContactEntry } from './types'
 export default function ContactListPage() {
   const { getParam, getNumberParam, setParams } = useUrlParams()
   const navigate = useNavigate()
-  const { entries, remove } = useContactEntries()
+  const { entries } = useContactEntries()
 
   const search = getParam('search', '')
   const type = getParam('type', 'all')
@@ -39,7 +39,10 @@ export default function ContactListPage() {
       if (type !== 'all' && row.type !== type) return false
       if (company !== 'all' && row.company !== company) return false
       if (!q) return true
-      const hay = [row.name, row.type, row.company, row.email, row.contactNo].join(' ').toLowerCase()
+      const hay = [row.name, row.type, row.company, row.email, row.mobile]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase()
       return hay.includes(q)
     })
   }, [entries, search, type, company])
@@ -60,17 +63,6 @@ export default function ContactListPage() {
     (row: ContactEntry) => navigate(`/contact-list/${row.id}`),
     [navigate]
   )
-  const handleEdit = useCallback(
-    (row: ContactEntry) => navigate(`/contact-list/${row.id}/edit`),
-    [navigate]
-  )
-  const handleDelete = useCallback(
-    (row: ContactEntry) => {
-      if (!window.confirm(`Remove ${row.name} from the list?`)) return
-      remove(row.id)
-    },
-    [remove]
-  )
 
   const filterInputClass =
     'h-11 rounded-lg border-border bg-white dark:bg-background text-accent shadow-sm placeholder:text-muted-foreground'
@@ -86,7 +78,7 @@ export default function ContactListPage() {
         <div className="">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="shrink-0 space-y-1">
-              <h1 className="text-xl font-bold text-accent sm:text-2xl">Contact list</h1>
+              <h1 className="text-xl font-bold text-accent sm:text-2xl">Contacts</h1>
               <p className="text-sm text-muted-foreground">Manage provider details</p>
             </div>
             <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
@@ -123,11 +115,11 @@ export default function ContactListPage() {
               </Select>
               <Button
                 type="button"
-                className="h-11 shrink-0 rounded-xl bg-secondary px-4 text-white hover:bg-secondary/90"
+                aria-label="Add provider"
+                className="h-11 w-11 shrink-0 rounded-xl bg-secondary p-0 text-white hover:bg-secondary/90"
                 onClick={() => navigate('/contact-list/new')}
               >
-                <Plus className="mr-2 h-4 w-4" />
-                + Add Provider
+                <Plus className="h-5 w-5" />
               </Button>
             </div>
           </div>
@@ -136,7 +128,7 @@ export default function ContactListPage() {
 
       <Card className="overflow-hidden rounded-2xl border border-border shadow-sm">
         <CardContent className="bg-card p-4 text-card-foreground">
-          <ContactListTable rows={paginatedData} onView={handleView} onEdit={handleEdit} onDelete={handleDelete} />
+          <ContactListTable rows={paginatedData} onView={handleView} />
 
           <div className="border-t border-border px-4 sm:px-6">
             <Pagination

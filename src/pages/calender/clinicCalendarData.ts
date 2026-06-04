@@ -21,6 +21,12 @@ export interface ClinicCalendarEvent {
   room?: string
   /** Doctor, nurse, or coordinator (optional — assignment may be pending). */
   staffName?: string
+  /** Clinical: working diagnosis (optional). */
+  diagnosis?: string
+  /** Clinical: body part / region treated (optional). */
+  bodyPart?: string
+  /** Clinical: free-text clinical notes (optional). */
+  clinicalNotes?: string
   /** Absolute column date (ISO); set by `resolveClinicCalendarEvents`. */
   dateISO: string
   /** `client-list` entry id for full profile navigation. */
@@ -52,6 +58,23 @@ export const CATEGORY_FILTER_OPTIONS: { value: ClinicEventCategory | 'all'; labe
   { value: 'procedure', label: 'Procedure' },
   { value: 'staff', label: 'Staff / Handover' },
   { value: 'admin', label: 'Administrative' },
+]
+
+export const CATEGORY_LABEL: Record<ClinicEventCategory, string> = {
+  consultation: 'Consultation',
+  follow_up: 'Follow-up',
+  diagnostics: 'Diagnostics',
+  procedure: 'Procedure',
+  staff: 'Staff / Handover',
+  admin: 'Administrative',
+}
+
+/** Item types a user can create directly from an empty calendar slot. */
+export const CREATABLE_ITEM_TYPES: { value: ClinicEventCategory; label: string }[] = [
+  { value: 'consultation', label: 'Appointment' },
+  { value: 'admin', label: 'Report writing block' },
+  { value: 'staff', label: 'Administrative time' },
+  { value: 'procedure', label: 'Other schedule item' },
 ]
 
 export const CATEGORY_CELL_STYLES: Record<
@@ -222,6 +245,9 @@ const clinicCalendarEventsCore: ClinicCalendarEventInput[] = [
     patientName: 'Michael Don',
     room: 'Rm 204',
     staffName: 'Dr. Rahman',
+    diagnosis: 'Lumbar facet joint dysfunction',
+    bodyPart: 'Lower back (L4–L5)',
+    clinicalNotes: 'Reduced ROM in extension; refer for guided mobilisation. Re-assess in 2 weeks.',
   },
   {
     id: 'APT-1002',
@@ -233,6 +259,9 @@ const clinicCalendarEventsCore: ClinicCalendarEventInput[] = [
     patientName: 'Sarah Johnson',
     room: 'Rm 201',
     staffName: 'Dr. Alam',
+    diagnosis: 'Post-operative ACL reconstruction',
+    bodyPart: 'Right knee',
+    clinicalNotes: 'Wound healing well. Cleared for phase-2 rehab loading.',
   },
   {
     id: 'APT-1003',

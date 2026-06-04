@@ -1,4 +1,18 @@
 import type React from 'react'
+import {
+  CalendarDays,
+  ClipboardList,
+  Contact,
+  FileBarChart2,
+  FolderOpen,
+  GitBranch,
+  LayoutDashboard,
+  Receipt,
+  Settings,
+  UserCog,
+  UserPlus,
+  Users,
+} from 'lucide-react'
 import type { UserRole } from '@/types/roles'
 
 export interface NavItem {
@@ -25,37 +39,43 @@ export const routeTitles: Record<string, string> = {
   '/settings/privacy': 'Privacy Policy',
   '/settings/about-us': 'About Us',
   '/settings/faq': 'Manage FAQ',
-  '/zealth-ai': 'Zealth AI',
-  '/waiting-list': 'Waiting list',
-  '/client-list': 'Client list',
-  '/contact-list': 'Contact list',
-  '/clinics-invoice': 'Clinics Invoice',
+  '/zealth-ai': 'AI Manager',
+  '/waiting-list': 'Waitlist',
+  '/client-list': 'Clients',
+  '/contact-list': 'Contacts',
+  '/clinics-invoice': 'Invoices',
   '/reports': 'Reports',
   '/exercises': 'Exercises',
-  '/branch-manage': 'Branch manage',
-  '/doctors-manage': 'Doctors manage',
+  '/branch-manage': 'Branch',
+  '/doctors-manage': 'Members',
   '/documents-manage': 'Documents',
   '/send-documents': 'Send Documents',
-  '/admin-manage': 'Admin Manage',
+  '/admin-manage': 'Admin',
   '/clinic-management': 'Clinic Management',
 }
 
 /**
- * Header tabs: keep this short (top-level routes).
- * Sidebar can include more items; header is for primary navigation.
+ * Primary top-navigation tabs. The left sidebar has been removed, so this is the
+ * single source of primary navigation. Order is intentional.
  */
 export const headerNav: NavItem[] = [
-  { title: 'Dashboard', href: '/dashboard' },
-  { title: 'Calendar', href: '/calender' },
-  { title: 'Waiting list', href: '/waiting-list' },
-  { title: 'Client list', href: '/client-list' },
-  { title: 'Contact list', href: '/contact-list' },
-  { title: 'Clinics Invoice', href: '/clinics-invoice' },
-  { title: 'Reports', href: '/reports' },
-  { title: 'Exercises', href: '/exercises' },
-  { title: 'Branch manage', href: '/branch-manage' },
-  { title: 'Doctors manage', href: '/doctors-manage' },
-  { title: 'Documents', href: '/documents-manage' },
-  { title: 'Send Documents', href: '/send-documents' },
+  { title: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { title: 'Calendar', href: '/calender', icon: CalendarDays },
+  { title: 'Clients', href: '/client-list', icon: Users },
+  { title: 'Contacts', href: '/contact-list', icon: Contact },
+  { title: 'Waitlist', href: '/waiting-list', icon: ClipboardList },
+  { title: 'Invoices', href: '/clinics-invoice', icon: Receipt },
+  { title: 'Reports', href: '/reports', icon: FileBarChart2 },
+  { title: 'Documents', href: '/documents-manage', icon: FolderOpen },
 ]
 
+/**
+ * Infrequently-used admin items, surfaced from the Settings icon menu in the
+ * top bar instead of taking permanent navigation space.
+ */
+export const settingsMenuNav: NavItem[] = [
+  { title: 'Branch', href: '/branch-manage', icon: GitBranch },
+  { title: 'Admin', href: '/admin-manage', icon: UserCog },
+  { title: 'Members', href: '/doctors-manage', icon: UserPlus },
+  { title: 'Settings', href: '/settings', icon: Settings },
+]

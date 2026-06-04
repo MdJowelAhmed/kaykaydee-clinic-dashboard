@@ -1,6 +1,6 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
@@ -9,26 +9,99 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { User } from 'lucide-react'
+import { Textarea } from '@/components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { User, Phone, MapPin, StickyNote } from 'lucide-react'
 import { ContactPageHeader, ContactSummaryCard } from './components/ContactHeaderParts'
 import { useContactEntries, nextContactIdNo } from './ContactEntriesContext'
+import { CONTACT_TYPE_OPTIONS } from './contactListData'
 import { contactInitials } from './utils'
 import type { ContactEntry } from './types'
 
 const schema = z.object({
+  // General Details — only the person name is mandatory
   name: z.string().min(1, 'Name is required'),
-  type: z.string().min(1, 'Type is required'),
-  company: z.string().min(1, 'Company is required'),
-  email: z.string().email('Valid email is required'),
-  contactNo: z.string().min(1, 'Contact is required'),
-  gender: z.string().optional(),
+  type: z.string().optional(),
+  title: z.string().optional(),
+  occupation: z.string().optional(),
+  company: z.string().optional(),
+  // Contact Details
+  email: z.union([z.string().email('Enter a valid email'), z.literal('')]).optional(),
+  mobile: z.string().optional(),
+  workPhone: z.string().optional(),
+  secondaryPhone: z.string().optional(),
+  // Address Details
+  addressSearch: z.string().optional(),
   address: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  postcode: z.string().optional(),
+  country: z.string().optional(),
+  // Notes
+  notes: z.string().optional(),
 })
 
 type FormValues = z.infer<typeof schema>
 
 const inputClass =
   'rounded-xl text-accent placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-primary'
+
+function FormSection({
+  icon,
+  title,
+  children,
+}: {
+  icon: ReactNode
+  title: string
+  children: ReactNode
+}) {
+  return (
+    <Card className="rounded-2xl border border-border bg-card shadow-sm">
+      <CardContent className="p-5 sm:p-6">
+        <div className="mb-6 flex items-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
+            {icon}
+          </div>
+          <h2 className="text-base font-semibold text-accent">{title}</h2>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">{children}</div>
+      </CardContent>
+    </Card>
+  )
+}
+
+function Field({
+  id,
+  label,
+  required,
+  error,
+  full,
+  children,
+}: {
+  id: string
+  label: string
+  required?: boolean
+  error?: string
+  full?: boolean
+  children: ReactNode
+}) {
+  return (
+    <div className={`space-y-1.5 ${full ? 'sm:col-span-2' : ''}`}>
+      <Label htmlFor={id} className="text-xs text-muted-foreground">
+        {label}
+        {required && <span className="ml-0.5 text-destructive">*</span>}
+      </Label>
+      {children}
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </div>
+  )
+}
 
 export default function ContactFormPage() {
   const navigate = useNavigate()
@@ -41,8 +114,9 @@ export default function ContactFormPage() {
 
   const {
     register,
+    control,
     handleSubmit,
-    setValue,
+    reset,
     watch,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
@@ -50,59 +124,91 @@ export default function ContactFormPage() {
     defaultValues: {
       name: '',
       type: '',
+      title: '',
+      occupation: '',
       company: '',
       email: '',
-      contactNo: '',
-      gender: '',
+      mobile: '',
+      workPhone: '',
+      secondaryPhone: '',
+      addressSearch: '',
       address: '',
+      city: '',
+      state: '',
+      postcode: '',
+      country: '',
+      notes: '',
     },
   })
 
   useEffect(() => {
-    if (isCreate) return
-    if (!entry) return
-    setValue('name', entry.name)
-    setValue('type', entry.type)
-    setValue('company', entry.company)
-    setValue('email', entry.email)
-    setValue('contactNo', entry.contactNo)
-    setValue('gender', entry.gender ?? '')
-    setValue('address', entry.address ?? '')
-  }, [isCreate, entry, setValue])
+    if (isCreate || !entry) return
+    reset({
+      name: entry.name ?? '',
+      type: entry.type ?? '',
+      title: entry.title ?? '',
+      occupation: entry.occupation ?? '',
+      company: entry.company ?? '',
+      email: entry.email ?? '',
+      mobile: entry.mobile ?? '',
+      workPhone: entry.workPhone ?? '',
+      secondaryPhone: entry.secondaryPhone ?? '',
+      addressSearch: '',
+      address: entry.address ?? '',
+      city: entry.city ?? '',
+      state: entry.state ?? '',
+      postcode: entry.postcode ?? '',
+      country: entry.country ?? '',
+      notes: entry.notes ?? '',
+    })
+  }, [isCreate, entry, reset])
 
   if (!isCreate && id && !entry) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <p className="text-lg text-muted-foreground">Provider not found</p>
+        <p className="text-lg text-muted-foreground">Contact not found</p>
         <button
           type="button"
           className="mt-2 text-sm text-primary hover:underline"
           onClick={() => navigate('/contact-list')}
         >
-          Back to contact list
+          Back to contacts
         </button>
       </div>
     )
   }
 
   const nameWatch = watch('name')
-  const displayName = nameWatch?.trim() ? nameWatch : isCreate ? 'New provider' : entry!.name
+  const displayName = nameWatch?.trim() ? nameWatch : isCreate ? 'New contact' : entry!.name
+
+  const trimOrUndef = (value?: string) => {
+    const v = value?.trim()
+    return v ? v : undefined
+  }
 
   const submitForm = handleSubmit((values) => {
     const payload: ContactEntry = {
       id: isCreate ? `ct-${Date.now()}` : entry!.id,
       idNo: isCreate ? nextContactIdNo(entries) : entry!.idNo,
-      name: values.name,
-      type: values.type,
-      company: values.company,
-      email: values.email,
-      contactNo: values.contactNo,
-      gender: values.gender || undefined,
-      address: values.address || undefined,
-      status: 'active',
+      name: values.name.trim(),
+      type: trimOrUndef(values.type),
+      title: trimOrUndef(values.title),
+      occupation: trimOrUndef(values.occupation),
+      company: trimOrUndef(values.company),
+      email: trimOrUndef(values.email),
+      mobile: trimOrUndef(values.mobile),
+      workPhone: trimOrUndef(values.workPhone),
+      secondaryPhone: trimOrUndef(values.secondaryPhone),
+      address: trimOrUndef(values.address),
+      city: trimOrUndef(values.city),
+      state: trimOrUndef(values.state),
+      postcode: trimOrUndef(values.postcode),
+      country: trimOrUndef(values.country),
+      notes: trimOrUndef(values.notes),
+      status: entry?.status ?? 'active',
     }
     upsert(payload)
-    toast.success(isCreate ? 'Provider added' : 'Provider updated')
+    toast.success(isCreate ? 'Contact added' : 'Contact updated')
     navigate(`/contact-list/${payload.id}`)
   })
 
@@ -113,87 +219,117 @@ export default function ContactFormPage() {
       transition={{ duration: 0.25 }}
       className="space-y-4"
     >
-      <ContactPageHeader title="Contact list" subtitle="Manage provider details" />
+      <ContactPageHeader title="Contacts" subtitle="Manage contact details" />
 
-      <ContactSummaryCard displayName={displayName} subTitle="provider" initials={contactInitials(displayName)} />
+      <ContactSummaryCard displayName={displayName} subTitle="contact" initials={contactInitials(displayName)} />
 
-      <form onSubmit={submitForm}>
-        <Card className="rounded-2xl border border-border bg-card shadow-sm">
-          <CardContent className="p-5 sm:p-6">
-            <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/15 text-primary">
-                  <User className="h-4 w-4" />
-                </div>
-                <h2 className="text-base font-semibold text-accent">Profile Details</h2>
-              </div>
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="h-10 w-full shrink-0 rounded-xl bg-secondary px-6 text-white hover:bg-secondary/90 sm:w-auto"
-              >
-                Save & Change
-              </Button>
-            </div>
+      <form onSubmit={submitForm} className="space-y-4">
+        <div className="flex justify-end">
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="h-10 w-full shrink-0 rounded-xl bg-secondary px-6 text-white hover:bg-secondary/90 sm:w-auto"
+          >
+            Save & Change
+          </Button>
+        </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <Label htmlFor="name" className="text-xs text-muted-foreground">
-                  Name
-                </Label>
-                <Input id="name" className={inputClass} {...register('name')} />
-                {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="company" className="text-xs text-muted-foreground">
-                  Company
-                </Label>
-                <Input id="company" className={inputClass} {...register('company')} />
-                {errors.company && <p className="text-xs text-destructive">{errors.company.message}</p>}
-              </div>
+        {/* General Details */}
+        <FormSection icon={<User className="h-4 w-4" />} title="General Details">
+          <Field id="name" label="Name" required error={errors.name?.message}>
+            <Input id="name" placeholder="Person name" className={inputClass} {...register('name')} />
+          </Field>
+          <Field id="type" label="Type">
+            <Controller
+              control={control}
+              name="type"
+              render={({ field }) => (
+                <Select value={field.value || ''} onValueChange={field.onChange}>
+                  <SelectTrigger id="type" className={inputClass}>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CONTACT_TYPE_OPTIONS.map((opt) => (
+                      <SelectItem key={opt} value={opt}>
+                        {opt}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </Field>
+          <Field id="title" label="Title">
+            <Input id="title" placeholder="e.g. Dr, Mr, Ms" className={inputClass} {...register('title')} />
+          </Field>
+          <Field id="occupation" label="Occupation">
+            <Input id="occupation" className={inputClass} {...register('occupation')} />
+          </Field>
+          <Field id="company" label="Company" full>
+            <Input id="company" className={inputClass} {...register('company')} />
+          </Field>
+        </FormSection>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="type" className="text-xs text-muted-foreground">
-                  Type
-                </Label>
-                <Input id="type" className={inputClass} {...register('type')} />
-                {errors.type && <p className="text-xs text-destructive">{errors.type.message}</p>}
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="gender" className="text-xs text-muted-foreground">
-                  Gender
-                </Label>
-                <Input id="gender" className={inputClass} {...register('gender')} />
-              </div>
+        {/* Contact Details */}
+        <FormSection icon={<Phone className="h-4 w-4" />} title="Contact Details">
+          <Field id="email" label="Email" error={errors.email?.message}>
+            <Input id="email" type="email" className={inputClass} {...register('email')} />
+          </Field>
+          <Field id="mobile" label="Mobile Number">
+            <Input id="mobile" className={inputClass} {...register('mobile')} />
+          </Field>
+          <Field id="workPhone" label="Work Phone">
+            <Input id="workPhone" className={inputClass} {...register('workPhone')} />
+          </Field>
+          <Field id="secondaryPhone" label="Secondary Phone Number">
+            <Input id="secondaryPhone" className={inputClass} {...register('secondaryPhone')} />
+          </Field>
+        </FormSection>
 
-              <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-xs text-muted-foreground">
-                  Email
-                </Label>
-                <Input id="email" type="email" className={inputClass} {...register('email')} />
-                {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="contactNo" className="text-xs text-muted-foreground">
-                  Contact No
-                </Label>
-                <Input id="contactNo" className={inputClass} {...register('contactNo')} />
-                {errors.contactNo && (
-                  <p className="text-xs text-destructive">{errors.contactNo.message}</p>
-                )}
-              </div>
+        {/* Address Details */}
+        <FormSection icon={<MapPin className="h-4 w-4" />} title="Address Details">
+          <Field id="addressSearch" label="Address Search" full>
+            <Input
+              id="addressSearch"
+              placeholder="Start typing to search an address…"
+              className={inputClass}
+              {...register('addressSearch')}
+            />
+          </Field>
+          <Field id="address" label="Address" full>
+            <Input id="address" className={inputClass} {...register('address')} />
+          </Field>
+          <Field id="city" label="City / Town">
+            <Input id="city" className={inputClass} {...register('city')} />
+          </Field>
+          <Field id="state" label="State / Region">
+            <Input id="state" className={inputClass} {...register('state')} />
+          </Field>
+          <Field id="postcode" label="Postcode">
+            <Input id="postcode" className={inputClass} {...register('postcode')} />
+          </Field>
+          <Field id="country" label="Country">
+            <Input id="country" className={inputClass} {...register('country')} />
+          </Field>
+        </FormSection>
 
-              <div className="space-y-1.5 sm:col-span-2">
-                <Label htmlFor="address" className="text-xs text-muted-foreground">
-                  Address
-                </Label>
-                <Input id="address" className={inputClass} {...register('address')} />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Notes */}
+        <FormSection icon={<StickyNote className="h-4 w-4" />} title="Notes">
+          <Field
+            id="notes"
+            label="Additional information (preferred contact method, best times to call, relationship to participant, invoicing instructions, referral info…)"
+            full
+          >
+            <Textarea
+              id="notes"
+              rows={5}
+              placeholder="Add any additional notes about this contact…"
+              className={inputClass}
+              {...register('notes')}
+            />
+          </Field>
+        </FormSection>
       </form>
     </motion.div>
   )
 }
-

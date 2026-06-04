@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Plus } from 'lucide-react'
+import { Plus, Send } from 'lucide-react'
 import { toast } from 'sonner'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -23,6 +24,7 @@ import type { DocumentFormValues, DocumentRow } from './types'
 
 export default function DocumentsManagePage() {
   const { getParam, getNumberParam, setParams } = useUrlParams()
+  const navigate = useNavigate()
   const { user } = useAppSelector((state) => state.auth)
 
   const search = getParam('search', '')
@@ -169,6 +171,15 @@ export default function DocumentsManagePage() {
               ))}
             </SelectContent>
           </Select>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => navigate('/send-documents')}
+            className="h-11 shrink-0 gap-2 rounded-xl border-border bg-card px-4 text-accent shadow-sm hover:bg-muted/40"
+          >
+            <Send className="h-4 w-4" />
+            Send documents
+          </Button>
           <Button
             type="button"
             onClick={openCreate}

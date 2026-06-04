@@ -9,61 +9,65 @@ import { FormSelect } from '@/components/common/Form/FormSelect'
 import { Button } from '@/components/ui/button'
 import type { WaitingListEntry, WaitingListStatus } from '../types'
 import {
-  collectResolvedEventsApproxWindow,
-  shouldPlacePatientOnWaitlist,
-} from '../waitlistAvailability'
+  APPOINTMENT_TYPES,
+  ANY_PRACTITIONER,
+  PREFERRED_PRACTITIONER_OPTIONS,
+} from '../waitingListData'
 
 const schema = z.object({
-  service: z.string().min(1, 'Service is required'),
-  patientName: z.string().min(1, 'Patient name is required'),
-  patientId: z.string().min(1, 'Patient ID is required'),
-  contactNo: z.string().min(1, 'Contact is required'),
-  doctor: z.string().min(1, 'Doctor is required'),
-  roomNo: z.string().min(1, 'Room is required'),
-  price: z.coerce.number().positive('Price must be positive'),
-  appointmentAt: z.string().min(1, 'Date and time is required'),
-  status: z.enum(['completed', 'pending', 'cancelled']),
+  patientName: z.string().min(1, 'Client name is required'),
+  dob: z.string().optional(),
+  address: z.string().optional(),
+  contactNo: z.string().min(1, 'Contact number is required'),
+  doctor: z.string().min(1, 'Preferred practitioner is required'),
+  appointmentType: z.string().min(1, 'Appointment type is required'),
+  dateAddedAt: z.string().min(1, 'Date added is required'),
+  preferredAppointmentDate: z.string().optional(),
+  status: z.enum(['waiting', 'contacted', 'booked', 'cancelled', 'declined']),
 })
 
 type FormValues = z.infer<typeof schema>
 
 const statusOptions = [
-  { value: 'pending', label: 'Pending' },
-  { value: 'completed', label: 'Confirmed' },
-  { value: 'cancelled', label: 'Cancel' },
+  { value: 'waiting', label: 'Waiting' },
+  { value: 'contacted', label: 'Contacted' },
+  { value: 'booked', label: 'Booked' },
+  { value: 'cancelled', label: 'Cancelled' },
+  { value: 'declined', label: 'Declined' },
 ]
+
+const appointmentTypeOptions = APPOINTMENT_TYPES.map((t) => ({ value: t, label: t }))
 
 interface AddAppointmentModalProps {
   open: boolean
   onClose: () => void
-  serviceOptions: { value: string; label: string }[]
-  doctorOptions: { value: string; label: string }[]
   existingEntries: WaitingListEntry[]
   onCreated: (entry: WaitingListEntry) => void
-  /** Calendar anchor used to scan ~90 days of demo schedule for doctor capacity (defaults to today). */
-  availabilityAnchorIso?: string
 }
 
 function nextSerialNo(existing: WaitingListEntry[]): string {
-  const nums = existing
-    .map((e) => parseInt(e.serialNo, 10))
-    .filter((n) => !Number.isNaN(n))
+  const nums = existing.map((e) => parseInt(e.serialNo, 10)).filter((n) => !Number.isNaN(n))
   const max = nums.length ? Math.max(...nums) : 265800
   return String(max + 1)
+}
+
+/** YYYY-MM-DD (date input) → ISO; empty → null. */
+function dateInputToIso(value?: string): string | null {
+  if (!value) return null
+  const d = new Date(value)
+  return Number.isNaN(d.getTime()) ? null : d.toISOString()
+}
+
+function todayInputValue(): string {
+  return new Date().toISOString().slice(0, 10)
 }
 
 export function AddAppointmentModal({
   open,
   onClose,
-  serviceOptions,
-  doctorOptions,
   existingEntries,
   onCreated,
-  availabilityAnchorIso,
 }: AddAppointmentModalProps) {
-  const serviceFieldOptions = serviceOptions.filter((o) => o.value !== 'all')
-  const doctorFieldOptions = doctorOptions.filter((o) => o.value !== 'all')
-
   const {
     register,
     handleSubmit,
@@ -74,64 +78,60 @@ export function AddAppointmentModal({
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      service: '',
       patientName: '',
-      patientId: '',
+      dob: '',
+      address: '',
       contactNo: '',
-      doctor: '',
-      roomNo: '',
-      price: 500,
-      appointmentAt: '',
-      status: 'pending',
+      doctor: ANY_PRACTITIONER,
+      appointmentType: APPOINTMENT_TYPES[0],
+      dateAddedAt: todayInputValue(),
+      preferredAppointmentDate: '',
+      status: 'waiting',
     },
   })
-
-  const statusVal = watch('status') as WaitingListStatus
 
   useEffect(() => {
     if (!open) return
     reset({
-      service: serviceFieldOptions[0]?.value ?? '',
       patientName: '',
-      patientId: '',
+      dob: '',
+      address: '',
       contactNo: '',
-      doctor: doctorFieldOptions[0]?.value ?? '',
-      roomNo: '',
-      price: 500,
-      appointmentAt: '',
-      status: 'pending',
+      doctor: ANY_PRACTITIONER,
+      appointmentType: APPOINTMENT_TYPES[0],
+      dateAddedAt: todayInputValue(),
+      preferredAppointmentDate: '',
+      status: 'waiting',
     })
-  }, [open, reset, serviceOptions, doctorOptions])
+  }, [open, reset])
 
   const onSubmit = handleSubmit((values) => {
-    const iso = new Date(values.appointmentAt).toISOString()
-    const anchor = (availabilityAnchorIso ?? new Date().toISOString().split('T')[0]).slice(0, 10)
-    const windowEvents = collectResolvedEventsApproxWindow(anchor)
-    const onWaitlist = shouldPlacePatientOnWaitlist(windowEvents, values.doctor, anchor)
+    const dateAddedIso = dateInputToIso(values.dateAddedAt) ?? new Date().toISOString()
+    const preferredIso = dateInputToIso(values.preferredAppointmentDate)
     const entry: WaitingListEntry = {
       id: `wl-new-${Date.now()}`,
       serialNo: nextSerialNo(existingEntries),
-      service: values.service,
       patientName: values.patientName,
-      patientId: values.patientId,
+      dob: dateInputToIso(values.dob) ?? '',
+      address: values.address ?? '',
       contactNo: values.contactNo,
       doctor: values.doctor,
-      appointmentAt: iso,
-      roomNo: values.roomNo,
-      price: values.price,
+      appointmentType: values.appointmentType,
+      dateAddedAt: dateAddedIso,
+      preferredAppointmentDate: preferredIso,
       status: values.status,
-      listRole: onWaitlist ? 'waitlist' : 'booked',
-      waitlistJoinedAt: onWaitlist ? new Date().toISOString() : null,
+      listRole: 'waitlist',
+      waitlistJoinedAt: dateAddedIso,
       slotOffer: null,
+      // Internal defaults (not shown in the table).
+      appointmentAt: preferredIso ?? dateAddedIso,
+      service: 'General',
+      patientId: `cl-${Date.now()}`,
+      roomNo: 'Rm TBD',
+      price: 0,
     }
     onCreated(entry)
-    if (onWaitlist) {
-      toast.success(
-        'Patient placed on waitlist: no patient-facing openings in the next ~90 days for this doctor (demo rule).'
-      )
-    } else {
-      toast.success('Appointment added')
-    }
+    toast.success('Client added to the waitlist')
     onClose()
   })
 
@@ -139,89 +139,74 @@ export function AddAppointmentModal({
     <ModalWrapper
       open={open}
       onClose={onClose}
-      title="Add appointment"
-      description="Create a new waiting list entry."
+      title="Add client to waitlist"
+      description="Add a client waiting for an appointment."
       size="lg"
     >
       <form onSubmit={onSubmit} className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
-          <FormSelect
-            label="Service"
-            value={watch('service')}
-            options={serviceFieldOptions}
-            onChange={(v) => setValue('service', v, { shouldValidate: true })}
-            placeholder="Select service"
-            error={errors.service?.message}
-            required
-          />
-          <FormSelect
-            label="Doctor"
-            value={watch('doctor')}
-            options={doctorFieldOptions}
-            onChange={(v) => setValue('doctor', v, { shouldValidate: true })}
-            placeholder="Select doctor"
-            error={errors.doctor?.message}
-            required
-          />
           <FormInput
-            label="Patient name"
+            label="Client name"
             {...register('patientName')}
             error={errors.patientName?.message}
             required
           />
+          <FormInput label="Date of birth" type="date" {...register('dob')} error={errors.dob?.message} />
+          <div className="sm:col-span-2">
+            <FormInput label="Address" {...register('address')} error={errors.address?.message} />
+          </div>
           <FormInput
-            label="Patient ID"
-            {...register('patientId')}
-            error={errors.patientId?.message}
-            required
-          />
-          <FormInput
-            label="Contact no"
+            label="Contact number"
             {...register('contactNo')}
             error={errors.contactNo?.message}
             required
           />
-          <FormInput
-            label="Room no"
-            {...register('roomNo')}
-            error={errors.roomNo?.message}
+          <FormSelect
+            label="Preferred practitioner"
+            value={watch('doctor')}
+            options={PREFERRED_PRACTITIONER_OPTIONS}
+            onChange={(v) => setValue('doctor', v, { shouldValidate: true })}
+            placeholder="Select practitioner"
+            error={errors.doctor?.message}
+            required
+          />
+          <FormSelect
+            label="Appointment type"
+            value={watch('appointmentType')}
+            options={appointmentTypeOptions}
+            onChange={(v) => setValue('appointmentType', v, { shouldValidate: true })}
+            placeholder="Select appointment type"
+            error={errors.appointmentType?.message}
             required
           />
           <FormInput
-            label="Price"
-            type="number"
-            step="0.01"
-            min={0}
-            {...register('price')}
-            error={errors.price?.message}
+            label="Date added to waitlist"
+            type="date"
+            {...register('dateAddedAt')}
+            error={errors.dateAddedAt?.message}
             required
           />
           <FormInput
-            label="Appointment date & time"
-            type="datetime-local"
-            {...register('appointmentAt')}
-            error={errors.appointmentAt?.message}
+            label="Preferred appointment date"
+            type="date"
+            {...register('preferredAppointmentDate')}
+            error={errors.preferredAppointmentDate?.message}
+          />
+          <FormSelect
+            label="Status"
+            value={watch('status')}
+            options={statusOptions}
+            onChange={(v) => setValue('status', v as WaitingListStatus, { shouldValidate: true })}
+            error={errors.status?.message}
             required
           />
-          <div className="sm:col-span-2">
-            <FormSelect
-              label="Status"
-              value={statusVal}
-              options={statusOptions}
-              onChange={(v) =>
-                setValue('status', v as WaitingListStatus, { shouldValidate: true })
-              }
-              error={errors.status?.message}
-              required
-            />
-          </div>
         </div>
         <div className="flex justify-end gap-2 pt-2">
           <Button type="button" variant="outline" onClick={onClose}>
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting} className="bg-slate-900 hover:bg-slate-800">
-            Save appointment
+            Add to waitlist
           </Button>
         </div>
       </form>

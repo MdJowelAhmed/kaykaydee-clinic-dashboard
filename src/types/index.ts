@@ -372,7 +372,10 @@ export interface BookingFormData {
 }
 
 // ==================== Calendar Types ====================
-export type CalendarViewRange = 7 | 10 | 15 | 30
+export type CalendarViewRange = 1 | 5 | 7 | 14 | 30
+
+/** Calendar row granularity in minutes. */
+export type CalendarInterval = 15 | 30 | 60
 
 export interface CalendarDay {
   /** ISO date string */

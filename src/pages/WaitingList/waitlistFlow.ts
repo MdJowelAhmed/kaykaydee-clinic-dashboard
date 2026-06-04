@@ -24,7 +24,7 @@ export function combineDateAndTime12h(dateISO: string, time12h: string): string 
 }
 
 function queueEligible(e: WaitingListEntry): boolean {
-  return e.listRole === 'waitlist' && e.status === 'pending' && !e.slotOffer
+  return e.listRole === 'waitlist' && e.status === 'waiting' && !e.slotOffer
 }
 
 export function waitlistQueueForDoctor(entries: WaitingListEntry[], doctor: string): WaitingListEntry[] {
@@ -72,7 +72,7 @@ export function acceptEarlierSlot(entries: WaitingListEntry[], entryId: string):
           listRole: 'booked',
           waitlistJoinedAt: null,
           slotOffer: null,
-          status: 'completed',
+          status: 'booked',
         }
       : e
   )

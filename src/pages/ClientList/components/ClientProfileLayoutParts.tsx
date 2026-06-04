@@ -73,12 +73,13 @@ export function ClientProfileEditDeleteActions({
 
 export function ClientProfileSummaryCard({
   displayName,
-  patientIdLine,
+  dob,
   initials,
   className,
 }: {
   displayName: string
-  patientIdLine: string
+  /** Formatted date of birth, e.g. "15/06/1985". */
+  dob: string
   initials: string
   className?: string
 }) {
@@ -92,7 +93,7 @@ export function ClientProfileSummaryCard({
         </Avatar>
         <div className="min-w-0">
           <p className="text-xl font-bold text-accent sm:text-2xl">{displayName}</p>
-          <p className="mt-1 text-sm text-accent">{patientIdLine}</p>
+          <p className="mt-1 text-sm font-medium text-accent">DOB: {dob}</p>
         </div>
       </CardContent>
     </Card>

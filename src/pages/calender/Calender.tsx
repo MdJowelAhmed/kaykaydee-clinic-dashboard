@@ -4,103 +4,77 @@ import { Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import CalendarView, { type SelectedSlot } from './components/CalendarView'
 import EventDetailsPanel from './components/EventDetailsPanel'
-import {
-  resolveClinicCalendarEvents,
-  CATEGORY_FILTER_OPTIONS,
-  type ClinicCalendarEvent,
-  type ClinicEventCategory,
-} from './clinicCalendarData'
+import CreateScheduleItemDialog, { type NewScheduleItem } from './components/CreateScheduleItemDialog'
+import { resolveClinicCalendarEvents, type ClinicCalendarEvent } from './clinicCalendarData'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import type { CalendarInterval } from '@/types'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
-import { goToToday, setSelectedDate } from '@/redux/slices/calendarSlice'
 import {
-  addWaitlistEntry,
   patientCalendarCancelled,
   selectCancelledCalendarKeys,
   selectWaitlistEntries,
 } from '@/redux/slices/waitlistSlice'
-import { cn } from '@/utils/cn'
-import { AddAppointmentModal } from '@/pages/WaitingList/components/AddAppointmentModal'
-import { cancellationCompositeKey, firstWaitlistPatientForDoctor } from '@/pages/WaitingList/waitlistFlow'
-import { getDoctorOptionsFromEntries, getServiceOptionsFromEntries } from '@/pages/WaitingList/waitingListData'
+import {
+  cancellationCompositeKey,
+  firstWaitlistPatientForDoctor,
+} from '@/pages/WaitingList/waitlistFlow'
+
+const todayISOString = () => new Date().toISOString().split('T')[0]
 
 const Calender: React.FC = () => {
-  const [category, setCategory] = useState<ClinicEventCategory | 'all'>('all')
-  const [searchValue, setSearchValue] = useState('')
-  const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null)
-  const [addAppointmentOpen, setAddAppointmentOpen] = useState(false)
   const dispatch = useAppDispatch()
-  const { days, selectedDate, viewRange } = useAppSelector((state) => state.calendar)
+  const { days, viewRange } = useAppSelector((state) => state.calendar)
   const waitingListEntries = useAppSelector(selectWaitlistEntries)
   const cancelledCalendarKeys = useAppSelector(selectCancelledCalendarKeys)
 
-  const todayISO = new Date().toISOString().split('T')[0]
-
+  // Events live in local state so they can be created (click a slot / the + button)
+  // and rescheduled (drag-and-drop) directly on the calendar.
+  const [events, setEvents] = useState<ClinicCalendarEvent[]>(() =>
+    resolveClinicCalendarEvents(todayISOString())
+  )
+  const [intervalMinutes, setIntervalMinutes] = useState<CalendarInterval>(60)
+  const [searchValue, setSearchValue] = useState('')
+  const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null)
   const [selectedDayIso, setSelectedDayIso] = useState<string | null>(null)
-
-  useEffect(() => {
-    if (viewRange === 15 || viewRange === 30) {
-      setSelectedSlot(null)
-    } else {
-      setSelectedDayIso(null)
-    }
-  }, [viewRange])
+  const [createState, setCreateState] = useState<{ dateISO: string; time: string } | null>(null)
 
   const cancelledKeySet = useMemo(() => new Set(cancelledCalendarKeys), [cancelledCalendarKeys])
-
   const visibleDateSet = useMemo(() => new Set(days.map((d) => d.date)), [days])
 
+  const eventsInWindow = useMemo(
+    () =>
+      events
+        .filter((e) => visibleDateSet.has(e.dateISO))
+        .filter((e) => !cancelledKeySet.has(cancellationCompositeKey(e.id, e.dateISO))),
+    [events, visibleDateSet, cancelledKeySet]
+  )
+
+  // Clear a stale day selection when it scrolls out of the visible window.
   useEffect(() => {
     if (selectedDayIso && !visibleDateSet.has(selectedDayIso)) {
       setSelectedDayIso(null)
     }
   }, [visibleDateSet, selectedDayIso])
 
-  const anchorDay = days[0]?.date ?? todayISO
-
-  const resolvedEvents = useMemo(
-    () => resolveClinicCalendarEvents(anchorDay),
-    [anchorDay]
-  )
-
-  const eventsInWindow = useMemo(
-    () =>
-      resolvedEvents
-        .filter((e) => visibleDateSet.has(e.dateISO))
-        .filter((e) => !cancelledKeySet.has(cancellationCompositeKey(e.id, e.dateISO))),
-    [resolvedEvents, visibleDateSet, cancelledKeySet]
-  )
-
-  const serviceOptions = useMemo(
-    () => getServiceOptionsFromEntries(waitingListEntries),
-    [waitingListEntries]
-  )
-  const doctorOptions = useMemo(
-    () => getDoctorOptionsFromEntries(waitingListEntries),
-    [waitingListEntries]
-  )
-
-  const calendarEvents = useMemo(() => {
-    if (category === 'all') return eventsInWindow
-    return eventsInWindow.filter((e) => e.category === category)
-  }, [eventsInWindow, category])
+  // Reset selection when switching between the hourly grid and the aggregated overview.
+  useEffect(() => {
+    setSelectedSlot(null)
+    setSelectedDayIso(null)
+  }, [viewRange])
 
   const slotEvents = useMemo(() => {
     if (!selectedSlot) return []
     const slotDay = days[selectedSlot.dayIndex]
     if (!slotDay) return []
-    return calendarEvents.filter(
+    return eventsInWindow.filter(
       (e) => e.dateISO === slotDay.date && e.time === selectedSlot.time
     )
-  }, [calendarEvents, selectedSlot, days])
+  }, [eventsInWindow, selectedSlot, days])
+
+  const dayPanelEvents = useMemo(() => {
+    if (!selectedDayIso) return []
+    return eventsInWindow.filter((e) => e.dateISO === selectedDayIso)
+  }, [selectedDayIso, eventsInWindow])
 
   const daySummaryTitle = useMemo(() => {
     if (!selectedDayIso) return undefined
@@ -108,11 +82,6 @@ const Calender: React.FC = () => {
     if (!d) return undefined
     return `${d.label} ${String(d.dayNumber).padStart(2, '0')}`
   }, [selectedDayIso, days])
-
-  const dayPanelEvents = useMemo(() => {
-    if (!selectedDayIso) return []
-    return calendarEvents.filter((e) => e.dateISO === selectedDayIso)
-  }, [selectedDayIso, calendarEvents])
 
   const panelVariant = selectedDayIso ? 'day' : 'slot'
   const panelEvents = selectedDayIso ? dayPanelEvents : slotEvents
@@ -126,6 +95,45 @@ const Calender: React.FC = () => {
     setSelectedDayIso(iso)
     if (iso) setSelectedSlot(null)
   }, [])
+
+  // Drag-and-drop reschedule: move an event to a new date + time.
+  const handleEventMove = useCallback(
+    (eventId: string, dateISO: string, time: string) => {
+      setEvents((prev) =>
+        prev.map((e) => (e.id === eventId ? { ...e, dateISO, time } : e))
+      )
+      toast.success('Appointment rescheduled')
+    },
+    []
+  )
+
+  const handleCreateAt = useCallback((dateISO: string, time: string) => {
+    setCreateState({ dateISO, time })
+  }, [])
+
+  const openFloatingCreate = useCallback(() => {
+    const dateISO = days[0]?.date ?? todayISOString()
+    setCreateState({ dateISO, time: '9:00 AM' })
+  }, [days])
+
+  const handleCreate = useCallback(
+    (item: NewScheduleItem) => {
+      if (!createState) return
+      const newEvent: ClinicCalendarEvent = {
+        id: `NEW-${Date.now()}`,
+        dayIndex: 0,
+        time: createState.time,
+        dateISO: createState.dateISO,
+        category: item.category,
+        taskTitle: item.taskTitle,
+        patientName: item.patientName,
+        staffName: item.staffName,
+      }
+      setEvents((prev) => [...prev, newEvent])
+      toast.success('Schedule item added')
+    },
+    [createState]
+  )
 
   const handlePatientCancelFromCalendar = useCallback(
     (ev: ClinicCalendarEvent) => {
@@ -152,7 +160,7 @@ const Calender: React.FC = () => {
     [dispatch, waitingListEntries]
   )
 
-  // If active filters/search remove every event in the picked slot, close the panel.
+  // If the picked slot becomes empty (e.g. its only event was moved away), close the panel.
   useEffect(() => {
     if (selectedSlot && slotEvents.length === 0) {
       setSelectedSlot(null)
@@ -164,150 +172,69 @@ const Calender: React.FC = () => {
     ? `${selectedSlotDay.label} ${selectedSlotDay.dayNumber.toString().padStart(2, '0')}`
     : undefined
 
+  const createDateLabel = useMemo(() => {
+    if (!createState) return undefined
+    const d = new Date(createState.dateISO + 'T12:00:00')
+    if (Number.isNaN(d.getTime())) return undefined
+    return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })
+  }, [createState])
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="space-y-6"
+      className="flex h-[calc(100vh-6rem)] min-h-[560px] w-full flex-col gap-4 xl:flex-row"
     >
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight text-accent">Clinic schedule</h1>
-        <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-          Hospital and clinic operations at a glance: patient appointments, diagnostics, procedures,
-          and supporting tasks—each block includes a short summary for your team.
-        </p>
-      </div>
-
-      {/* <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {statCards.map((card, i) => {
-          const Icon = card.icon
-          return (
-            <motion.div
-              key={card.title}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 * i }}
-            >
-              <Card className={cn('rounded-2xl border shadow-sm', card.className)}>
-                <CardContent className="flex items-start gap-3 p-5">
-                  <div
-                    className={cn(
-                      'flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/80 shadow-sm',
-                      card.iconClass
-                    )}
-                  >
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-xs font-medium text-slate-600">{card.title}</p>
-                    <p className="mt-1 text-2xl font-bold text-slate-900">{card.value}</p>
-                    <p className="mt-0.5 text-[11px] text-slate-500">{card.hint}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )
-        })}
-      </div> */}
-
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_360px] xl:gap-6">
-        <Card className="min-w-0 rounded-2xl border border-border bg-card shadow-sm">
-          <CardContent className="space-y-4 p-5 sm:p-6">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <h2 className="text-lg font-semibold text-accent">Schedule grid</h2>
-              <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
-                <Button
-                  type="button"
-                  className="h-10 shrink-0 rounded-xl bg-primary px-4 text-primary-foreground hover:bg-primary/90"
-                  onClick={() => setAddAppointmentOpen(true)}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add appointment
-                </Button>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => dispatch(goToToday())}
-                    className={cn(
-                      'h-9 rounded-full border px-3 text-xs font-semibold transition-colors',
-                      selectedDate === todayISO
-                        ? 'border-primary/30 bg-primary/10 text-primary'
-                        : 'border-border bg-background text-accent hover:bg-muted/30'
-                    )}
-                  >
-                    Today
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <label className="text-xs font-medium text-muted-foreground">Date</label>
-                  <input
-                    type="date"
-                    value={selectedDate}
-                    min={todayISO}
-                    onChange={(e) => dispatch(setSelectedDate(e.target.value))}
-                    className="h-10 rounded-xl border border-border bg-background px-3 text-sm text-accent outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                  />
-                </div>
-
-                <div className="w-full sm:w-[220px]">
-                  <Select
-                    value={category}
-                    onValueChange={(v) => setCategory(v as ClinicEventCategory | 'all')}
-                  >
-                    <SelectTrigger className="h-10 rounded-xl border-border bg-background text-accent">
-                      <SelectValue placeholder="Filter by type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {CATEGORY_FILTER_OPTIONS.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            <CalendarView
-              events={calendarEvents}
-              searchValue={searchValue}
-              onSearchChange={setSearchValue}
-              selectedSlot={selectedSlot}
-              onSlotSelect={handleSlotSelect}
-              selectedDayIso={selectedDayIso}
-              onDaySelect={handleDaySelect}
-            />
-          </CardContent>
-        </Card>
-
-        <div className="h-[640px] xl:sticky xl:top-4 xl:h-[calc(100vh-6rem)]">
-          <EventDetailsPanel
-            variant={panelVariant}
-            events={panelEvents}
-            slotLabel={selectedSlot?.time}
-            dayLabel={slotDayLabel}
-            daySummaryTitle={daySummaryTitle}
-            onPatientCancel={handlePatientCancelFromCalendar}
-            onClose={() => {
-              setSelectedSlot(null)
-              setSelectedDayIso(null)
-            }}
+      <Card className="flex min-h-0 min-w-0 flex-1 flex-col rounded-2xl border border-border bg-card shadow-sm">
+        <CardContent className="flex min-h-0 flex-1 flex-col p-3 sm:p-4">
+          <CalendarView
+            events={eventsInWindow}
+            searchValue={searchValue}
+            onSearchChange={setSearchValue}
+            interval={intervalMinutes}
+            onIntervalChange={setIntervalMinutes}
+            selectedSlot={selectedSlot}
+            onSlotSelect={handleSlotSelect}
+            selectedDayIso={selectedDayIso}
+            onDaySelect={handleDaySelect}
+            onCreateAt={handleCreateAt}
+            onEventMove={handleEventMove}
           />
-        </div>
+        </CardContent>
+      </Card>
+
+      <div className="h-[420px] shrink-0 xl:h-auto xl:w-[360px]">
+        <EventDetailsPanel
+          variant={panelVariant}
+          events={panelEvents}
+          slotLabel={selectedSlot?.time}
+          dayLabel={slotDayLabel}
+          daySummaryTitle={daySummaryTitle}
+          onPatientCancel={handlePatientCancelFromCalendar}
+          onClose={() => {
+            setSelectedSlot(null)
+            setSelectedDayIso(null)
+          }}
+        />
       </div>
 
-      <AddAppointmentModal
-        open={addAppointmentOpen}
-        onClose={() => setAddAppointmentOpen(false)}
-        serviceOptions={serviceOptions}
-        doctorOptions={doctorOptions}
-        existingEntries={waitingListEntries}
-        availabilityAnchorIso={anchorDay}
-        onCreated={(entry) => dispatch(addWaitlistEntry(entry))}
+      {/* Floating quick-create — fallback to clicking an empty slot. */}
+      <button
+        type="button"
+        onClick={openFloatingCreate}
+        aria-label="Add schedule item"
+        className="fixed bottom-6 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-secondary text-white shadow-lg transition-colors hover:bg-secondary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      >
+        <Plus className="h-6 w-6" />
+      </button>
+
+      <CreateScheduleItemDialog
+        open={createState !== null}
+        dateLabel={createDateLabel}
+        time={createState?.time}
+        onClose={() => setCreateState(null)}
+        onCreate={handleCreate}
       />
     </motion.div>
   )

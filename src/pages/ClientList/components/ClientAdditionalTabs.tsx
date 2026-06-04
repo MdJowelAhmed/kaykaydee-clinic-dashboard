@@ -317,7 +317,7 @@ export function ClientReportsTab({ client }: { client: ClientListEntry }) {
       <CardContent className="p-4">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-accent">Dr.'s Reports</h3>
+            <h3 className="text-lg font-semibold text-accent">Reports</h3>
             <p className="text-sm text-muted-foreground">Clinical reports of {client.patientName}</p>
           </div>
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
@@ -606,7 +606,7 @@ export function ClientInvoiceTab({ client }: { client: ClientListEntry }) {
       <CardContent className="p-4">
         <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-accent">Invoice</h3>
+            <h3 className="text-lg font-semibold text-accent">Invoices</h3>
             <p className="text-sm text-muted-foreground">Billing history of {client.patientName}</p>
           </div>
           <SearchInput value={search} onChange={(v) => { setSearch(v); setPage(1) }} placeholder="Search invoice" className="w-full sm:w-[300px]" />

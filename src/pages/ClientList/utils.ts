@@ -20,6 +20,17 @@ export function formatClientDobDisplay(iso: string | undefined): string {
   }
 }
 
+/** e.g. `15/06/1985` — compact DOB shown under the client name. */
+export function formatClientDobSlash(iso: string | undefined): string {
+  if (!iso) return '—'
+  try {
+    const d = parseISO(iso.length <= 10 ? `${iso}T12:00:00` : iso)
+    return format(d, 'dd/MM/yyyy')
+  } catch {
+    return '—'
+  }
+}
+
 /** e.g. `2,jan 2026` to match the reference mock */
 export function formatClientJoinDate(iso: string): string {
   const d = parseISO(iso)

@@ -26,12 +26,8 @@ import { WaitingListDetailsModal } from './components/WaitingListDetailsModal'
 import { AddAppointmentModal } from './components/AddAppointmentModal'
 import {
   WAITING_LIST_STATUS_OPTIONS,
-  WAITING_LIST_DATE_OPTIONS,
-  WAITING_LIST_ROLE_OPTIONS,
-  getDoctorOptionsFromEntries,
-  getServiceOptionsFromEntries,
+  WAITING_LIST_APPT_TYPE_OPTIONS,
 } from './waitingListData'
-import { appointmentMonthKey } from './utils'
 import type { WaitingListEntry } from './types'
 
 export default function WaitingListPage() {
@@ -41,8 +37,7 @@ export default function WaitingListPage() {
 
   const search = getParam('search', '')
   const status = getParam('status', 'all')
-  const queue = getParam('queue', 'all')
-  const dateMonth = getParam('date', 'all')
+  const apptType = getParam('type', 'all')
   const page = getNumberParam('page', 1)
   const limit = getNumberParam('limit', 15)
 
@@ -50,32 +45,19 @@ export default function WaitingListPage() {
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [addOpen, setAddOpen] = useState(false)
 
-  const serviceOptions = useMemo(() => getServiceOptionsFromEntries(entries), [entries])
-  const doctorOptions = useMemo(() => getDoctorOptionsFromEntries(entries), [entries])
-
   const filteredList = useMemo(() => {
     const q = search.trim().toLowerCase()
     return entries.filter((row) => {
-      if (queue !== 'all' && row.listRole !== queue) return false
       if (status !== 'all' && row.status !== status) return false
-      if (dateMonth !== 'all' && appointmentMonthKey(row.appointmentAt) !== dateMonth) {
-        return false
-      }
+      if (apptType !== 'all' && row.appointmentType !== apptType) return false
       if (!q) return true
-      const hay = [
-        row.serialNo,
-        row.service,
-        row.patientName,
-        row.patientId,
-        row.contactNo,
-        row.doctor,
-        row.roomNo,
-      ]
+      const hay = [row.patientName, row.contactNo, row.doctor, row.appointmentType, row.address]
+        .filter(Boolean)
         .join(' ')
         .toLowerCase()
       return hay.includes(q)
     })
-  }, [entries, search, status, dateMonth, queue])
+  }, [entries, search, status, apptType])
 
   const totalPages = Math.max(1, Math.ceil(filteredList.length / limit))
 
@@ -102,9 +84,12 @@ export default function WaitingListPage() {
     setDetailsOpen(true)
   }, [])
 
-  const handleChangeStatus = useCallback((id: string, next: WaitingListEntry['status']) => {
-    dispatch(updateWaitlistEntryStatus({ id, status: next }))
-  }, [dispatch])
+  const handleChangeStatus = useCallback(
+    (id: string, next: WaitingListEntry['status']) => {
+      dispatch(updateWaitlistEntryStatus({ id, status: next }))
+    },
+    [dispatch]
+  )
 
   const handleAddCreated = useCallback(
     (entry: WaitingListEntry) => {
@@ -135,78 +120,49 @@ export default function WaitingListPage() {
       transition={{ duration: 0.3 }}
       className="flex flex-col gap-6"
     >
-      <div className="overflow-hidden">
-        <div className="">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-            <div className="shrink-0 space-y-1">
-              <h1 className="text-xl font-bold text-accent sm:text-2xl">Waiting list</h1>
-              <p className="max-w-2xl text-sm text-muted-foreground">
-                When a doctor has no patient-facing openings for roughly the next ninety days, new
-                patients are stored as waitlist. If someone cancels on the schedule, the first
-                waitlisted patient gets an earlier-slot message with Yes / No (simulated here from
-                appointment details).
-              </p>
-            </div>
+      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
+        <SearchInput
+          value={search}
+          onChange={handleSearch}
+          placeholder="Search client, contact, practitioner…"
+          className="w-full min-w-0 sm:max-w-md lg:max-w-xl"
+          inputClassName={filterInputClass}
+        />
 
-            <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
-              <SearchInput
-                value={search}
-                onChange={handleSearch}
-                placeholder="Search here"
-                className="w-full min-w-0 sm:max-w-md lg:max-w-xl"
-                inputClassName={filterInputClass}
-              />
+        <Select value={apptType} onValueChange={(v) => setParams({ type: v, page: 1 })}>
+          <SelectTrigger className={`h-11 w-full shrink-0 sm:w-[180px] ${filterInputClass}`}>
+            <SelectValue placeholder="Appointment type" />
+          </SelectTrigger>
+          <SelectContent>
+            {WAITING_LIST_APPT_TYPE_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-              <Select value={dateMonth} onValueChange={(v) => setParams({ date: v, page: 1 })}>
-                <SelectTrigger className={`h-11 w-full shrink-0 sm:w-[160px] ${filterInputClass}`}>
-                  <SelectValue placeholder="Appoint Date" />
-                </SelectTrigger>
-                <SelectContent>
-                  {WAITING_LIST_DATE_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+        <Select value={status} onValueChange={(v) => setParams({ status: v, page: 1 })}>
+          <SelectTrigger className={`h-11 w-full shrink-0 sm:w-[140px] ${filterInputClass}`}>
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            {WAITING_LIST_STATUS_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-              <Select value={queue} onValueChange={(v) => setParams({ queue: v, page: 1 })}>
-                <SelectTrigger className={`h-11 w-full shrink-0 sm:w-[140px] ${filterInputClass}`}>
-                  <SelectValue placeholder="Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {WAITING_LIST_ROLE_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Select value={status} onValueChange={(v) => setParams({ status: v, page: 1 })}>
-                <SelectTrigger className={`h-11 w-full shrink-0 sm:w-[140px] ${filterInputClass}`}>
-                  <SelectValue placeholder="Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  {WAITING_LIST_STATUS_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              <Button
-                type="button"
-                className="h-11 shrink-0 rounded-xl bg-secondary px-4 text-white hover:bg-secondary/90"
-                onClick={() => setAddOpen(true)}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                Add Provider
-              </Button>
-            </div>
-          </div>
-        </div>
+        <Button
+          type="button"
+          aria-label="Add client to waitlist"
+          className="h-11 w-11 shrink-0 rounded-xl bg-secondary p-0 text-white hover:bg-secondary/90"
+          onClick={() => setAddOpen(true)}
+        >
+          <Plus className="h-5 w-5" />
+        </Button>
       </div>
 
       <Card className="overflow-hidden rounded-2xl border border-border shadow-sm">
@@ -245,8 +201,6 @@ export default function WaitingListPage() {
       <AddAppointmentModal
         open={addOpen}
         onClose={() => setAddOpen(false)}
-        serviceOptions={serviceOptions}
-        doctorOptions={doctorOptions}
         existingEntries={entries}
         onCreated={handleAddCreated}
       />

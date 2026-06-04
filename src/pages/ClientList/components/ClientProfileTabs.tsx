@@ -15,10 +15,10 @@ export const CLIENT_PROFILE_TAB_PROFILE = 'profile'
 const TAB_DEFS = [
   { id: CLIENT_PROFILE_TAB_PROFILE, label: 'Clients Profile', Icon: User },
   { id: 'appointments', label: 'Appointments', Icon: Calendar },
-  { id: 'documents', label: 'Clients Documents', Icon: FolderOpen },
-  { id: 'reports', label: "Dr.'s Reports", Icon: FileText },
+  { id: 'documents', label: 'Documents', Icon: FolderOpen },
+  { id: 'reports', label: 'Reports', Icon: FileText },
   { id: 'exercises', label: 'Exercises', Icon: HeartPulse },
-  { id: 'invoice', label: 'Invoice', Icon: Receipt },
+  { id: 'invoice', label: 'Invoices', Icon: Receipt },
 ] as const
 
 const triggerClass =

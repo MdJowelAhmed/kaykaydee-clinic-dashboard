@@ -18,7 +18,9 @@ import {
   clientNameInitials,
 } from './components/ClientProfileLayoutParts'
 import { useClientListEntries } from './ClientListEntriesContext'
-import { clientPatientIdRef, formatClientDobDisplay } from './utils'
+import { clientPatientIdRef, formatClientDobDisplay, formatClientDobSlash } from './utils'
+import { ClientTags } from './components/ClientTags'
+import { ClientAlertsBanner } from './components/ClientAlertsBanner'
 import type { ClientListEntry } from './types'
 
 function DetailField({ label, value }: { label: string; value: string }) {
@@ -57,6 +59,19 @@ function ProfileDetailsCard({ client }: { client: ClientListEntry }) {
             />
             <DetailField label="Gender" value={client.gender ?? '—'} />
             <DetailField label="Address" value={client.address} />
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-6 border-t border-border pt-4 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <p className="text-xs text-muted-foreground">Tags</p>
+            <ClientTags tags={client.tags} />
+          </div>
+          <div className="space-y-1.5">
+            <p className="text-xs text-muted-foreground">Alerts</p>
+            <p className="text-sm font-medium text-accent">
+              {client.alerts?.trim() ? client.alerts : 'No active alerts'}
+            </p>
           </div>
         </div>
       </CardContent>
@@ -113,9 +128,11 @@ export default function ClientDetailsPage() {
 
       <ClientProfileSummaryCard
         displayName={client.patientName}
-        patientIdLine={`Patient ID: ${clientPatientIdRef(client)}`}
+        dob={formatClientDobSlash(client.dateOfBirth)}
         initials={clientNameInitials(client.patientName)}
       />
+
+      <ClientAlertsBanner alerts={client.alerts} />
 
       <ClientProfileTabs
         value={tab}

@@ -14,9 +14,8 @@ import { SearchInput } from '@/components/common/SearchInput'
 import { Pagination } from '@/components/common/Pagination'
 import { useUrlParams } from '@/hooks/useUrlState'
 import { ClientListTable } from './components/ClientListTable'
-import { CLIENT_LIST_DATE_OPTIONS, CLIENT_LIST_NAME_OPTIONS } from './clientListData'
+import { CLIENT_LIST_TAG_OPTIONS, CLIENT_LIST_NAME_OPTIONS } from './clientListData'
 import { useClientListEntries } from './ClientListEntriesContext'
-import { clientJoinMonthKey } from './utils'
 import type { ClientListEntry } from './types'
 import { useNavigate } from 'react-router-dom'
 
@@ -25,21 +24,21 @@ export default function ClientListPage() {
   const navigate = useNavigate()
 
   const search = getParam('search', '')
-  const dateMonth = getParam('date', 'all')
+  const tag = getParam('tag', 'all')
   const nameSort = getParam('sort', 'default')
   const page = getNumberParam('page', 1)
   const limit = getNumberParam('limit', 15)
 
-  const { entries, removeClient } = useClientListEntries()
+  const { entries } = useClientListEntries()
 
   const filteredList = useMemo(() => {
     const q = search.trim().toLowerCase()
     let list = entries.filter((row) => {
-      if (dateMonth !== 'all' && clientJoinMonthKey(row.joinDate) !== dateMonth) {
+      if (tag !== 'all' && !(row.tags ?? []).includes(tag)) {
         return false
       }
       if (!q) return true
-      const hay = [row.idNo, row.patientName, row.contactNo, row.email, row.address]
+      const hay = [row.idNo, row.patientName, row.contactNo, row.email, ...(row.tags ?? [])]
         .join(' ')
         .toLowerCase()
       return hay.includes(q)
@@ -52,7 +51,7 @@ export default function ClientListPage() {
     }
 
     return list
-  }, [entries, search, dateMonth, nameSort])
+  }, [entries, search, tag, nameSort])
 
   const totalPages = Math.max(1, Math.ceil(filteredList.length / limit))
 
@@ -79,21 +78,6 @@ export default function ClientListPage() {
       navigate(`/client-list/${row.id}`)
     },
     [navigate]
-  )
-
-  const handleEdit = useCallback(
-    (row: ClientListEntry) => {
-      navigate(`/client-list/${row.id}/edit`)
-    },
-    [navigate]
-  )
-
-  const handleDelete = useCallback(
-    (row: ClientListEntry) => {
-      if (!window.confirm(`Remove ${row.patientName} from the list?`)) return
-      removeClient(row.id)
-    },
-    [removeClient]
   )
 
   const filterInputClass =
@@ -123,14 +107,14 @@ export default function ClientListPage() {
                 className="w-full min-w-0 sm:max-w-md lg:max-w-xl"
                 inputClassName={filterInputClass}
               />
-              <Select value={dateMonth} onValueChange={(v) => setParams({ date: v, page: 1 })}>
+              <Select value={tag} onValueChange={(v) => setParams({ tag: v, page: 1 })}>
                 <SelectTrigger
-                  className={`h-11 w-full shrink-0 sm:w-[140px] ${filterInputClass}`}
+                  className={`h-11 w-full shrink-0 sm:w-[150px] ${filterInputClass}`}
                 >
-                  <SelectValue placeholder="Date" />
+                  <SelectValue placeholder="Tags" />
                 </SelectTrigger>
                 <SelectContent>
-                  {CLIENT_LIST_DATE_OPTIONS.map((option) => (
+                  {CLIENT_LIST_TAG_OPTIONS.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
                       {option.label}
                     </SelectItem>
@@ -166,12 +150,7 @@ export default function ClientListPage() {
 
       <Card className="overflow-hidden rounded-2xl border border-border shadow-sm">
         <CardContent className="bg-card p-4 text-card-foreground">
-          <ClientListTable
-            rows={paginatedData}
-            onOpenProfile={handleOpenProfile}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+          <ClientListTable rows={paginatedData} onOpenProfile={handleOpenProfile} />
 
           <div className="border-t border-border px-4 sm:px-6">
             <Pagination

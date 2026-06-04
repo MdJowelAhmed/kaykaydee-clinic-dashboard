@@ -1,8 +1,7 @@
 import { ModalWrapper } from '@/components/common/ModalWrapper'
 import { Button } from '@/components/ui/button'
-import { formatCurrency } from '@/utils/formatters'
 import type { WaitingListEntry } from '../types'
-import { formatWaitingListAppointment, statusLabel } from '../utils'
+import { formatWaitingListAppointment, formatWaitlistDate, statusLabel } from '../utils'
 
 interface WaitingListDetailsModalProps {
   entry: WaitingListEntry | null
@@ -78,48 +77,42 @@ export function WaitingListDetailsModal({
 
       <dl className="grid gap-3 text-sm sm:grid-cols-2">
         <div>
-          <dt className="text-muted-foreground">Type</dt>
-          <dd className="font-medium text-slate-900">
-            {entry.listRole === 'waitlist' ? 'Waitlist (no slot in ~90 days)' : 'Booked'}
-          </dd>
+          <dt className="text-muted-foreground">Client name</dt>
+          <dd className="font-medium text-slate-900">{entry.patientName}</dd>
         </div>
         <div>
           <dt className="text-muted-foreground">Status</dt>
           <dd className="font-medium text-slate-900">{statusLabel(entry.status)}</dd>
         </div>
         <div>
-          <dt className="text-muted-foreground">Service</dt>
-          <dd className="font-medium text-slate-900">{entry.service}</dd>
+          <dt className="text-muted-foreground">Date of birth</dt>
+          <dd className="font-medium text-slate-900">{formatWaitlistDate(entry.dob)}</dd>
         </div>
         <div>
-          <dt className="text-muted-foreground">Patient name</dt>
-          <dd className="font-medium text-slate-900">{entry.patientName}</dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">Patient ID</dt>
-          <dd className="font-medium text-slate-900">{entry.patientId}</dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">Contact</dt>
+          <dt className="text-muted-foreground">Contact number</dt>
           <dd className="font-medium text-slate-900">{entry.contactNo}</dd>
         </div>
+        <div className="sm:col-span-2">
+          <dt className="text-muted-foreground">Address</dt>
+          <dd className="font-medium text-slate-900">{entry.address || '—'}</dd>
+        </div>
         <div>
-          <dt className="text-muted-foreground">Doctor</dt>
+          <dt className="text-muted-foreground">Preferred practitioner</dt>
           <dd className="font-medium text-slate-900">{entry.doctor}</dd>
         </div>
-        <div className="sm:col-span-2">
-          <dt className="text-muted-foreground">Appointment</dt>
+        <div>
+          <dt className="text-muted-foreground">Appointment type</dt>
+          <dd className="font-medium text-slate-900">{entry.appointmentType}</dd>
+        </div>
+        <div>
+          <dt className="text-muted-foreground">Date added to waitlist</dt>
+          <dd className="font-medium text-slate-900">{formatWaitlistDate(entry.dateAddedAt)}</dd>
+        </div>
+        <div>
+          <dt className="text-muted-foreground">Preferred appointment date</dt>
           <dd className="font-medium text-slate-900">
-            {formatWaitingListAppointment(entry.appointmentAt)}
+            {formatWaitlistDate(entry.preferredAppointmentDate)}
           </dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">Room</dt>
-          <dd className="font-medium text-slate-900">{entry.roomNo}</dd>
-        </div>
-        <div>
-          <dt className="text-muted-foreground">Price</dt>
-          <dd className="font-medium text-slate-900">{formatCurrency(entry.price)}</dd>
         </div>
       </dl>
     </ModalWrapper>

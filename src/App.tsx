@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'sonner'
+import { ConfigProvider, theme as antdTheme } from 'antd'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import DashboardLayout from '@/components/layout/DashboardLayout'
 import AuthLayout from '@/components/layout/AuthLayout'
@@ -70,6 +71,7 @@ function RoleBasedRedirect() {
 
 function App() {
   const dispatch = useAppDispatch()
+  const { theme } = useAppSelector((state) => state.ui)
 
   // Load user from storage on app mount
   useEffect(() => {
@@ -77,7 +79,18 @@ function App() {
   }, [dispatch])
 
   return (
-    <TooltipProvider>
+    <ConfigProvider
+      theme={{
+        algorithm: theme === 'dark' ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
+        token: {
+          colorPrimary: '#7946CD',
+          borderRadius: 10,
+          controlHeight: 40,
+          colorBgContainer: theme === 'dark' ? '#181c1f' : '#ffffff',
+        },
+      }}
+    >
+      <TooltipProvider>
       <Routes>
         {/* Auth Routes - No sidebar/header */}
         <Route path="/auth" element={<AuthLayout />}>
@@ -401,7 +414,8 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster position="top-right" richColors closeButton />
-    </TooltipProvider>
+      </TooltipProvider>
+    </ConfigProvider>
   )
 }
 

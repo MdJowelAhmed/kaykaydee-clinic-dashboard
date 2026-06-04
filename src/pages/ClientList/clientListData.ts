@@ -1,4 +1,27 @@
 import type { ClientListEntry } from './types'
+import { CLIENT_TAGS } from './components/ClientTags'
+
+/** Deterministic 1–2 tags per row so the demo list shows a realistic mix. */
+function tagsForIndex(index: number): string[] {
+  const first = CLIENT_TAGS[index % CLIENT_TAGS.length]
+  if (index % 3 === 0) return [first]
+  const second = CLIENT_TAGS[(index + 3) % CLIENT_TAGS.length]
+  return second === first ? [first] : [first, second]
+}
+
+/** A handful of demo clients carry safety alerts; most have none. */
+const SAMPLE_ALERTS = [
+  'High falls risk — assist with transfers and ensure walking aid is within reach.',
+  'Requires interpreter (Arabic). Book an interpreter for all appointments.',
+  'History of aggressive behaviours — two staff members must be present.',
+  'Manual handling required: hoist transfer, two-person assist.',
+  'Carer must attend all appointments.',
+]
+
+function alertsForIndex(index: number): string | undefined {
+  // ~1 in 6 clients has an alert.
+  return index % 6 === 0 ? SAMPLE_ALERTS[(index / 6) % SAMPLE_ALERTS.length] : undefined
+}
 
 const NAMES = [
   'Zoya Clinic',
@@ -49,6 +72,8 @@ function buildRow(index: number): ClientListEntry {
     dateOfBirth: dob.toISOString().slice(0, 10),
     gender,
     emergencyContact: `073 155 ${String(3600 + (index % 1000)).padStart(4, '0')}`,
+    tags: tagsForIndex(index),
+    alerts: alertsForIndex(index),
   }
 }
 
@@ -67,4 +92,9 @@ export const CLIENT_LIST_NAME_OPTIONS = [
   { value: 'default', label: 'Clients name' },
   { value: 'name_asc', label: 'Name A–Z' },
   { value: 'name_desc', label: 'Name Z–A' },
+]
+
+export const CLIENT_LIST_TAG_OPTIONS = [
+  { value: 'all', label: 'All tags' },
+  ...CLIENT_TAGS.map((t) => ({ value: t, label: t })),
 ]
