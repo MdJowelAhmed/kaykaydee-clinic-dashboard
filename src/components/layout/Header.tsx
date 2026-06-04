@@ -1,5 +1,5 @@
-import { NavLink, useNavigate, useLocation } from 'react-router-dom'
-import { Brain, LogOut, Menu, Moon, Settings as SettingsIcon, Sun, User } from 'lucide-react'
+import { NavLink, useNavigate } from 'react-router-dom'
+import { Bell, Brain, LogOut, Menu, Moon, Settings as SettingsIcon, Sun, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -13,12 +13,15 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { useAppDispatch, useAppSelector } from '@/redux/hooks'
 import { toggleTheme } from '@/redux/slices/uiSlice'
 import { logout } from '@/redux/slices/authSlice'
-import { NotificationPreviewDialog } from '@/components/layout/NotificationPreviewDialog'
 import { useState } from 'react'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
 import { headerNav, settingsMenuNav } from '@/components/layout/navigation'
+import { MOCK_NOTIFICATIONS } from '@/mocks/notificationData'
 import { cn } from '@/utils/cn'
 import { hasRouteAccess } from '@/types/roles'
+
+/** Unread badge = inbox notifications (demo data). */
+const NOTIFICATION_COUNT = MOCK_NOTIFICATIONS.filter((n) => n.box === 'inbox').length
 
 /** Icon button styling shared by the right-side actions so they match the notification bell. */
 const ICON_BTN =
@@ -26,7 +29,6 @@ const ICON_BTN =
 
 export function Header() {
   const navigate = useNavigate()
-  const location = useLocation()
   const dispatch = useAppDispatch()
   const { theme } = useAppSelector((state) => state.ui)
   const { user } = useAppSelector((state) => state.auth)
@@ -184,58 +186,55 @@ export function Header() {
               </DropdownMenu>
             )}
 
-            {/* Notifications */}
-            <NotificationPreviewDialog />
+            {/* Notifications — go straight to the notifications page */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  className={cn(ICON_BTN, 'relative')}
+                  aria-label={`Notifications${NOTIFICATION_COUNT ? ` (${NOTIFICATION_COUNT} unread)` : ''}`}
+                  onClick={() => navigate('/notification')}
+                >
+                  <Bell className="h-5 w-5" />
+                  {NOTIFICATION_COUNT > 0 && (
+                    <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold leading-none text-white">
+                      {NOTIFICATION_COUNT > 9 ? '9+' : NOTIFICATION_COUNT}
+                    </span>
+                  )}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="text-accent">Notifications</TooltipContent>
+            </Tooltip>
 
-            {/* Profile menu */}
-            <DropdownMenu>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DropdownMenuTrigger asChild>
-                    <button
-                      type="button"
-                      className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white transition-opacity hover:opacity-90"
-                      aria-label="Profile"
-                    >
-                      <User className="h-5 w-5" />
-                    </button>
-                  </DropdownMenuTrigger>
-                </TooltipTrigger>
-                <TooltipContent className="text-accent">Profile</TooltipContent>
-              </Tooltip>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>
-                  <div className="flex flex-col space-y-0.5">
-                    <p className="text-sm font-medium text-accent">
-                      {user ? `${user.firstName} ${user.lastName}`.trim() || user.email : 'Admin User'}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {user?.email || 'admin@example.com'}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => navigate('/settings/profile')}
-                  className={cn(location.pathname.startsWith('/settings/profile') && 'text-primary')}
-                >
-                  <User className="mr-2 h-4 w-4" />
-                  Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/settings')}>
-                  <SettingsIcon className="mr-2 h-4 w-4" />
-                  Settings
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
+            {/* Logout */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  className={cn(ICON_BTN, 'hover:bg-destructive/10 hover:text-destructive')}
+                  aria-label="Logout"
                   onClick={() => setLogoutDialogOpen(true)}
-                  className="text-destructive focus:text-destructive"
                 >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <LogOut className="h-5 w-5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="text-accent">Logout</TooltipContent>
+            </Tooltip>
+
+            {/* Profile — opens the profile page directly */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-white transition-opacity hover:opacity-90"
+                  aria-label="Profile"
+                  onClick={() => navigate('/settings/profile')}
+                >
+                  <User className="h-5 w-5" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent className="text-accent">Profile</TooltipContent>
+            </Tooltip>
           </div>
         </div>
 
